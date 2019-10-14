@@ -1,4 +1,4 @@
-import { userSchema } from '../../../lib/schemas/user.schema';
+import { userSchema } from '../user.schema';
 import {
     invalidEmail,
     passwordNotLongEnough,
@@ -7,7 +7,7 @@ import {
     usernameIsRequired,
     passwordIsRequired,
     emailIsRequired
-} from '../../../lib/messages/user.errorMessages';
+} from '../../messages/user.errorMessages';
 
 describe('User Schema', () => {
     const validateUser = async (user: any) => {
