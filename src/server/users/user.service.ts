@@ -56,7 +56,7 @@ const create = async (userParam: UserParams) => {
         email: userParam.email,
         createdDate: userParam.createdDate
     };
-    console.log(userParamWithoutPassword);
+
     let user: IUser = new User(userParamWithoutPassword);
 
     // Hash password
