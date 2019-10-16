@@ -2,7 +2,8 @@ import { itemSchema } from '../item.schema';
 import {
     physicalRequired,
     digitalRequired,
-    publisherRequired
+    publisherRequired,
+    titleIsRequired
 } from '../../messages/item.errorMessages';
 
 describe('Item Schema', () => {
@@ -18,12 +19,14 @@ describe('Item Schema', () => {
 
     it('Does not reject when required fields are present', async () => {
         const testItem = {
+            title: 'test',
             physical: false,
             digital: false,
             publisher: 'test'
         };
 
         const testItem2 = {
+            title: 'test',
             physical: false,
             digital: false,
             publisher: 'test',
@@ -42,8 +45,21 @@ describe('Item Schema', () => {
         expect(error2).toBeUndefined();
     });
 
+    it('Returns an error when title field not included', async () => {
+        const testItem = {
+            physical: true,
+            digital: true,
+            publisher: 'test'
+        };
+
+        const error = await validateItem(testItem);
+        expect(error.path).toEqual('title');
+        expect(error.message).toEqual(titleIsRequired);
+    });
+
     it('Returns an error when physical field not included', async () => {
         const testItem = {
+            title: 'test',
             digital: true,
             publisher: 'test'
         };
@@ -55,6 +71,7 @@ describe('Item Schema', () => {
 
     it('Returns an error when digital field not included', async () => {
         const testItem = {
+            title: 'test',
             physical: true,
             publisher: 'test'
         };
@@ -66,6 +83,7 @@ describe('Item Schema', () => {
 
     it('Returns an error when publisher field not included', async () => {
         const testItem = {
+            title: 'test',
             digital: true,
             physical: true
         };
