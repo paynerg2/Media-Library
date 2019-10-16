@@ -1,6 +1,5 @@
 import { bookTypes } from '../formats';
 
-export const titleIsRequired = 'Title must be specified';
 export const authorIsRequired = 'At least one author is required';
 export const invalidType = `Type must be one of the following: ${bookTypes}`;
 export const typeIsRequired = 'Type must be specified';

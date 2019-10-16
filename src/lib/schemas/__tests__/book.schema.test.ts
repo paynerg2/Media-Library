@@ -1,6 +1,5 @@
 import { bookSchema } from '../';
 import {
-    titleIsRequired,
     authorIsRequired,
     typeIsRequired,
     languageIsRequired,
@@ -56,21 +55,6 @@ describe('Book Schema', () => {
 
         expect(error).toBeUndefined();
         expect(error2).toBeUndefined();
-    });
-
-    it('Returns an error when the title field is absent', async () => {
-        const testBook = {
-            authors: ['test'],
-            type: 'novel',
-            language: 'test',
-            physical: false,
-            digital: false,
-            publisher: 'test'
-        };
-
-        const error = await validateBook(testBook);
-        expect(error.path).toEqual('title');
-        expect(error.message).toEqual(titleIsRequired);
     });
 
     it('Returns an error when the authors field is absent', async () => {

@@ -6,12 +6,10 @@ import {
     invalidType,
     typeIsRequired,
     languageIsRequired,
-    volumeMustBePositive,
-    titleIsRequired
+    volumeMustBePositive
 } from '../messages/book.errorMessages';
 
 export const bookSchema: yup.ObjectSchema = itemSchema.shape({
-    title: yup.string().required(titleIsRequired),
     authors: yup
         .array()
         .of(yup.string())
