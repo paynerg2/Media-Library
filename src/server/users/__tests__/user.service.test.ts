@@ -4,13 +4,9 @@ import {
     duplicateEmail,
     duplicateUsername
 } from '../../../lib/messages/user.errorMessages';
+import { mockDocumentQuery } from '../../_helpers/testHelpers';
 
 describe('User Service', () => {
-    const mockDocumentQuery: any = {
-        select: jest.fn(),
-        save: jest.fn()
-    };
-
     describe('Create', () => {
         const testUser = {
             username: 'test',
