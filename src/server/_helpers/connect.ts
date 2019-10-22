@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { env } from '../_helpers/env';
 import { logger } from '../_helpers/logger';
+import { connectOptions } from './connectOptions';
 
 let connectionString = '';
 // Note: if script in package.json has space between
@@ -17,7 +18,7 @@ if (process.env.NODE_ENV === 'test') {
 // See: https://github.com/Automattic/mongoose/issues/1992
 mongoose.Promise = global.Promise;
 
-export const connect = async (options?: any) => {
+export const connect = async (options?: Array<string>) => {
     await mongoose
         .connect(connectionString, {
             useCreateIndex: true,
@@ -28,9 +29,21 @@ export const connect = async (options?: any) => {
             if (process.env.NODE_ENV !== 'test') {
                 logger.info('Successfully connected to database');
             }
-            if (options === 'dropUsers' && process.env.NODE_ENV === 'test') {
+            if (
+                options &&
+                options.includes(connectOptions.dropUsers) &&
+                process.env.NODE_ENV === 'test'
+            ) {
                 await mongoose.connection.db.dropCollection('users');
                 logger.info('Dropping collection: users');
+            }
+            if (
+                options &&
+                options.includes(connectOptions.dropSeries) &&
+                process.env.NODE_ENV === 'test'
+            ) {
+                await mongoose.connection.db.dropCollection('series');
+                logger.info('Dropping collection: series');
             }
         })
         .catch(err => {
