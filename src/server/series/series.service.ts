@@ -2,14 +2,17 @@ import Series from './series.model';
 import { ISeriesParams, ISeries } from './series.interface';
 
 import { logger } from '../_helpers/logger';
-import { seriesNotFound } from '../../lib/messages/series.errorMessages';
+import {
+    seriesNotFound,
+    duplicateSeries
+} from '../../lib/messages/series.errorMessages';
 import { IService } from '../_interfaces/service.interface';
 
-const getAll = async (): Promise<ISeriesParams[]> => {
+const getAll = async (): Promise<ISeries[]> => {
     return await Series.find();
 };
 
-const getById = async (id: string): Promise<ISeriesParams | null> => {
+const getById = async (id: string): Promise<ISeries | null> => {
     try {
         return await Series.findById(id);
     } catch (error) {
@@ -19,6 +22,14 @@ const getById = async (id: string): Promise<ISeriesParams | null> => {
 };
 
 const create = async (seriesParams: ISeriesParams) => {
+    // Check explicityly for duplicates
+    const seriesAlreadyExists = await Series.findOne({
+        name: seriesParams.name
+    });
+    if (seriesAlreadyExists) {
+        throw Error(duplicateSeries);
+    }
+
     try {
         const series: ISeries = new Series(seriesParams);
         await series.save();
@@ -47,7 +58,7 @@ const _delete = async (id: string) => {
     await Series.findByIdAndRemove(id);
 };
 
-export const seriesService: IService<ISeriesParams> = {
+export const seriesService: IService<ISeriesParams, ISeries> = {
     getAll,
     getById,
     create,
