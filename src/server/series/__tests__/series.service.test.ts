@@ -57,7 +57,7 @@ describe('Series Service', () => {
 
     describe('Update', () => {
         const testSeries = {
-            title: 'test',
+            name: 'test',
             items: ['test', 'test']
         };
         const testId = 'test';
