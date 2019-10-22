@@ -1,6 +1,6 @@
-export interface IService<T> {
-    getAll: () => Promise<T[]>;
-    getById: (id: string) => Promise<T | null>;
+export interface IService<T, R> {
+    getAll: () => Promise<R[]>;
+    getById: (id: string) => Promise<R | null>;
     create: (params: T) => void;
     update: (id: string, params: T) => void;
     delete: (id: string) => void;
