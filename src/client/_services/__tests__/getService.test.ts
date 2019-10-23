@@ -1,33 +1,39 @@
 import { AxiosResponse } from 'axios';
 import axios from '../../_helpers/axios';
-import { seriesService } from '../series.service';
-import { tsExportAssignment } from '@babel/types';
+import { getService } from '../service';
 
-describe('Series Service', () => {
+describe('Service Factory Method', () => {
+    const route = 'test';
+    const service = getService<any>(route);
+
+    const testItem = {
+        name: 'test',
+        items: ['test', 'test'],
+        id: 'test'
+    };
+    const testErrorMessage = 'test';
+    const testId = 'test';
+
     describe('Create', () => {
-        const response: AxiosResponse = {
-            data: [],
-            status: 200,
-            statusText: '',
-            headers: {},
-            config: {}
-        };
-        const testSeries = {
-            name: 'test',
-            items: ['test', 'test']
-        };
-        const testOptions = {
-            data: testSeries
-        };
-
         describe('On successful request', () => {
+            const response: AxiosResponse = {
+                data: [],
+                status: 200,
+                statusText: '',
+                headers: {},
+                config: {}
+            };
+            const testOptions = {
+                data: testItem
+            };
+
             it('Makes a post request with expected parameters', async () => {
                 axios.post = jest.fn(() => Promise.resolve(response as any));
 
                 try {
-                    await seriesService.create(testSeries);
+                    await service.create(testItem);
                     expect(axios.post).toHaveBeenCalledWith(
-                        '/series',
+                        `/${route}`,
                         testOptions
                     );
                 } catch (error) {
@@ -38,30 +44,23 @@ describe('Series Service', () => {
 
         describe('On unsuccessful request', () => {
             it('Throws an error with expected message', async () => {
-                const testErrorMessage = 'test';
                 axios.post = jest.fn(() =>
                     Promise.reject(Error(testErrorMessage))
                 );
 
                 try {
-                    await seriesService.create(testSeries);
+                    await service.create(testItem);
                 } catch (error) {
                     expect(error).toBeDefined();
-                    expect(error.message).toEqual(
-                        `Series registration unsuccessful: ${testErrorMessage}`
-                    );
+                    expect(error.message).toEqual(testErrorMessage);
                 }
             });
         });
     });
 
     describe('Get All', () => {
-        const testSeries = {
-            name: 'test',
-            items: ['test', 'test']
-        };
         const response: AxiosResponse = {
-            data: [testSeries],
+            data: [testItem],
             status: 200,
             statusText: '',
             headers: {},
@@ -72,10 +71,10 @@ describe('Series Service', () => {
             it('Makes a get request', async () => {
                 axios.get = jest.fn(() => Promise.resolve(response as any));
                 try {
-                    const response = await seriesService.getAll();
-                    expect(axios.get).toHaveBeenCalledWith('/series');
+                    const response = await service.getAll();
+                    expect(axios.get).toHaveBeenCalledWith(`/${route}`);
                     expect(response.status).toEqual(200);
-                    expect(response.data).toEqual([testSeries]);
+                    expect(response.data).toEqual([testItem]);
                 } catch (error) {
                     expect(error).toBeUndefined();
                 }
@@ -84,30 +83,23 @@ describe('Series Service', () => {
 
         describe('On unsuccessful request', () => {
             it('Throws an error with expected message', async () => {
-                const testErrorMessage = 'test';
                 axios.get = jest.fn(() =>
                     Promise.reject({ message: testErrorMessage })
                 );
 
                 try {
-                    await seriesService.getAll();
+                    await service.getAll();
                 } catch (error) {
                     expect(error).toBeDefined();
-                    expect(error.message).toEqual(
-                        `Series GetAll Unsuccessful: ${testErrorMessage}`
-                    );
+                    expect(error.message).toEqual(testErrorMessage);
                 }
             });
         });
     });
 
     describe('Get By ID', () => {
-        const testSeries = {
-            name: 'test',
-            items: ['test', 'test']
-        };
         const response: AxiosResponse = {
-            data: testSeries,
+            data: testItem,
             status: 200,
             statusText: '',
             headers: {},
@@ -117,12 +109,13 @@ describe('Series Service', () => {
         describe('On successful request', () => {
             it('Makes a get request with expected parameters', async () => {
                 axios.get = jest.fn(() => Promise.resolve(response as any));
-                const testId = 'test';
 
                 try {
-                    const response = await seriesService.getById(testId);
-                    expect(axios.get).toHaveBeenCalledWith(`/series/${testId}`);
-                    expect(response.data).toEqual(testSeries);
+                    const response = await service.getById(testId);
+                    expect(axios.get).toHaveBeenCalledWith(
+                        `/${route}/${testId}`
+                    );
+                    expect(response.data).toEqual(testItem);
                 } catch (error) {
                     expect(error).toBeUndefined();
                 }
@@ -131,18 +124,15 @@ describe('Series Service', () => {
 
         describe('On unsuccessful request', () => {
             it('Throws an error with expected message', async () => {
-                const testErrorMessage = 'test';
                 axios.get = jest.fn(() =>
                     Promise.reject({ message: testErrorMessage })
                 );
-                const testId = 'test';
+
                 try {
-                    await seriesService.getById(testId);
+                    await service.getById(testId);
                 } catch (error) {
                     expect(error).toBeDefined();
-                    expect(error.message).toEqual(
-                        `Series GetById Unsuccessful: ${testErrorMessage}`
-                    );
+                    expect(error.message).toEqual(testErrorMessage);
                 }
             });
         });
@@ -151,7 +141,8 @@ describe('Series Service', () => {
     describe('Update', () => {
         const update = {
             name: 'test',
-            items: ['test', 'update']
+            items: ['test', 'update'],
+            id: 'test'
         };
         const response: AxiosResponse = {
             data: [],
@@ -167,11 +158,11 @@ describe('Series Service', () => {
         describe('On successful request', () => {
             it('Makes a put request with the expected parameters', async () => {
                 axios.put = jest.fn(() => Promise.resolve(response as any));
-                const testId = 'test';
+
                 try {
-                    await seriesService.update(testId, update);
+                    await service.update(testId, update);
                     expect(axios.put).toHaveBeenCalledWith(
-                        `/series/${testId}`,
+                        `/${route}/${testId}`,
                         testOptions
                     );
                 } catch (error) {
@@ -182,19 +173,15 @@ describe('Series Service', () => {
 
         describe('On unsuccessful request', () => {
             it('Throws an error with expected message', async () => {
-                const testErrorMessage = 'test';
-                const testId = 'test';
                 axios.put = jest.fn(() =>
                     Promise.reject({ message: testErrorMessage })
                 );
 
                 try {
-                    await seriesService.update(testId, update);
+                    await service.update(testId, update);
                 } catch (error) {
                     expect(error).toBeDefined();
-                    expect(error.message).toEqual(
-                        `Series Update Unsuccessful: ${testErrorMessage}`
-                    );
+                    expect(error.message).toEqual(testErrorMessage);
                 }
             });
         });
@@ -212,11 +199,11 @@ describe('Series Service', () => {
         describe('On successful request', () => {
             it('Makes a delete request with expected parameters', async () => {
                 axios.delete = jest.fn(() => Promise.resolve(response as any));
-                const testId = 'test';
+
                 try {
-                    await seriesService.delete(testId);
+                    await service.delete(testId);
                     expect(axios.delete).toHaveBeenCalledWith(
-                        `/series/${testId}`
+                        `/${route}/${testId}`
                     );
                 } catch (error) {
                     expect(error).toBeUndefined();
@@ -226,19 +213,15 @@ describe('Series Service', () => {
 
         describe('On unsuccessful request', () => {
             it('Throws an error with expected message', async () => {
-                const testErrorMessage = 'test';
-                const testId = 'test';
                 axios.delete = jest.fn(() =>
                     Promise.reject({ message: testErrorMessage })
                 );
 
                 try {
-                    await seriesService.delete(testId);
+                    await service.delete(testId);
                 } catch (error) {
                     expect(error).toBeDefined();
-                    expect(error.message).toEqual(
-                        `Series Delete Unsuccessful: ${testErrorMessage}`
-                    );
+                    expect(error.message).toEqual(testErrorMessage);
                 }
             });
         });
