@@ -16,7 +16,7 @@ describe('Series Controller', () => {
     let next: NextFunction;
     const testId: string = 'test';
     const testSeries = {
-        title: 'test',
+        name: 'test',
         items: ['test', 'test']
     };
     const testErrorMessage = 'test';
@@ -37,7 +37,9 @@ describe('Series Controller', () => {
         seriesSchema.validate = jest.fn();
 
         it('Calls validate & create from service with expected parameters', async () => {
-            seriesService.create = jest.fn();
+            seriesService.create = jest.fn(() => {
+                return Promise.resolve(testSeries as any);
+            });
             await create(req, res, next);
             expect(seriesSchema.validate).toHaveBeenCalledWith(testSeries);
             expect(seriesService.create).toHaveBeenCalledWith(testSeries);
@@ -126,7 +128,9 @@ describe('Series Controller', () => {
 
         it('Calls update from the service with expected parameters', async () => {
             seriesSchema.validate = jest.fn();
-            seriesService.update = jest.fn();
+            seriesService.update = jest.fn(() => {
+                return Promise.resolve(testSeries as any);
+            });
             await update(req, res, next);
             expect(seriesService.update).toHaveBeenCalledWith(
                 testId,

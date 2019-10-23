@@ -20,8 +20,8 @@ export const create = async (
 
     try {
         if (!error) {
-            await seriesService.create(req.body.data);
-            res.json({});
+            const series = await seriesService.create(req.body.data);
+            res.json(series);
         }
     } catch (err) {
         logger.error(err.message);
@@ -75,8 +75,11 @@ export const update = async (
 
     try {
         if (!error) {
-            await seriesService.update(req.params.id, req.body.data);
-            res.json({});
+            const updatedSeries = await seriesService.update(
+                req.params.id,
+                req.body.data
+            );
+            res.json(updatedSeries);
         }
     } catch (err) {
         logger.error(err.message);

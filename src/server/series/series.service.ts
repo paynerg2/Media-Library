@@ -21,7 +21,7 @@ const getById = async (id: string): Promise<ISeries | null> => {
     }
 };
 
-const create = async (seriesParams: ISeriesParams) => {
+const create = async (seriesParams: ISeriesParams): Promise<ISeries> => {
     // Check explicityly for duplicates
     const seriesAlreadyExists = await Series.findOne({
         name: seriesParams.name
@@ -32,14 +32,17 @@ const create = async (seriesParams: ISeriesParams) => {
 
     try {
         const series: ISeries = new Series(seriesParams);
-        await series.save();
+        return await series.save();
     } catch (error) {
         logger.error(`Error in create service method: ${error}`);
         throw Error(error);
     }
 };
 
-const update = async (id: string, seriesParams: ISeriesParams) => {
+const update = async (
+    id: string,
+    seriesParams: ISeriesParams
+): Promise<ISeries> => {
     let series;
     try {
         series = await Series.findById(id);
@@ -50,7 +53,9 @@ const update = async (id: string, seriesParams: ISeriesParams) => {
 
     if (series) {
         Object.assign(series, seriesParams);
-        await series.save();
+        return await series.save();
+    } else {
+        throw Error(seriesNotFound);
     }
 };
 

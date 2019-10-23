@@ -700,8 +700,9 @@ describe('Integration Tests', () => {
                     .post('/series')
                     .send({ data: testSeries })
                     .set('Authorization', 'Bearer ' + token);
+                const cleanedResponse = getCleanedResponse(postResponse.body);
                 expect(postResponse.status).toEqual(200);
-                expect(postResponse.body).toEqual({});
+                expect(cleanedResponse).toEqual(testSeries);
             });
 
             it('Rejects with an error when the series already exists', async () => {
@@ -800,16 +801,9 @@ describe('Integration Tests', () => {
                     .put(`/series/${id}`)
                     .set('Authorization', 'Bearer ' + token)
                     .send({ data: expectedUpdate });
+                const cleanedResponse = getCleanedResponse(putReponse.body);
                 expect(putReponse.status).toEqual(200);
-                expect(putReponse.body).toEqual({});
-
-                // Check that the user is correctly update
-                const getResponse2 = await request(app)
-                    .get(`/series/${id}`)
-                    .set('Authorization', 'Bearer ' + token);
-                const updatesSeries = getCleanedResponse(getResponse2.body);
-                expect(getResponse2.status).toEqual(200);
-                expect(updatesSeries).toEqual(expectedUpdate);
+                expect(cleanedResponse).toEqual(expectedUpdate);
             });
 
             it('Rejects when name is not included', async () => {
