@@ -1,12 +1,12 @@
 import express from 'express';
-import {
-    _delete,
+import { seriesRequestHandler } from './series.requestHandler';
+const {
     create,
     getAll,
     getById,
-    update
-} from './series.requestHandlers';
-
+    update,
+    delete: _delete
+} = seriesRequestHandler;
 const router = express();
 
 // Mount Routes

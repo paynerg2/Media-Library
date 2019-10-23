@@ -1,16 +1,17 @@
 import { NextFunction } from 'connect';
 
-import {
-    _delete,
-    create,
-    getAll,
-    getById,
-    update
-} from '../series.requestHandlers';
+import { seriesRequestHandler } from '../series.requestHandler';
 import { seriesService } from '../series.service';
 import { seriesSchema } from '../../../lib/schemas';
 import { ISeries } from '../series.interface';
 import { logger } from '../../_helpers/logger';
+const {
+    delete: _delete,
+    create,
+    getAll,
+    getById,
+    update
+} = seriesRequestHandler;
 
 describe('Series Controller', () => {
     let next: NextFunction;
