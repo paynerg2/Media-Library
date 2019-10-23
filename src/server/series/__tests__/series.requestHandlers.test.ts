@@ -1,3 +1,11 @@
+/*
+ * This test is mainly for the getRequestHandler helper function.
+ * Rather than test it with mocked schema/service, it is tested here
+ * with a simple model/entity. Any other request handler will work the
+ * same way, so any other testing of request handlers for the simple models
+ * is redundant.
+ */
+
 import { NextFunction } from 'connect';
 
 import { seriesRequestHandler } from '../series.requestHandler';
