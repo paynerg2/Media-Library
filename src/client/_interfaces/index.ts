@@ -7,3 +7,6 @@ export * from './series.interface';
 export * from './userState.interface';
 export * from './authenticationState.interface';
 export * from './seriesState.interface';
+
+// Other
+export * from './actionTypes';
