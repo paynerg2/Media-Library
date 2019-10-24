@@ -4,9 +4,14 @@ import { getService } from '../service';
 
 describe('Service Factory Method', () => {
     const route = 'test';
-    const service = getService<any>(route);
+    interface mockInterface {
+        name: string;
+        items: string[];
+        id: string;
+    }
+    const service = getService<mockInterface>(route);
 
-    const testItem = {
+    const testItem: mockInterface = {
         name: 'test',
         items: ['test', 'test'],
         id: 'test'
@@ -17,7 +22,7 @@ describe('Service Factory Method', () => {
     describe('Create', () => {
         describe('On successful request', () => {
             const response: AxiosResponse = {
-                data: [],
+                data: testItem,
                 status: 200,
                 statusText: '',
                 headers: {},
@@ -31,11 +36,12 @@ describe('Service Factory Method', () => {
                 axios.post = jest.fn(() => Promise.resolve(response as any));
 
                 try {
-                    await service.create(testItem);
+                    const item: mockInterface = await service.create(testItem);
                     expect(axios.post).toHaveBeenCalledWith(
                         `/${route}`,
                         testOptions
                     );
+                    expect(item).toEqual(testItem);
                 } catch (error) {
                     expect(error).toBeUndefined();
                 }
@@ -71,10 +77,9 @@ describe('Service Factory Method', () => {
             it('Makes a get request', async () => {
                 axios.get = jest.fn(() => Promise.resolve(response as any));
                 try {
-                    const response = await service.getAll();
+                    const items: mockInterface[] = await service.getAll();
                     expect(axios.get).toHaveBeenCalledWith(`/${route}`);
-                    expect(response.status).toEqual(200);
-                    expect(response.data).toEqual([testItem]);
+                    expect(items).toEqual([testItem]);
                 } catch (error) {
                     expect(error).toBeUndefined();
                 }
@@ -111,11 +116,11 @@ describe('Service Factory Method', () => {
                 axios.get = jest.fn(() => Promise.resolve(response as any));
 
                 try {
-                    const response = await service.getById(testId);
+                    const item = await service.getById(testId);
                     expect(axios.get).toHaveBeenCalledWith(
                         `/${route}/${testId}`
                     );
-                    expect(response.data).toEqual(testItem);
+                    expect(item).toEqual(testItem);
                 } catch (error) {
                     expect(error).toBeUndefined();
                 }
@@ -145,7 +150,7 @@ describe('Service Factory Method', () => {
             id: 'test'
         };
         const response: AxiosResponse = {
-            data: [],
+            data: update,
             status: 200,
             statusText: '',
             headers: {},
@@ -160,11 +165,12 @@ describe('Service Factory Method', () => {
                 axios.put = jest.fn(() => Promise.resolve(response as any));
 
                 try {
-                    await service.update(testId, update);
+                    const updatedItem = await service.update(testId, update);
                     expect(axios.put).toHaveBeenCalledWith(
                         `/${route}/${testId}`,
                         testOptions
                     );
+                    expect(updatedItem).toEqual(update);
                 } catch (error) {
                     expect(error).toBeUndefined();
                 }

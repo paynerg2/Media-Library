@@ -1,29 +1,37 @@
 import axios from '../_helpers/axios';
 import { AxiosRequestConfig } from 'axios';
+import { response } from 'express';
 
-const create = <T extends any>(route: string) => async (item: T) => {
+const create = <T extends any>(route: string) => async (
+    item: T
+): Promise<T> => {
     const options: AxiosRequestConfig = {
         data: item
     };
 
     try {
-        await axios.post(`/${route}`, options);
+        const response = await axios.post(`/${route}`, options);
+        return response.data;
     } catch (error) {
         throw Error(error.message);
     }
 };
 
-const getAll = (route: string) => async () => {
+const getAll = <T extends any>(route: string) => async (): Promise<T[]> => {
     try {
-        return await axios.get(`/${route}`);
+        const response = await axios.get(`/${route}`);
+        return response.data;
     } catch (error) {
         throw Error(error.message);
     }
 };
 
-const getById = (route: string) => async (id: string) => {
+const getById = <T extends any>(route: string) => async (
+    id: string
+): Promise<T> => {
     try {
-        return await axios.get(`/${route}/${id}`);
+        const response = await axios.get(`/${route}/${id}`);
+        return response.data;
     } catch (error) {
         throw Error(error.message);
     }
@@ -37,7 +45,8 @@ const update = <T extends any>(route: string) => async (
         data: seriesUpdate
     };
     try {
-        await axios.put(`/${route}/${id}`, options);
+        const response = await axios.put(`/${route}/${id}`, options);
+        return response.data;
     } catch (error) {
         throw Error(error.message);
     }
@@ -54,8 +63,8 @@ const _delete = (route: string) => async (id: string) => {
 export const getService = <T extends any>(route: string) => {
     return {
         create: create<T>(route),
-        getAll: getAll(route),
-        getById: getById(route),
+        getAll: getAll<T>(route),
+        getById: getById<T>(route),
         update: update<T>(route),
         delete: _delete(route)
     };
