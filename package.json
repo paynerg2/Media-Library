@@ -62,7 +62,7 @@
         "start": "react-scripts start",
         "server": "ts-node -P tsconfig.server.json src/server/server.ts",
         "build": "react-scripts build",
-        "test": "jest --watchAll --verbose --runInBand",
+        "test": "jest --clearCache && jest --watchAll --verbose --runInBand",
         "clearTestCache": "jest --clearCache",
         "eject": "react-scripts eject"
     },
