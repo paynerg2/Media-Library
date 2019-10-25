@@ -10,3 +10,4 @@ export * from './seriesState.interface';
 
 // Other
 export * from './actionTypes';
+export * from './action.interface';
