@@ -1,7 +1,4 @@
-import configureMockStore, {
-    MockStoreEnhanced,
-    MockStore
-} from 'redux-mock-store';
+import configureMockStore, { MockStoreEnhanced } from 'redux-mock-store';
 import thunkMiddleware from 'redux-thunk';
 import {
     mockInterface,
@@ -9,7 +6,6 @@ import {
     mockService
 } from '../../_helpers/_mocks';
 import { getActions } from '../getActions';
-import logger from 'redux-logger';
 
 const mockStore = configureMockStore([thunkMiddleware]);
 
@@ -240,7 +236,7 @@ describe('Action Factory', () => {
             it('Dispatches request and success action', () => {
                 const expectedActions = [
                     { type: mockActionTypes.DELETE_REQUEST },
-                    { type: mockActionTypes.DELETE_SUCCESS }
+                    { type: mockActionTypes.DELETE_SUCCESS, payload: testId }
                 ];
                 expect(store.getActions()).toEqual(expectedActions);
             });

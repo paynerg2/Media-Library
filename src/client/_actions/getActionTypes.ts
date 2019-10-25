@@ -1,4 +1,5 @@
 import { IActionTypes } from '../_interfaces';
+import { Item } from '../_interfaces/item.interface';
 
 export const getActionTypes = <T extends any>(constants: IActionTypes) => {
     const successWithPayload = <T extends any>(payload: T, type: string) => {
@@ -30,32 +31,33 @@ export const getActionTypes = <T extends any>(constants: IActionTypes) => {
     return {
         create: {
             request: () => request(constants.CREATE_REQUEST),
-            success: (payload: T) =>
+            success: (payload: T & Item) =>
                 successWithPayload(payload, constants.CREATE_SUCCESS),
             failure: (error: Error) => failure(error, constants.CREATE_FAILURE)
         },
         getAll: {
             request: () => request(constants.GET_REQUEST),
-            success: (payload: T[]) =>
+            success: (payload: (T & Item)[]) =>
                 successWithPayload(payload, constants.GET_SUCCESS),
             failure: (error: Error) => failure(error, constants.GET_FAILURE)
         },
         getById: {
             request: () => request(constants.GET_BY_ID_REQUEST),
-            success: (payload: T) =>
+            success: (payload: T & Item) =>
                 successWithPayload(payload, constants.GET_BY_ID_SUCCESS),
             failure: (error: Error) =>
                 failure(error, constants.GET_BY_ID_FAILURE)
         },
         update: {
             request: () => request(constants.UPDATE_REQUEST),
-            success: (payload: T) =>
+            success: (payload: T & Item) =>
                 successWithPayload(payload, constants.UPDATE_SUCCESS),
             failure: (error: Error) => failure(error, constants.UPDATE_FAILURE)
         },
         _delete: {
             request: () => request(constants.DELETE_REQUEST),
-            success: () => success(constants.DELETE_SUCCESS),
+            success: (payload: string) =>
+                successWithPayload(payload, constants.DELETE_SUCCESS),
             failure: (error: Error) => failure(error, constants.DELETE_FAILURE)
         }
     };

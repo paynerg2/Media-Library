@@ -1,11 +1,14 @@
 import { getActionTypes } from '../getActionTypes';
 import { mockActionTypes, mockInterface } from '../../_helpers/_mocks';
+import { Item } from '../../_interfaces/item.interface';
 
 describe('Get Action Types Helper', () => {
-    const payload: mockInterface = {
+    const payload: mockInterface & Item = {
+        _id: 'test',
         property: 'test',
         property2: 616
     };
+    const testId = 'test';
     const testError = Error('test');
 
     const actionTypes = getActionTypes<mockInterface>(mockActionTypes);
@@ -84,8 +87,9 @@ describe('Get Action Types Helper', () => {
             expect(action.request()).toEqual({
                 type: mockActionTypes.DELETE_REQUEST
             });
-            expect(action.success()).toEqual({
-                type: mockActionTypes.DELETE_SUCCESS
+            expect(action.success(testId)).toEqual({
+                type: mockActionTypes.DELETE_SUCCESS,
+                payload: testId
             });
             expect(action.failure(testError)).toEqual({
                 type: mockActionTypes.DELETE_FAILURE,

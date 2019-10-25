@@ -3,6 +3,7 @@ import { AnyAction } from 'redux';
 
 import { IActionTypes } from '../_interfaces';
 import { getActionTypes } from './getActionTypes';
+import { Item } from '../_interfaces/item.interface';
 
 export const getActions = <T extends any>(
     service: any,
@@ -13,7 +14,7 @@ export const getActions = <T extends any>(
         const { request, success, failure } = actions.create;
         try {
             dispatch(request());
-            const newItem: T = await service.create(item);
+            const newItem: T & Item = await service.create(item);
             dispatch(success(newItem));
         } catch (error) {
             dispatch(failure(error));
@@ -23,7 +24,7 @@ export const getActions = <T extends any>(
         const { request, success, failure } = actions.getAll;
         try {
             dispatch(request());
-            const itemList: T[] = await service.getAll();
+            const itemList: (T & Item)[] = await service.getAll();
             dispatch(success(itemList));
         } catch (error) {
             dispatch(failure(error));
@@ -33,7 +34,7 @@ export const getActions = <T extends any>(
         const { request, success, failure } = actions.getById;
         try {
             dispatch(request());
-            const item: T = await service.getById(id);
+            const item: T & Item = await service.getById(id);
             dispatch(success(item));
         } catch (error) {
             dispatch(failure(error));
@@ -45,7 +46,7 @@ export const getActions = <T extends any>(
         const { request, success, failure } = actions.update;
         try {
             dispatch(request());
-            const updatedItem: T = await service.update(id, update);
+            const updatedItem: T & Item = await service.update(id, update);
             dispatch(success(updatedItem));
         } catch (error) {
             dispatch(failure(error));
@@ -56,7 +57,7 @@ export const getActions = <T extends any>(
         try {
             dispatch(request());
             await service.delete(id);
-            dispatch(success());
+            dispatch(success(id));
         } catch (error) {
             dispatch(failure(error));
         }
