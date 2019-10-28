@@ -1,25 +1,22 @@
 import Series from './series.model';
 import { ISeriesParams, ISeries } from './series.interface';
-
-import { logger } from '../_helpers/logger';
 import {
     seriesNotFound,
     duplicateSeries
 } from '../../lib/messages/series.errorMessages';
 import { IService } from '../_interfaces/service.interface';
+import { getSimpleService } from '../_helpers/getSimpleService';
 
-const getAll = async (): Promise<ISeries[]> => {
-    return await Series.find();
+const errorMessages = {
+    create: duplicateSeries,
+    getById: seriesNotFound,
+    update: seriesNotFound
 };
 
-const getById = async (id: string): Promise<ISeries | null> => {
-    try {
-        return await Series.findById(id);
-    } catch (error) {
-        logger.error(`${error} : ${seriesNotFound}`);
-        throw Error(seriesNotFound);
-    }
-};
+const service: IService<ISeriesParams, ISeries> = getSimpleService<
+    ISeriesParams,
+    ISeries
+>(Series, errorMessages);
 
 const create = async (seriesParams: ISeriesParams): Promise<ISeries> => {
     // Check explicityly for duplicates
@@ -30,43 +27,13 @@ const create = async (seriesParams: ISeriesParams): Promise<ISeries> => {
         throw Error(duplicateSeries);
     }
 
-    try {
-        const series: ISeries = new Series(seriesParams);
-        return await series.save();
-    } catch (error) {
-        logger.error(`Error in create service method: ${error}`);
-        throw Error(error);
-    }
-};
-
-const update = async (
-    id: string,
-    seriesParams: ISeriesParams
-): Promise<ISeries> => {
-    let series;
-    try {
-        series = await Series.findById(id);
-    } catch (error) {
-        logger.error(`${error} : ${seriesNotFound}`);
-        throw new Error(seriesNotFound);
-    }
-
-    if (series) {
-        Object.assign(series, seriesParams);
-        return await series.save();
-    } else {
-        throw Error(seriesNotFound);
-    }
-};
-
-const _delete = async (id: string) => {
-    await Series.findByIdAndRemove(id);
+    return await service.create(seriesParams);
 };
 
 export const seriesService: IService<ISeriesParams, ISeries> = {
-    getAll,
-    getById,
+    getAll: service.getAll,
+    getById: service.getById,
     create,
-    update,
-    delete: _delete
+    update: service.update,
+    delete: service.delete
 };

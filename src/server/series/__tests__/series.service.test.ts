@@ -1,3 +1,10 @@
+/**
+ * Functions as a test of the getSimpleService helper method.
+ * Testing here instead of mocking a Mongoose.Model/Schema, because
+ * the test implementation is the same with the exception of
+ * additional guard statements in the create method.
+ */
+
 import Series from '../series.model';
 import { seriesService } from '../series.service';
 import { mockDocumentQuery } from '../../_helpers/testHelpers';
@@ -48,7 +55,7 @@ describe('Series Service', () => {
                 error = e;
             }
             expect(logger.error).toHaveBeenCalledWith(
-                `Error: ${testErrorMessage} : ${seriesNotFound}`
+                `${testErrorMessage} : ${seriesNotFound}`
             );
             expect(error).toBeDefined();
             expect(error.message).toEqual(seriesNotFound);
@@ -83,7 +90,7 @@ describe('Series Service', () => {
                 error = e;
             }
             expect(logger.error).toHaveBeenCalledWith(
-                `Error: ${testErrorMessage} : ${seriesNotFound}`
+                `${testErrorMessage} : ${seriesNotFound}`
             );
             expect(error).toBeDefined();
             expect(error.message).toEqual(seriesNotFound);
