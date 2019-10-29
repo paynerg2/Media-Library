@@ -5,3 +5,5 @@ export const personNotFound =
 export const companyNotFound = 'Company not found';
 export const invalidStatus = 'Invalid status';
 export const invalidUrl = 'Must be valid website URL';
+export const timeTravellingNotAllowed =
+    'Company founded in the future? Something is amiss';
