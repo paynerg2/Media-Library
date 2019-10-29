@@ -7,7 +7,7 @@ import {
 } from '../../lib/messages/company.errorMessages';
 import { IService } from '../_interfaces/service.interface';
 import { getSimpleService } from '../_helpers/getSimpleService';
-import { duplicateSeries } from '../../lib/messages/series.errorMessages';
+import { logger } from '../_helpers/logger';
 
 const errorMessages = {
     create: duplicateCompany,
@@ -25,7 +25,8 @@ const create = async (companyParams: CompanyParams): Promise<ICompany> => {
         name: companyParams.name
     });
     if (companyAlreadyExists) {
-        throw Error(duplicateSeries);
+        logger.error(duplicateCompany);
+        throw Error(duplicateCompany);
     }
 
     return await service.create(companyParams);
