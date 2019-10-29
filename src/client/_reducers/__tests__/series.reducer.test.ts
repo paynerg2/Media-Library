@@ -1,7 +1,8 @@
 import { series } from '../series.reducer';
 import { seriesConstants } from '../../_constants';
-import { SeriesState, Series, IAction } from '../../_interfaces';
+import { SeriesState, IAction } from '../../_interfaces';
 import { Item } from '../../_interfaces/item.interface';
+import { Series } from '../../../lib/interfaces';
 
 describe('Series Reducer', () => {
     const testErrorMessage = 'test';
