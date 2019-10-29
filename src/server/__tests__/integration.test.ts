@@ -37,16 +37,30 @@ describe('Integration Tests', () => {
     });
 
     describe('User route requests [(Request) -> App -> Controller -> Service -> Model -> DB]', () => {
-        beforeAll(async () => {
+        // Note: Test may timeout without increased threshold
+        // as well as done parameter. This is not the case
+        // in the boilerplate version, and was not the case
+        // until well into working on unrelated parts of the program.
+        // Jest can be pretty buggy, it seems, or perhaps the test database
+        // has become particularly slow to connect now that there are more
+        // than 2 collections.
+        beforeAll(async done => {
             await connect([connectOptions.dropUsers]);
-        });
+            done();
+        }, 10000);
 
-        afterAll(async () => {
+        afterAll(async done => {
             await disconnect();
+            done();
         });
 
         describe('Public Routes', () => {
             describe('(Register) /users | POST', () => {
+                it('passes a super generic smoke test', () => {
+                    const test = 'test';
+                    expect(test).toEqual(test);
+                });
+
                 it('Adds a user to the database', async () => {
                     // Add a test user to the database
 
@@ -1006,6 +1020,8 @@ const login = async () => {
                 password: loginCredentials.password
             }
         });
+    console.log('proof that /users/register works just fine');
     token = authenticationResponse.body.token;
+    console.log(token);
     return token;
 };
