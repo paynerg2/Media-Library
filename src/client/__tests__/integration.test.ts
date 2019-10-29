@@ -17,10 +17,10 @@ import {
     User,
     AuthenticatedUser,
     AuthenticationState,
-    Series,
     SeriesState
 } from '../_interfaces';
 import { Item } from '../_interfaces/item.interface';
+import { Series } from '../../lib/interfaces';
 
 describe('Client-side integration tests', () => {
     it('Initializes store with expected default values', () => {
@@ -291,7 +291,7 @@ describe('Client-side integration tests', () => {
                     seriesService.create = jest.fn(() =>
                         Promise.reject(Error(testErrorMessage))
                     );
-                    store.dispatch<any>(seriesActions.create({}));
+                    store.dispatch<any>(seriesActions.create(testSeries));
                 });
 
                 afterAll(() => {

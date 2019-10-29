@@ -1,5 +1,6 @@
 import Series from './series.model';
-import { ISeriesParams, ISeries } from './series.interface';
+import { ISeries } from './series.interface';
+import { Series as SeriesParams } from '../../lib/interfaces';
 import {
     seriesNotFound,
     duplicateSeries
@@ -13,12 +14,12 @@ const errorMessages = {
     update: seriesNotFound
 };
 
-const service: IService<ISeriesParams, ISeries> = getSimpleService<
-    ISeriesParams,
+const service: IService<SeriesParams, ISeries> = getSimpleService<
+    SeriesParams,
     ISeries
 >(Series, errorMessages);
 
-const create = async (seriesParams: ISeriesParams): Promise<ISeries> => {
+const create = async (seriesParams: SeriesParams): Promise<ISeries> => {
     // Check explicityly for duplicates
     const seriesAlreadyExists = await Series.findOne({
         name: seriesParams.name
@@ -30,7 +31,7 @@ const create = async (seriesParams: ISeriesParams): Promise<ISeries> => {
     return await service.create(seriesParams);
 };
 
-export const seriesService: IService<ISeriesParams, ISeries> = {
+export const seriesService: IService<SeriesParams, ISeries> = {
     getAll: service.getAll,
     getById: service.getById,
     create,

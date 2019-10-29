@@ -1,8 +1,4 @@
 import { Document } from 'mongoose';
+import { Series } from '../../lib/interfaces';
 
-export interface ISeries extends ISeriesParams, Document {}
-
-export interface ISeriesParams {
-    name: string;
-    items: any[];
-}
+export interface ISeries extends Series, Document {}

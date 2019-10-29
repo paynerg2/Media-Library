@@ -1,6 +1,7 @@
 import { getRequestHandler } from '../_helpers/getRequestHandler';
-import { ISeriesParams, ISeries } from './series.interface';
+import { ISeries } from './series.interface';
+import { Series } from '../../lib/interfaces';
 
-export const seriesRequestHandler = getRequestHandler<ISeriesParams, ISeries>(
+export const seriesRequestHandler = getRequestHandler<Series, ISeries>(
     'series'
 );

@@ -1,5 +1,5 @@
 import { StringTMap } from './stringTMap.interface';
-import { Series } from './series.interface';
+import { Series } from '../../lib/interfaces/series.interface';
 
 export interface SeriesState {
     allIds: String[];
