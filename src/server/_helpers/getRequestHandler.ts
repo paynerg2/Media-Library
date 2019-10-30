@@ -5,10 +5,9 @@ import { getSchema } from '../_helpers/getSchema';
 import { logger } from './logger';
 import { IService } from '../_interfaces/service.interface';
 
-let schema: yup.ObjectSchema<object>;
-
 const create = <T extends any, R extends any>(
-    service: IService<T, R>
+    service: IService<T, R>,
+    schema: yup.ObjectSchema<object>
 ) => async (req: Request, res: Response, next: NextFunction) => {
     let validationError;
     try {
@@ -55,7 +54,8 @@ const getById = <T extends any, R extends any>(
 };
 
 const update = <T extends any, R extends any>(
-    service: IService<T, R>
+    service: IService<T, R>,
+    schema: yup.ObjectSchema<object>
 ) => async (req: Request, res: Response, next: NextFunction) => {
     let validationError;
     try {
@@ -95,13 +95,13 @@ const _delete = <T extends any, R extends any>(
 export const getRequestHandler = <T extends any, R extends any>(
     type: string
 ) => {
-    schema = getSchema(type);
+    const schema: yup.ObjectSchema<object> = getSchema(type);
     const service: IService<any, any> = getService(type);
     return {
-        create: create<T, R>(service),
+        create: create<T, R>(service, schema),
         getAll: getAll<T, R>(service),
         getById: getById<T, R>(service),
-        update: update<T, R>(service),
+        update: update<T, R>(service, schema),
         delete: _delete<T, R>(service)
     };
 };
