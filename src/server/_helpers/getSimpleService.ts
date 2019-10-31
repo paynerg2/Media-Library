@@ -44,7 +44,7 @@ const update = <T extends any, R extends Document>(
 const getAll = <T extends any, R extends Document>(
     model: Model<R>
 ) => async (): Promise<R[]> => {
-    return await model.find();
+    return await model.find({});
 };
 
 const getById = <T extends any, R extends Document>(

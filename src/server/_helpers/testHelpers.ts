@@ -25,6 +25,16 @@ export const getCleanedResponse = (object: any) => {
 };
 
 const cleanObject = (object: any) => {
+    /**
+     * Stringify and then parse to convert Mongoose Documents
+     * to plain JS objects - otherwise a handful of virtual
+     * properties and functions are returned. This only affects
+     * testing of the service layer since converting to JSON
+     * gets rid of all of these virtuals.
+     * This is a stopgap solution, and will likely be replaed with:
+     * TODO: Replace usage of _id with id and query Mongoose models with lean().
+     */
+    object = JSON.parse(JSON.stringify(object));
     const { _id, __v, ...cleanedObject } = object;
     return cleanedObject;
 };

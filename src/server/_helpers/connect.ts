@@ -45,6 +45,14 @@ export const connect = async (options?: Array<string>) => {
                 await mongoose.connection.db.dropCollection('series');
                 logger.info('Dropping collection: series');
             }
+            if (
+                options &&
+                options.includes(connectOptions.dropCompanies) &&
+                process.env.NODE_ENV === 'test'
+            ) {
+                await mongoose.connection.db.dropCollection('companies');
+                logger.info('Dropping collection: companies');
+            }
         })
         .catch(err => {
             logger.error(`Error connecting to database: ${err}`);

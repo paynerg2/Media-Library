@@ -6,7 +6,7 @@ import {
     invalidStatus
 } from '../../messages/company.errorMessages';
 
-describe('Login Schema', () => {
+describe('Company Schema', () => {
     const validateCompany = async (company: any) => {
         let error;
         try {

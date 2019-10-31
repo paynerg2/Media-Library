@@ -17,6 +17,23 @@ describe('Test Helpers', () => {
             expect(actualOutput).toEqual(expectedOutput);
         });
 
+        it('Removes properties _id and __v from single object with nested properties', () => {
+            const input = {
+                _id: 'test',
+                __v: 0,
+                property: 'test',
+                property2: [],
+                property3: ['test', 'test']
+            };
+            const expectedOutput = {
+                property: 'test',
+                property2: [],
+                property3: ['test', 'test']
+            };
+            const actualOutput = getCleanedResponse(input);
+            expect(actualOutput).toEqual(expectedOutput);
+        });
+
         it('Removes the properties _id and __v from all objects in an array', () => {
             const input = [
                 {

@@ -7,6 +7,7 @@ import {
 } from '../../lib/messages/series.errorMessages';
 import { IService } from '../_interfaces/service.interface';
 import { getSimpleService } from '../_helpers/getSimpleService';
+import { logger } from '../_helpers/logger';
 
 const errorMessages = {
     create: duplicateSeries,
@@ -25,6 +26,7 @@ const create = async (seriesParams: SeriesParams): Promise<ISeries> => {
         name: seriesParams.name
     });
     if (seriesAlreadyExists) {
+        logger.error(duplicateSeries);
         throw Error(duplicateSeries);
     }
 

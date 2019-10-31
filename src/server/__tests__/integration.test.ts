@@ -1,4 +1,5 @@
 import request from 'supertest';
+import mongoose, { mongo } from 'mongoose';
 import { connect } from '../_helpers/connect';
 import { disconnect } from '../_helpers/disconnect';
 import { invalidToken } from '../../lib/messages/error-handler.errorMessages';
@@ -24,12 +25,22 @@ import { userService } from '../users/user.service';
 import { seriesService } from '../series/series.service';
 import { getCleanedResponse } from '../_helpers/testHelpers';
 import { connectOptions } from '../_helpers/connectOptions';
+import { Company } from '../../lib/interfaces';
+import {
+    duplicateCompany,
+    companyNotFound,
+    companyNameIsRequired
+} from '../../lib/messages/company.errorMessages';
+import { companyService } from '../companies/company.service';
+import { ICompany } from '../companies/company.interface';
 
 const testUser = {
     username: 'test',
     password: 'test',
     email: 'test@test.com'
 };
+
+jest.clearAllMocks();
 
 describe('Integration Tests', () => {
     it('is in test mode', () => {
@@ -757,7 +768,7 @@ describe('Integration Tests', () => {
 
         describe('(Get By Id) /series/:id | GET', () => {
             it('Successfully retrieves a series by id', async () => {
-                // Retrieve the first user returned from the database
+                // Retrieve the first series returned from the database
                 const getResponse = await request(app)
                     .get('/series')
                     .set('Authorization', 'Bearer ' + token);
@@ -797,12 +808,6 @@ describe('Integration Tests', () => {
                     .set('Authorization', 'Bearer ' + token);
                 expectedSeries = getResponse.body[0];
                 id = getResponse.body[0]._id;
-
-                // Add a second series to the database
-                await request(app)
-                    .post('/series')
-                    .send({ data: secondSeries })
-                    .set('Authorization', 'Bearer ' + token);
             });
 
             it('Successfully updates selected series', async () => {
@@ -829,6 +834,7 @@ describe('Integration Tests', () => {
                     .put(`/series/${id}`)
                     .set('Authorization', 'Bearer ' + token)
                     .send({ data: expectedUpdate });
+
                 expect(putResponse.status).toEqual(400);
                 expect(putResponse.error).toBeDefined();
                 expect(putResponse.body).toEqual({
@@ -843,7 +849,7 @@ describe('Integration Tests', () => {
                     .get('/series')
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(200);
-                expect(getResponse.body.length).toEqual(2);
+                expect(getResponse.body.length).toEqual(1);
                 expect(getResponse.body[0]._id).toBeDefined();
                 const id = getResponse.body[0]._id;
 
@@ -864,7 +870,7 @@ describe('Integration Tests', () => {
         });
     });
 
-    describe('Series Service calls [Service ->Model -> DB]', () => {
+    describe('Series Service calls [Service -> Model -> DB]', () => {
         beforeAll(async () => {
             await connect([connectOptions.dropSeries]);
         });
@@ -894,10 +900,10 @@ describe('Integration Tests', () => {
                 try {
                     await seriesService.create(testSeries);
                     const series = await seriesService.getAll();
-                    const cleanedResponse = getCleanedResponse(series);
+                    const cleanedResponse = getCleanedResponse(series[0]);
                     expect(cleanedResponse).toEqual(testSeries);
                 } catch (error) {
-                    expect(error).toBeDefined();
+                    expect(error).toBeUndefined();
                 }
             });
 
@@ -997,6 +1003,218 @@ describe('Integration Tests', () => {
             });
         });
     });
+
+    describe('Company route requests [(Request) -> App -> Controller -> Service -> Model -> DB]', () => {
+        let token: string | null;
+        beforeAll(async () => {
+            await connect([connectOptions.dropCompanies]);
+            token = await login();
+        });
+
+        afterAll(async () => {
+            await disconnect();
+        });
+        const item1 = mongoose.Types.ObjectId().toHexString();
+        const item2 = mongoose.Types.ObjectId().toHexString();
+
+        const testCompany: Company = {
+            name: 'test',
+            titles: [item1, item2]
+        };
+
+        describe('(Create) /companies | POST', () => {
+            it('Adds a company to the database', async () => {
+                const postResponse = await request(app)
+                    .post('/companies')
+                    .send({ data: testCompany })
+                    .set('Authorization', 'Bearer ' + token);
+                const cleanedResponse = getCleanedResponse(postResponse);
+                expect(postResponse.status).toEqual(200);
+                //expect(cleanedResponse).toEqual(testCompany);
+            });
+
+            it('Rejects with an error when the company exists already', async () => {
+                const postResponse = await request(app)
+                    .post('/companies')
+                    .send({ data: testCompany })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(500);
+                expect(postResponse.body).toEqual({
+                    message: duplicateCompany
+                });
+            });
+        });
+
+        describe('(Get All) /companies | GET', () => {
+            it('Returns a full list of companies', async () => {
+                const getResponse = await request(app)
+                    .get('/companies')
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getResponse.status).toEqual(200);
+                expect(getResponse.body[0].name).toEqual(testCompany.name);
+                expect(getResponse.body[0].titles).toEqual(testCompany.titles);
+            });
+        });
+
+        describe('(Get By Id) /companies/:id | GET', () => {
+            it('Successfully retrieves a company by id', async () => {
+                // Get id from first company returned
+                const getResponse = await request(app)
+                    .get('/companies')
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getResponse.status).toEqual(200);
+                expect(getResponse.body.length).toEqual(1);
+                expect(getResponse.body[0]._id).toBeDefined();
+                const expectedCompany = getResponse.body[0];
+                const id = getResponse.body[0]._id;
+
+                // Search for that company by id
+                const getByIdResponse = await request(app)
+                    .get(`/companies/${id}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getByIdResponse.status).toEqual(200);
+                expect(getByIdResponse.body).toEqual(expectedCompany);
+            });
+
+            it('Returns an error if series not found', async () => {
+                const randomId = mongoose.Types.ObjectId().toHexString();
+                const getResponse = await request(app)
+                    .get(`/companies/${randomId}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getResponse.status).toEqual(404);
+                expect(getResponse.error).toBeDefined();
+            });
+        });
+
+        describe('(Update) /series/:id | PUT', () => {
+            let id: string;
+            let expectedCompany: any;
+            const secondCompany = {
+                name: 'second',
+                titles: [item1]
+            };
+            beforeAll(async () => {
+                const getResponse = await request(app)
+                    .get('/companies')
+                    .set('Authorization', 'Bearer ' + token);
+                expectedCompany = getResponse.body[0];
+                id = getResponse.body[0]._id;
+            });
+
+            it('Successfully updates selected company', async () => {
+                const newItem = mongoose.Types.ObjectId().toHexString();
+                const expectedUpdate = {
+                    name: expectedCompany.name,
+                    owners: [],
+                    titles: [...expectedCompany.titles, newItem]
+                };
+                const putResponse = await request(app)
+                    .put(`/companies/${id}`)
+                    .set('Authorization', 'Bearer ' + token)
+                    .send({ data: expectedUpdate });
+                const cleanedResponse = getCleanedResponse(putResponse.body);
+                expect(putResponse.status).toEqual(200);
+                expect(cleanedResponse).toEqual(expectedUpdate);
+            });
+
+            it('Rejects when  name is not included', async () => {
+                const newItem = mongoose.Types.ObjectId().toHexString();
+                const expectedUpdate = {
+                    titles: [...testCompany.titles, newItem]
+                };
+                const putResponse = await request(app)
+                    .put(`/companies/${id}`)
+                    .set('Authorization', 'Bearer ' + token)
+                    .send({ data: expectedUpdate });
+
+                expect(putResponse.status).toEqual(400);
+                expect(putResponse.error).toBeDefined();
+                expect(putResponse.body).toEqual({
+                    message: companyNameIsRequired
+                });
+            });
+        });
+
+        describe('(Delete) /companies/:id | DELETE', () => {
+            it('Successfully deletes the series with selected id', async () => {
+                // Get the id of the first company returned
+                const getResponse = await request(app)
+                    .get('/companies')
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getResponse.status).toEqual(200);
+                expect(getResponse.body.length).toEqual(1);
+                expect(getResponse.body[0]._id).toBeDefined();
+                const id = getResponse.body[0]._id;
+
+                // Use that id to delete the series
+                const deleteResponse = await request(app)
+                    .delete(`/companies/${id}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(deleteResponse.status).toEqual(200);
+                expect(deleteResponse.body).toEqual({});
+
+                // Expect the company to no longer by found in DB
+                const getByIdResponse = await request(app)
+                    .get(`/companies/${id}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getByIdResponse.status).toEqual(404);
+                expect(getByIdResponse.error).toBeDefined();
+            });
+        });
+    });
+
+    describe('Company Service Calls [Service -> Model -> DB]', () => {
+        beforeAll(async () => {
+            await connect([connectOptions.dropCompanies]);
+        });
+
+        afterAll(async () => {
+            await disconnect();
+        });
+
+        const item1 = mongoose.Types.ObjectId().toHexString();
+        const item2 = mongoose.Types.ObjectId().toHexString();
+        const testCompany: Company = {
+            name: 'test',
+            titles: [item1, item2]
+        };
+
+        describe('Get Method | Empty DB', () => {
+            it('Returns an empty array', async () => {
+                try {
+                    const companies = await companyService.getAll();
+                    expect(companies).toEqual([]);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+        });
+
+        describe('Create Method', () => {
+            it('Adds a company to the database', async () => {
+                const expectedResponse = {
+                    ...testCompany,
+                    owners: []
+                };
+                try {
+                    const company: Company = await companyService.create(
+                        testCompany
+                    );
+                    const cleanedResponse = getCleanedResponse(company);
+                    expect(cleanedResponse).toEqual(expectedResponse);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+
+            it('Returns an error if the company name is taken', async () => {
+                const testCompany2 = {
+                    name: testCompany.name,
+                    titles: []
+                };
+            });
+        });
+    });
 });
 
 const login = async () => {
@@ -1020,8 +1238,6 @@ const login = async () => {
                 password: loginCredentials.password
             }
         });
-    console.log('proof that /users/register works just fine');
     token = authenticationResponse.body.token;
-    console.log(token);
     return token;
 };
