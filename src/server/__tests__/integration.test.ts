@@ -1212,6 +1212,92 @@ describe('Integration Tests', () => {
                     name: testCompany.name,
                     titles: []
                 };
+
+                try {
+                    await companyService.create(testCompany2);
+                } catch (error) {
+                    expect(error).toBeDefined();
+                    expect(error.message).toEqual(duplicateCompany);
+                }
+            });
+        });
+
+        describe('Get By ID Method', () => {
+            it('Retrieves a specific series from the database', async () => {
+                try {
+                    const companyList = await companyService.getAll();
+                    const expectedCompany = companyList[0];
+                    const company = await companyService.getById(
+                        expectedCompany._id
+                    );
+                    expect(company!._id).toEqual(expectedCompany._id);
+                    const cleanedResponse = getCleanedResponse(company);
+                    const cleanedExpectation = getCleanedResponse(
+                        expectedCompany
+                    );
+                    expect(cleanedResponse).toEqual(cleanedExpectation);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+
+            it('Returns error if company is not found', async () => {
+                try {
+                    const fakeId = mongoose.Types.ObjectId().toHexString();
+                    await companyService.getById(fakeId);
+                } catch (error) {
+                    expect(error).toBeDefined();
+                    expect(error).toEqual(Error(companyNotFound));
+                }
+            });
+        });
+
+        describe('Update Method', () => {
+            it('Updates a specific company', async () => {
+                try {
+                    const companyList = await companyService.getAll();
+                    const company = getCleanedResponse(companyList[0]);
+                    const updatedCompany = {
+                        ...company,
+                        titles: [...company.titles, 'update']
+                    };
+                    await companyService.update(
+                        companyList[0]._id,
+                        updatedCompany
+                    );
+                    const actualUpdate = await companyService.getById(
+                        companyList[0]._id
+                    );
+                    expect(actualUpdate!._id).toEqual(companyList[0]._id);
+                    const cleanedResponse = getCleanedResponse(actualUpdate);
+                    expect(cleanedResponse).toEqual(updatedCompany);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+
+            it('Returns an error if series not found', async () => {
+                try {
+                    const fakeId = mongoose.Types.ObjectId().toHexString();
+                    await companyService.update(fakeId, testCompany);
+                } catch (error) {
+                    expect(error).toBeDefined();
+                    expect(error.message).toEqual(companyNotFound);
+                }
+            });
+        });
+
+        describe('Delete Method', () => {
+            it('Deletes a specified company from the database', async () => {
+                try {
+                    const companyList = await companyService.getAll();
+                    const id = companyList[0]._id;
+                    await companyService.delete(id);
+                    const actualSeries = await companyService.getById(id);
+                    expect(actualSeries).toBeNull();
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
             });
         });
     });
