@@ -1,5 +1,6 @@
 import { creatorSchema } from '../creator.schema';
 import { firstNameIsRequired } from '../../messages/creator.errorMessages';
+import { Creator } from '../../interfaces';
 
 describe('Creator Schema', () => {
     const validateCreator = async (creator: any) => {
@@ -13,8 +14,19 @@ describe('Creator Schema', () => {
     };
 
     it('Does not reject when all required fields are present', async () => {
-        const testCreator = {
+        const testCreator: Creator = {
             firstName: 'test'
+        };
+        const error = await validateCreator(testCreator);
+        expect(error).toBeUndefined();
+    });
+
+    it('Does not reject when all fields are present', async () => {
+        const testCreator: Creator = {
+            firstName: 'test',
+            middleInitials: 'T.',
+            lastName: 'test',
+            works: ['test', 'test']
         };
         const error = await validateCreator(testCreator);
         expect(error).toBeUndefined();
