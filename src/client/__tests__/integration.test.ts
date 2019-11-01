@@ -1,3 +1,4 @@
+import mongoose, { mongo } from 'mongoose';
 import { store } from '../_helpers/store';
 import { initialState as userDefaultState } from '../_reducers/users.reducer';
 import { initialState as authDefaultState } from '../_reducers/authentication.reducer';
@@ -7,21 +8,24 @@ import {
     userActions,
     authenticationActions,
     seriesActions,
-    appActions
+    appActions,
+    companyActions
 } from '../_actions';
 import {
     userService,
     authenticationService,
-    seriesService
+    seriesService,
+    companyService
 } from '../_services';
 import {
     User,
     AuthenticatedUser,
     AuthenticationState,
-    SeriesState
+    SeriesState,
+    CompanyState
 } from '../_interfaces';
 import { Item } from '../_interfaces/item.interface';
-import { Series } from '../../lib/interfaces';
+import { Series, Company } from '../../lib/interfaces';
 
 describe('Client-side integration tests', () => {
     it('Initializes store with expected default values', () => {
@@ -420,7 +424,7 @@ describe('Client-side integration tests', () => {
 
                 it('Reaches an error state', () => {
                     const { series } = store.getState();
-                    const expectedState = {
+                    const expectedState: SeriesState = {
                         ...seriesDefaultState,
                         loading: true,
                         error: Error(testErrorMessage)
@@ -559,12 +563,355 @@ describe('Client-side integration tests', () => {
 
                 it('Reaches an error state', () => {
                     const { series } = store.getState();
-                    const expectedState = {
+                    const expectedState: SeriesState = {
                         ...seriesDefaultState,
                         loading: true,
                         error: Error(testErrorMessage)
                     };
                     expect(series).toEqual(expectedState);
+                });
+            });
+        });
+    });
+
+    describe('Company redux routes [(Dispatch) -> Action Creator -> Service -> Reducer -> Store Update]', () => {
+        const clearCompanyState = () => {
+            store.dispatch<any>(appActions.reset);
+        };
+        const item1 = mongoose.Types.ObjectId().toHexString();
+        const item2 = mongoose.Types.ObjectId().toHexString();
+        const testCompany: Company = {
+            name: 'test',
+            titles: [item1, item2]
+        };
+        const testId = 'test';
+        const testItem: Company & Item = {
+            ...testCompany,
+            _id: testId
+        };
+        const testErrorMessage = 'test';
+
+        describe('Action | Create', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    companyService.create = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    store.dispatch<any>(companyActions.create(testCompany));
+                });
+
+                afterAll(() => {
+                    clearCompanyState();
+                });
+
+                it('Calls the create() service method with expected parameters', () => {
+                    expect(companyService.create).toHaveBeenCalledWith(
+                        testCompany
+                    );
+                });
+
+                it('Adds company to state correctly', () => {
+                    const { companies } = store.getState();
+                    const expectedState: CompanyState = {
+                        ...companyDefaultState,
+                        allIds: [testItem._id],
+                        byId: {
+                            [testItem._id]: testCompany
+                        }
+                    };
+                    expect(companies).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const { users, authentication, series } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    companyService.create = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(companyActions.create(testCompany));
+                });
+
+                afterAll(() => {
+                    clearCompanyState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { companies } = store.getState();
+                    const expectedState = {
+                        ...companyDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(companies).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Get By ID', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    companyService.getById = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    store.dispatch<any>(companyActions.getById(testId));
+                });
+
+                afterAll(() => {
+                    clearCompanyState();
+                });
+
+                it('Calls the getById() service method with expected parameters', () => {
+                    expect(companyService.getById).toHaveBeenCalledWith(testId);
+                });
+
+                it('Adds the response to state correctly', () => {
+                    const { companies } = store.getState();
+                    const expectedState: CompanyState = {
+                        ...companyDefaultState,
+                        selectedCompany: testItem._id
+                    };
+                    expect(companies).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const { users, authentication, series } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    companyService.getById = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(companyActions.getById(testId));
+                });
+
+                afterAll(() => {
+                    clearCompanyState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { companies } = store.getState();
+                    const expectedState: CompanyState = {
+                        ...companyDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(companies).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Get All', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    companyService.getAll = jest.fn(() =>
+                        Promise.resolve([testItem])
+                    );
+                    store.dispatch<any>(companyActions.getAll());
+                });
+
+                afterAll(() => {
+                    clearCompanyState();
+                });
+
+                it('Calls the getAll() service method', () => {
+                    expect(companyService.getAll).toHaveBeenCalled();
+                });
+
+                it('Adds the response to state correctly', () => {
+                    const { companies } = store.getState();
+                    const expectedState: CompanyState = {
+                        ...companyDefaultState,
+                        allIds: [testItem._id],
+                        byId: {
+                            [testItem._id]: testCompany
+                        }
+                    };
+                    expect(companies).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const { users, authentication, series } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    companyService.getAll = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(companyActions.getAll());
+                });
+
+                afterAll(() => {
+                    clearCompanyState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { companies } = store.getState();
+                    const expectedState = {
+                        ...companyDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(companies).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Update', () => {
+            const newItem = mongoose.Types.ObjectId().toHexString();
+            const testUpdate: Company = {
+                ...testItem,
+                titles: [...testItem.titles, newItem]
+            };
+
+            describe('On successful request', () => {
+                const expectedUpdate: Company = {
+                    ...testCompany,
+                    titles: testUpdate.titles
+                };
+                beforeAll(() => {
+                    companyService.create = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    companyService.update = jest.fn(() =>
+                        Promise.resolve(testUpdate)
+                    );
+                    store.dispatch<any>(companyActions.create(testCompany));
+                    store.dispatch<any>(
+                        companyActions.update(testId, testUpdate)
+                    );
+                });
+
+                afterAll(() => {
+                    clearCompanyState();
+                });
+
+                it('Calls the update() service method with expected parameters', () => {
+                    expect(companyService.update).toHaveBeenCalledWith(
+                        testId,
+                        testUpdate
+                    );
+                });
+
+                it('Updates the state correctly', () => {
+                    const { companies } = store.getState();
+                    const expectedState: CompanyState = {
+                        ...companyDefaultState,
+                        allIds: [testItem._id],
+                        byId: {
+                            [testItem._id]: expectedUpdate
+                        }
+                    };
+                    expect(companies).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const { users, authentication, series } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    companyService.update = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(
+                        companyActions.update(testId, testUpdate)
+                    );
+                });
+
+                afterAll(() => {
+                    clearCompanyState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { companies } = store.getState();
+                    const expectedState = {
+                        ...companyDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(companies).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Delete', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    companyService.create = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    companyService.delete = jest.fn(() => Promise.resolve());
+                    store.dispatch<any>(companyActions.create(testItem));
+                    store.dispatch<any>(companyActions.delete(testItem._id));
+                });
+
+                afterAll(() => {
+                    clearCompanyState();
+                });
+
+                it('Calls the delete() service method with expected parameters', () => {
+                    expect(companyService.delete).toHaveBeenCalledWith(
+                        testItem._id
+                    );
+                });
+
+                it('Removes the deleted item from state correctly', () => {
+                    const { companies } = store.getState();
+                    const expectedState: CompanyState = {
+                        ...companyDefaultState
+                    };
+                    expect(companies).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const { users, authentication, series } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    companyService.delete = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(companyActions.delete(testId));
+                });
+
+                afterAll(() => {
+                    clearCompanyState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { companies } = store.getState();
+                    const expectedState: CompanyState = {
+                        ...companyDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(companies).toEqual(expectedState);
                 });
             });
         });
