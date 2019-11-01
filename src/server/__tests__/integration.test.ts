@@ -25,7 +25,7 @@ import { userService } from '../users/user.service';
 import { seriesService } from '../series/series.service';
 import { getCleanedResponse } from '../_helpers/testHelpers';
 import { connectOptions } from '../_helpers/connectOptions';
-import { Company } from '../../lib/interfaces';
+import { Company, Creator } from '../../lib/interfaces';
 import {
     duplicateCompany,
     companyNotFound,
@@ -33,6 +33,11 @@ import {
 } from '../../lib/messages/company.errorMessages';
 import { companyService } from '../companies/company.service';
 import { ICompany } from '../companies/company.interface';
+import {
+    firstNameIsRequired,
+    creatorNotFound
+} from '../../lib/messages/creator.errorMessages';
+import { creatorService } from '../creators/creator.service';
 
 const testUser = {
     username: 'test',
@@ -1028,9 +1033,14 @@ describe('Integration Tests', () => {
                     .post('/companies')
                     .send({ data: testCompany })
                     .set('Authorization', 'Bearer ' + token);
-                const cleanedResponse = getCleanedResponse(postResponse);
+                // Expect default values to be added by Mongo
+                const expectedResponse: Company = {
+                    ...testCompany,
+                    owners: []
+                };
+                const cleanedResponse = getCleanedResponse(postResponse.body);
                 expect(postResponse.status).toEqual(200);
-                //expect(cleanedResponse).toEqual(testCompany);
+                expect(cleanedResponse).toEqual(expectedResponse);
             });
 
             it('Rejects with an error when the company exists already', async () => {
@@ -1077,7 +1087,7 @@ describe('Integration Tests', () => {
             });
 
             it('Returns an error if series not found', async () => {
-                const randomId = mongoose.Types.ObjectId().toHexString();
+                const randomId: string = mongoose.Types.ObjectId().toHexString();
                 const getResponse = await request(app)
                     .get(`/companies/${randomId}`)
                     .set('Authorization', 'Bearer ' + token);
@@ -1089,10 +1099,7 @@ describe('Integration Tests', () => {
         describe('(Update) /series/:id | PUT', () => {
             let id: string;
             let expectedCompany: any;
-            const secondCompany = {
-                name: 'second',
-                titles: [item1]
-            };
+
             beforeAll(async () => {
                 const getResponse = await request(app)
                     .get('/companies')
@@ -1298,6 +1305,270 @@ describe('Integration Tests', () => {
                 } catch (error) {
                     expect(error).toBeUndefined();
                 }
+            });
+        });
+    });
+
+    describe('Creator route requests [(Request) -> App -> Controller -> Service -> Model -> DB]', () => {
+        let token: string | null;
+        beforeAll(async () => {
+            await connect([connectOptions.dropCreators]);
+            token = await login();
+        });
+
+        afterAll(async () => {
+            await disconnect();
+        });
+        const item1 = mongoose.Types.ObjectId().toHexString();
+        const item2 = mongoose.Types.ObjectId().toHexString();
+        const testCreator: Creator = {
+            firstName: 'test',
+            middleInitials: 'T.',
+            lastName: 'tester',
+            works: [item1, item2]
+        };
+
+        describe('(Create) /creators | POST', () => {
+            it('Adds a creator to the database', async () => {
+                const postResponse = await request(app)
+                    .post('/creators')
+                    .send({ data: testCreator })
+                    .set('Authorization', 'Bearer ' + token);
+                const cleanedResponse = getCleanedResponse(postResponse.body);
+                expect(postResponse.status).toEqual(200);
+                expect(cleanedResponse).toEqual(testCreator);
+            });
+        });
+
+        describe('(Get All) /creators | GET', () => {
+            it('Returns a full list of creators', async () => {
+                const getResponse = await request(app)
+                    .get('/creators')
+                    .set('Authorization', 'Bearer ' + token);
+                const cleanedResponse = getCleanedResponse(getResponse.body);
+                const expectedResponse = [testCreator];
+                expect(cleanedResponse).toEqual(expectedResponse);
+            });
+        });
+
+        describe('(Get By Id /creators/:id | GET', () => {
+            it('Successfully retrieves a creator by id', async () => {
+                // Get the id from the first creator returned
+                const getResponse = await request(app)
+                    .get('/creators')
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getResponse.status).toEqual(200);
+                expect(getResponse.body.length).toEqual(1);
+                expect(getResponse.body[0]._id).toBeDefined();
+                const id = getResponse.body[0]._id;
+                const expectedCreator = getResponse.body[0];
+
+                // Search for that creator by id
+                const getByIdResponse = await request(app)
+                    .get(`/creators/${id}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getByIdResponse.status).toEqual(200);
+                expect(getByIdResponse.body).toEqual(expectedCreator);
+            });
+
+            it('Returns an error if creator not found', async () => {
+                const randomId: string = mongoose.Types.ObjectId().toHexString();
+                const getResponse = await request(app)
+                    .get(`/creators/${randomId}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getResponse.status).toEqual(404);
+                expect(getResponse.error).toBeDefined();
+            });
+        });
+
+        describe('(Update) /creators/:id | PUT', () => {
+            let id: string;
+            let expectedCreator: any;
+
+            beforeAll(async () => {
+                const getResponse = await request(app)
+                    .get('/creators')
+                    .set('Authorization', 'Bearer ' + token);
+                expectedCreator = getCleanedResponse(getResponse.body[0]);
+                id = getResponse.body[0]._id;
+            });
+
+            it('Successfully updates selected creator', async () => {
+                const newItem = mongoose.Types.ObjectId().toHexString();
+                const expectedUpdate = {
+                    ...expectedCreator,
+                    works: [...expectedCreator.works, newItem]
+                };
+
+                const putResponse = await request(app)
+                    .put(`/creators/${id}`)
+                    .set('Authorization', 'Bearer ' + token)
+                    .send({ data: expectedUpdate });
+                expect(putResponse.status).toEqual(200);
+                const cleanedResponse = getCleanedResponse(putResponse.body);
+                expect(cleanedResponse).toEqual(expectedUpdate);
+            });
+
+            it('Rejects when firstName is not included', async () => {
+                const { firstName, ...expectedUpdate } = testCreator;
+                const putResponse = await request(app)
+                    .put(`/creators/${id}`)
+                    .set('Authorization', 'Bearer ' + token)
+                    .send({ data: expectedUpdate });
+                expect(putResponse.status).toEqual(400);
+                expect(putResponse.error).toBeDefined();
+                expect(putResponse.body).toEqual({
+                    message: firstNameIsRequired
+                });
+            });
+        });
+
+        describe('(Delete) /creators/:id | DELETE', () => {
+            it('Successfully deletes the creator with selected id', async () => {
+                // Get the id from the first creator returned
+                const getResponse = await request(app)
+                    .get('/creators')
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getResponse.status).toEqual(200);
+                expect(getResponse.body.length).toEqual(1);
+                expect(getResponse.body[0]._id).toBeDefined();
+                const id = getResponse.body[0]._id;
+
+                // Use that id to delete the creator
+                const deleteResponse = await request(app)
+                    .delete(`/creators/${id}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(deleteResponse.status).toEqual(200);
+                expect(deleteResponse.body).toEqual({});
+
+                // Expect the creator to no longer be in DB
+                const getByIdResponse = await request(app)
+                    .get(`/creators/${id}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getByIdResponse.status).toEqual(404);
+                expect(getByIdResponse.error).toBeDefined();
+            });
+        });
+    });
+
+    describe('Creator Service Calls [Service -> Model -> DB]', () => {
+        beforeAll(async () => {
+            await connect([connectOptions.dropCreators]);
+        });
+        afterAll(async () => {
+            await disconnect();
+        });
+
+        const item1 = mongoose.Types.ObjectId().toHexString();
+        const item2 = mongoose.Types.ObjectId().toHexString();
+        const testCreator: Creator = {
+            firstName: 'test',
+            middleInitials: 'T.',
+            lastName: 'tester',
+            works: [item1, item2]
+        };
+
+        describe('Get Method | Empty DB', () => {
+            it('Returns an empty array', async () => {
+                try {
+                    const creators = await creatorService.getAll();
+                    expect(creators).toEqual([]);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+
+            describe('Create Method', () => {
+                it('Adds a creator to the database', async () => {
+                    try {
+                        const creator: Creator = await creatorService.create(
+                            testCreator
+                        );
+                        const cleanedResponse = getCleanedResponse(creator);
+                        expect(cleanedResponse).toEqual(testCreator);
+                    } catch (error) {
+                        expect(error).toBeUndefined();
+                    }
+                });
+            });
+
+            describe('Get By ID Method', () => {
+                it('Retrieves a specific creator from the database', async () => {
+                    try {
+                        const creatorList = await creatorService.getAll();
+                        const expectedCreator = creatorList[0];
+                        const creator = await creatorService.getById(
+                            expectedCreator._id
+                        );
+                        expect(creator!._id).toEqual(expectedCreator._id);
+                        const cleanedResponse = getCleanedResponse(creator);
+                        const cleanedExpectation = getCleanedResponse(
+                            expectedCreator
+                        );
+                        expect(cleanedResponse).toEqual(cleanedExpectation);
+                    } catch (error) {
+                        expect(error).toBeUndefined();
+                    }
+                });
+
+                it('Returns error if creator is not found', async () => {
+                    try {
+                        const fakeId = mongoose.Types.ObjectId().toHexString();
+                        await creatorService.getById(fakeId);
+                    } catch (error) {
+                        expect(error).toBeDefined();
+                        expect(error.message).toEqual(Error(creatorNotFound));
+                    }
+                });
+            });
+
+            describe('Update Method', () => {
+                it('Updates a specific creator', async () => {
+                    try {
+                        const creatorList = await creatorService.getAll();
+                        const creator = getCleanedResponse(creatorList[0]);
+                        const updatedCreator = {
+                            ...creator,
+                            titles: [...creator.titles, 'update']
+                        };
+                        await creatorService.update(
+                            creatorList[0]._id,
+                            updatedCreator
+                        );
+                        const actualUpdate = await creatorService.getById(
+                            creatorList[0]._id
+                        );
+                        expect(actualUpdate!._id).toEqual(creatorList[0]._id);
+                        const cleanedResponse = getCleanedResponse(
+                            actualUpdate
+                        );
+                        expect(cleanedResponse).toEqual(updatedCreator);
+                    } catch (error) {}
+                });
+
+                it('Returns an error if creator not found', async () => {
+                    try {
+                        const fakeId = mongoose.Types.ObjectId().toHexString();
+                        await creatorService.update(fakeId, testCreator);
+                    } catch (error) {
+                        expect(error).toBeDefined();
+                        expect(error.message).toEqual(creatorNotFound);
+                    }
+                });
+            });
+
+            describe('Delete Method', () => {
+                it('Deletes a specified creator from the database', async () => {
+                    try {
+                        const creatorList = await creatorService.getAll();
+                        const id = creatorList[0]._id;
+                        await creatorService.delete(id);
+                        const actualCreator = await creatorService.getById(id);
+                        expect(actualCreator).toBeNull();
+                    } catch (error) {
+                        expect(error).toBeUndefined();
+                    }
+                });
             });
         });
     });
