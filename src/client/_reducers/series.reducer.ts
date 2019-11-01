@@ -35,28 +35,29 @@ export const series = (state = initialState, action: IAction): SeriesState => {
             return {
                 ...initialState,
                 allIds: [...state.allIds, id],
-                byId: { ...state.byId, [id]: payloadWithoutId },
-                loading: false
+                byId: { ...state.byId, [id]: payloadWithoutId }
             } as SeriesState;
 
         case seriesConstants.GET_SUCCESS:
             return {
                 ...initialState,
                 allIds: action.payload.map((item: any) => item._id),
-                byId: normalize(action.payload),
-                loading: false
+                byId: normalize(action.payload)
             } as SeriesState;
         case seriesConstants.GET_BY_ID_SUCCESS:
             return {
                 ...state,
                 loading: false,
-                selectedSeries: action.payload._id
+                selectedSeries: action.payload._id,
+                error: undefined
             } as SeriesState;
         case seriesConstants.UPDATE_SUCCESS:
             const { _id, ...updatedItem } = action.payload;
             return {
                 ...state,
-                byId: { ...state.byId, [_id]: updatedItem }
+                byId: { ...state.byId, [_id]: updatedItem },
+                loading: false,
+                error: undefined
             } as SeriesState;
         case seriesConstants.DELETE_SUCCESS:
             const deletedId = action.payload;
@@ -68,9 +69,11 @@ export const series = (state = initialState, action: IAction): SeriesState => {
             return {
                 ...state,
                 byId: remainingSeries,
-                allIds: remainingIds
+                allIds: remainingIds,
+                loading: false,
+                error: undefined
             } as SeriesState;
         default:
-            return initialState;
+            return state;
     }
 };

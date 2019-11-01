@@ -7,5 +7,5 @@ const reset = () => async (dispatch: Dispatch<AnyAction>) => {
 };
 
 export const appActions = {
-    reset
+    reset: { type: appConstants.APP_RESET }
 };
