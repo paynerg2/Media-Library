@@ -2,6 +2,7 @@ import { store } from '../_helpers/store';
 import { initialState as userDefaultState } from '../_reducers/users.reducer';
 import { initialState as authDefaultState } from '../_reducers/authentication.reducer';
 import { initialState as seriesDefaultState } from '../_reducers/series.reducer';
+import { initialState as companyDefaultState } from '../_reducers/company.reducer';
 import {
     userActions,
     authenticationActions,
@@ -27,7 +28,8 @@ describe('Client-side integration tests', () => {
         const expectedState = {
             users: userDefaultState,
             authentication: authDefaultState,
-            series: seriesDefaultState
+            series: seriesDefaultState,
+            companies: companyDefaultState
         };
         const state = store.getState();
         expect(state).toEqual(expectedState);
@@ -233,7 +235,7 @@ describe('Client-side integration tests', () => {
 
     describe('Series redux routes [(Dispatch) -> Action Creator -> Service -> Reducer -> Store Update]', () => {
         const clearSeriesState = () => {
-            store.dispatch<any>(appActions.reset());
+            store.dispatch<any>(appActions.reset);
             expect(store.getState().series).toEqual(seriesDefaultState);
         };
 
@@ -305,6 +307,7 @@ describe('Client-side integration tests', () => {
                         loading: true,
                         error: Error(testErrorMessage)
                     };
+
                     expect(series).toEqual(expectedState);
                 });
             });

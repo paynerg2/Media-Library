@@ -86,8 +86,15 @@ describe('Series Reducer', () => {
                 ...initialState,
                 error: Error(testErrorMessage)
             };
+            const expectedState2: SeriesState = {
+                ...requestState,
+                error: Error(testErrorMessage)
+            };
             failureActions.forEach(action => {
                 expect(series(initialState, action)).toEqual(expectedState);
+            });
+            failureActions.forEach(action => {
+                expect(series(requestState, action)).toEqual(expectedState2);
             });
         });
     });
@@ -146,50 +153,56 @@ describe('Series Reducer', () => {
         });
 
         describe('Update', () => {
-            const testUpdate: Series & Item = {
-                _id: testItem._id,
-                name: testItem.name,
-                items: [...testItem.items, 'update']
-            };
-            const { _id, ...testUpdatedSeries } = testUpdate;
-            const action: IAction = {
-                type: seriesConstants.UPDATE_SUCCESS,
-                payload: testUpdate
-            };
-            const preUpdateState = {
-                ...requestState,
-                byId: {
-                    [testItem._id]: testSeries
-                },
-                allIds: [testItem._id]
-            };
-            const expectedState: SeriesState = {
-                ...preUpdateState,
-                byId: {
-                    [testUpdate._id]: testUpdatedSeries as Series
-                }
-            };
-            expect(series(preUpdateState, action)).toEqual(expectedState);
+            it('Correctly updates a series', () => {
+                const testUpdate: Series & Item = {
+                    _id: testItem._id,
+                    name: testItem.name,
+                    items: [...testItem.items, 'update']
+                };
+                const { _id, ...testUpdatedSeries } = testUpdate;
+                const action: IAction = {
+                    type: seriesConstants.UPDATE_SUCCESS,
+                    payload: testUpdate
+                };
+                const preUpdateState = {
+                    ...requestState,
+                    byId: {
+                        [testItem._id]: testSeries
+                    },
+                    allIds: [testItem._id]
+                };
+                const expectedState: SeriesState = {
+                    ...preUpdateState,
+                    byId: {
+                        [testUpdate._id]: testUpdatedSeries as Series
+                    },
+                    loading: false
+                };
+                expect(series(preUpdateState, action)).toEqual(expectedState);
+            });
         });
 
         describe('Delete', () => {
-            const action = {
-                type: seriesConstants.DELETE_SUCCESS,
-                payload: testItem._id
-            };
-            const preDeleteState = {
-                ...requestState,
-                byId: {
-                    [testItem._id]: testSeries
-                },
-                allIds: [testItem._id]
-            };
-            const expectedState = {
-                ...preDeleteState,
-                byId: {},
-                allIds: []
-            };
-            expect(series(preDeleteState, action)).toEqual(expectedState);
+            it('Correctly removes a series from state', () => {
+                const action = {
+                    type: seriesConstants.DELETE_SUCCESS,
+                    payload: testItem._id
+                };
+                const preDeleteState = {
+                    ...requestState,
+                    byId: {
+                        [testItem._id]: testSeries
+                    },
+                    allIds: [testItem._id]
+                };
+                const expectedState = {
+                    ...preDeleteState,
+                    byId: {},
+                    allIds: [],
+                    loading: false
+                };
+                expect(series(preDeleteState, action)).toEqual(expectedState);
+            });
         });
     });
 });
