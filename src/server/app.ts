@@ -29,6 +29,7 @@ app.use(jwt());
 app.use('/users', require('./users/user.controller'));
 app.use('/series', require('./series/series.controller'));
 app.use('/companies', require('./companies/company.controller'));
+app.use('/creators', require('./creators/creator.controller'));
 
 // Global Error Handler
 app.use(errorHandler);
