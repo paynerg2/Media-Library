@@ -3,13 +3,15 @@ import { users } from './users.reducer';
 import { authentication } from './authentication.reducer';
 import { series } from './series.reducer';
 import { companies } from './company.reducer';
+import { creators } from './creator.reducer';
 import { appActions } from '../_actions';
 
 const appReducer = combineReducers({
     users,
     authentication,
     series,
-    companies
+    companies,
+    creators
 });
 
 export type RootState = ReturnType<typeof appReducer>;

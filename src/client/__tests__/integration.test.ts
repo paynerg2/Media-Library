@@ -4,6 +4,7 @@ import { initialState as userDefaultState } from '../_reducers/users.reducer';
 import { initialState as authDefaultState } from '../_reducers/authentication.reducer';
 import { initialState as seriesDefaultState } from '../_reducers/series.reducer';
 import { initialState as companyDefaultState } from '../_reducers/company.reducer';
+import { initialState as creatorDefaultState } from '../_reducers/creator.reducer';
 import {
     userActions,
     authenticationActions,
@@ -15,17 +16,19 @@ import {
     userService,
     authenticationService,
     seriesService,
-    companyService
+    companyService,
+    creatorService
 } from '../_services';
 import {
     User,
     AuthenticatedUser,
     AuthenticationState,
     SeriesState,
-    CompanyState
+    CompanyState,
+    CreatorState
 } from '../_interfaces';
 import { Item } from '../_interfaces/item.interface';
-import { Series, Company } from '../../lib/interfaces';
+import { Series, Company, Creator } from '../../lib/interfaces';
 
 describe('Client-side integration tests', () => {
     it('Initializes store with expected default values', () => {
@@ -33,7 +36,8 @@ describe('Client-side integration tests', () => {
             users: userDefaultState,
             authentication: authDefaultState,
             series: seriesDefaultState,
-            companies: companyDefaultState
+            companies: companyDefaultState,
+            creators: creatorDefaultState
         };
         const state = store.getState();
         expect(state).toEqual(expectedState);
