@@ -29,6 +29,7 @@ import {
 } from '../_interfaces';
 import { Item } from '../_interfaces/item.interface';
 import { Series, Company, Creator } from '../../lib/interfaces';
+import { creatorActions } from '../_actions/creator.actions';
 
 describe('Client-side integration tests', () => {
     it('Initializes store with expected default values', () => {
@@ -767,7 +768,7 @@ describe('Client-side integration tests', () => {
 
                 it('Reaches an error state', () => {
                     const { companies } = store.getState();
-                    const expectedState = {
+                    const expectedState: CompanyState = {
                         ...companyDefaultState,
                         loading: true,
                         error: Error(testErrorMessage)
@@ -849,7 +850,7 @@ describe('Client-side integration tests', () => {
 
                 it('Reaches an error state', () => {
                     const { companies } = store.getState();
-                    const expectedState = {
+                    const expectedState: CompanyState = {
                         ...companyDefaultState,
                         loading: true,
                         error: Error(testErrorMessage)
@@ -916,6 +917,382 @@ describe('Client-side integration tests', () => {
                         error: Error(testErrorMessage)
                     };
                     expect(companies).toEqual(expectedState);
+                });
+            });
+        });
+    });
+
+    describe('Creator redux routes [(Dispatch) -> Action Creator -> Service -> Reducer -> Store Update]', () => {
+        const clearCreatorState = () => {
+            store.dispatch<any>(appActions.reset);
+        };
+        const item1 = mongoose.Types.ObjectId().toHexString();
+        const item2 = mongoose.Types.ObjectId().toHexString();
+        const testCreator: Creator = {
+            firstName: 'test',
+            middleInitials: 'T.',
+            lastName: 'tester',
+            works: [item1, item2]
+        };
+        const testId = 'test';
+        const testItem: Creator & Item = {
+            ...testCreator,
+            _id: testId
+        };
+        const testErrorMessage = 'test';
+
+        describe('Action | Create', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    creatorService.create = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    store.dispatch<any>(creatorActions.create(testCreator));
+                });
+
+                afterAll(() => {
+                    clearCreatorState();
+                });
+
+                it('Calls the create() service method with expectd parameters', () => {
+                    expect(creatorService.create).toHaveBeenCalledWith(
+                        testCreator
+                    );
+                });
+
+                it('Adds creator to state correctly', () => {
+                    const { creators } = store.getState();
+                    const expectedState: CreatorState = {
+                        ...creatorDefaultState,
+                        allIds: [testItem._id],
+                        byId: {
+                            [testItem._id]: testCreator
+                        }
+                    };
+                    expect(creators).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    creatorService.create = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(creatorActions.create(testCreator));
+                });
+
+                afterAll(() => {
+                    clearCreatorState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { creators } = store.getState();
+                    const expectedState = {
+                        ...creatorDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(creators).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Get By ID', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    creatorService.getById = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    store.dispatch<any>(creatorActions.getById(testId));
+                });
+
+                afterAll(() => {
+                    clearCreatorState();
+                });
+
+                it('Calls the getById() service method with expected parameters', () => {
+                    expect(creatorService.getById).toHaveBeenCalledWith(testId);
+                });
+
+                it('Adds the response to state correctly', () => {
+                    const { creators } = store.getState();
+                    const expectedState: CreatorState = {
+                        ...creatorDefaultState,
+                        selectedCreator: testItem._id
+                    };
+                    expect(creators).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                });
+            });
+
+            describe('On unsuccuessful request', () => {
+                beforeAll(() => {
+                    creatorService.getById = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(creatorActions.getById(testId));
+                });
+
+                afterAll(() => {
+                    clearCreatorState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { creators } = store.getState();
+                    const expectedState: CreatorState = {
+                        ...creatorDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(creators).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Get All', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    creatorService.getAll = jest.fn(() =>
+                        Promise.resolve([testItem])
+                    );
+                    store.dispatch<any>(creatorActions.getAll());
+                });
+
+                afterAll(() => {
+                    clearCreatorState();
+                });
+
+                it('Calls the getAll() service method', () => {
+                    expect(creatorService.getAll).toHaveBeenCalled();
+                });
+
+                it('Adds the response to state correctly', () => {
+                    const { creators } = store.getState();
+                    const expectedState: CreatorState = {
+                        ...creatorDefaultState,
+                        allIds: [testItem._id],
+                        byId: {
+                            [testItem._id]: testCreator
+                        }
+                    };
+                    expect(creators).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    creatorService.getAll = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(creatorActions.getAll());
+                });
+
+                afterAll(() => {
+                    clearCreatorState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { creators } = store.getState();
+                    const expectedState: CreatorState = {
+                        ...creatorDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(creators).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Update', () => {
+            const newItem = mongoose.Types.ObjectId().toHexString();
+            const testUpdate: Creator = {
+                ...testItem,
+                works: [...testItem.works!, newItem]
+            };
+
+            describe('On successful request', () => {
+                const expectedUpdate: Creator = {
+                    ...testCreator,
+                    works: testUpdate.works
+                };
+
+                beforeAll(() => {
+                    creatorService.create = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    creatorService.update = jest.fn(() =>
+                        Promise.resolve(testUpdate)
+                    );
+                    store.dispatch<any>(creatorActions.create(testCreator));
+                    store.dispatch<any>(
+                        creatorActions.update(testId, testUpdate)
+                    );
+                });
+
+                afterAll(() => {
+                    clearCreatorState();
+                });
+
+                it('Calls the update() service method with expected parameters', () => {
+                    expect(creatorService.update).toHaveBeenCalledWith(
+                        testId,
+                        testUpdate
+                    );
+                });
+
+                it('Updates the state correctly', () => {
+                    const { creators } = store.getState();
+                    const expectedState: CreatorState = {
+                        ...creatorDefaultState,
+                        allIds: [testItem._id],
+                        byId: {
+                            [testItem._id]: expectedUpdate
+                        }
+                    };
+                    expect(creators).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    creatorService.update = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(
+                        creatorActions.update(testId, testUpdate)
+                    );
+                });
+
+                afterAll(() => {
+                    clearCreatorState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { creators } = store.getState();
+                    const expectedState: CreatorState = {
+                        ...creatorDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(creators).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Delete', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    creatorService.create = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    creatorService.delete = jest.fn(() => Promise.resolve());
+                    store.dispatch<any>(creatorActions.create(testItem));
+                    store.dispatch<any>(creatorActions.delete(testItem._id));
+                });
+
+                afterAll(() => {
+                    clearCreatorState();
+                });
+
+                it('Calls the delete() service method with expected parameters', () => {
+                    expect(creatorService.delete).toHaveBeenCalledWith(
+                        testItem._id
+                    );
+                });
+
+                it('Removes the deleted item from state correctly', () => {
+                    const { creators } = store.getState();
+                    const expectedState: CreatorState = {
+                        ...creatorDefaultState
+                    };
+                    expect(creators).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    creatorService.delete = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(creatorActions.delete(testId));
+                });
+
+                afterAll(() => {
+                    clearCreatorState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { creators } = store.getState();
+                    const expectedState: CreatorState = {
+                        ...creatorDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(creators).toEqual(expectedState);
                 });
             });
         });
