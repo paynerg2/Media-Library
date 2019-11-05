@@ -1,9 +1,9 @@
 import { getActionTypes } from '../getActionTypes';
 import { mockActionTypes, mockInterface } from '../../_helpers/_mocks';
-import { Item } from '../../_interfaces/item.interface';
+import { MongoId } from '../../_interfaces/mongoId.interface';
 
 describe('Get Action Types Helper', () => {
-    const payload: mockInterface & Item = {
+    const payload: mockInterface & MongoId = {
         _id: 'test',
         property: 'test',
         property2: 616

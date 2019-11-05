@@ -3,7 +3,7 @@ import { AnyAction } from 'redux';
 
 import { IActionTypes } from '../_interfaces';
 import { getActionTypes } from './getActionTypes';
-import { Item } from '../_interfaces/item.interface';
+import { MongoId } from '../_interfaces/mongoId.interface';
 
 export const getActions = <T extends any>(
     service: any,
@@ -14,7 +14,7 @@ export const getActions = <T extends any>(
         const { request, success, failure } = actions.create;
         try {
             dispatch(request());
-            const newItem: T & Item = await service.create(item);
+            const newItem: T & MongoId = await service.create(item);
             dispatch(success(newItem));
         } catch (error) {
             dispatch(failure(error));
@@ -24,7 +24,7 @@ export const getActions = <T extends any>(
         const { request, success, failure } = actions.getAll;
         try {
             dispatch(request());
-            const itemList: (T & Item)[] = await service.getAll();
+            const itemList: (T & MongoId)[] = await service.getAll();
             dispatch(success(itemList));
         } catch (error) {
             dispatch(failure(error));
@@ -34,7 +34,7 @@ export const getActions = <T extends any>(
         const { request, success, failure } = actions.getById;
         try {
             dispatch(request());
-            const item: T & Item = await service.getById(id);
+            const item: T & MongoId = await service.getById(id);
             dispatch(success(item));
         } catch (error) {
             dispatch(failure(error));
@@ -46,7 +46,7 @@ export const getActions = <T extends any>(
         const { request, success, failure } = actions.update;
         try {
             dispatch(request());
-            const updatedItem: T & Item = await service.update(id, update);
+            const updatedItem: T & MongoId = await service.update(id, update);
             dispatch(success(updatedItem));
         } catch (error) {
             dispatch(failure(error));

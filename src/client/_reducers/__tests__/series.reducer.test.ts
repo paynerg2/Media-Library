@@ -1,7 +1,7 @@
 import { series } from '../series.reducer';
 import { seriesConstants } from '../../_constants';
 import { SeriesState, IAction } from '../../_interfaces';
-import { Item } from '../../_interfaces/item.interface';
+import { MongoId } from '../../_interfaces/mongoId.interface';
 import { Series } from '../../../lib/interfaces';
 
 describe('Series Reducer', () => {
@@ -10,11 +10,11 @@ describe('Series Reducer', () => {
         name: 'test',
         items: ['test', 'test']
     };
-    const testItem: Series & Item = {
+    const testItem: Series & MongoId = {
         ...testSeries,
         _id: 'test'
     };
-    const testItem2: Series & Item = {
+    const testItem2: Series & MongoId = {
         ...testSeries,
         _id: 'test2'
     };
@@ -154,7 +154,7 @@ describe('Series Reducer', () => {
 
         describe('Update', () => {
             it('Correctly updates a series', () => {
-                const testUpdate: Series & Item = {
+                const testUpdate: Series & MongoId = {
                     _id: testItem._id,
                     name: testItem.name,
                     items: [...testItem.items, 'update']

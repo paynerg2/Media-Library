@@ -12,4 +12,4 @@ export * from './creatorState.interface';
 // Other
 export * from './actionTypes';
 export * from './action.interface';
-export * from './item.interface';
+export * from './mongoId.interface';

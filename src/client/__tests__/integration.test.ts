@@ -27,7 +27,7 @@ import {
     CompanyState,
     CreatorState
 } from '../_interfaces';
-import { Item } from '../_interfaces/item.interface';
+import { MongoId } from '../_interfaces/mongoId.interface';
 import { Series, Company, Creator } from '../../lib/interfaces';
 import { creatorActions } from '../_actions/creator.actions';
 
@@ -253,7 +253,7 @@ describe('Client-side integration tests', () => {
             items: ['test', 'test']
         };
         const testId = 'test';
-        const testItem: Series & Item = {
+        const testItem: Series & MongoId = {
             ...testSeries,
             _id: testId
         };
@@ -590,7 +590,7 @@ describe('Client-side integration tests', () => {
             titles: [item1, item2]
         };
         const testId = 'test';
-        const testItem: Company & Item = {
+        const testItem: Company & MongoId = {
             ...testCompany,
             _id: testId
         };
@@ -935,7 +935,7 @@ describe('Client-side integration tests', () => {
             works: [item1, item2]
         };
         const testId = 'test';
-        const testItem: Creator & Item = {
+        const testItem: Creator & MongoId = {
             ...testCreator,
             _id: testId
         };
