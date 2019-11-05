@@ -22,6 +22,9 @@ export const bookSchema: yup.ObjectSchema = itemSchema.shape({
         .oneOf(bookTypes, invalidType)
         .required(typeIsRequired),
     language: yup.string().required(languageIsRequired),
-    volume: yup.number().positive(volumeMustBePositive),
+    volume: yup
+        .number()
+        .positive(volumeMustBePositive)
+        .default(1),
     isbn: yup.string()
 });
