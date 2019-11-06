@@ -1,4 +1,4 @@
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 import { store } from '../_helpers/store';
 import { initialState as userDefaultState } from '../_reducers/users.reducer';
 import { initialState as authDefaultState } from '../_reducers/authentication.reducer';
@@ -6,18 +6,25 @@ import { initialState as seriesDefaultState } from '../_reducers/series.reducer'
 import { initialState as companyDefaultState } from '../_reducers/company.reducer';
 import { initialState as creatorDefaultState } from '../_reducers/creator.reducer';
 import {
+    initialState as bookDefaultState,
+    books
+} from '../_reducers/book.reducer';
+import {
     userActions,
     authenticationActions,
     seriesActions,
     appActions,
-    companyActions
+    companyActions,
+    creatorActions,
+    bookActions
 } from '../_actions';
 import {
     userService,
     authenticationService,
     seriesService,
     companyService,
-    creatorService
+    creatorService,
+    bookService
 } from '../_services';
 import {
     User,
@@ -25,11 +32,12 @@ import {
     AuthenticationState,
     SeriesState,
     CompanyState,
-    CreatorState
+    CreatorState,
+    BookState
 } from '../_interfaces';
 import { MongoId } from '../_interfaces/mongoId.interface';
-import { Series, Company, Creator } from '../../lib/interfaces';
-import { creatorActions } from '../_actions/creator.actions';
+import { Series, Company, Creator, Book } from '../../lib/interfaces';
+import { bookTypes } from '../../lib/formats';
 
 describe('Client-side integration tests', () => {
     it('Initializes store with expected default values', () => {
@@ -38,7 +46,8 @@ describe('Client-side integration tests', () => {
             authentication: authDefaultState,
             series: seriesDefaultState,
             companies: companyDefaultState,
-            creators: creatorDefaultState
+            creators: creatorDefaultState,
+            books: bookDefaultState
         };
         const state = store.getState();
         expect(state).toEqual(expectedState);
@@ -954,7 +963,7 @@ describe('Client-side integration tests', () => {
                     clearCreatorState();
                 });
 
-                it('Calls the create() service method with expectd parameters', () => {
+                it('Calls the create() service method with expected parameters', () => {
                     expect(creatorService.create).toHaveBeenCalledWith(
                         testCreator
                     );
@@ -1000,7 +1009,7 @@ describe('Client-side integration tests', () => {
 
                 it('Reaches an error state', () => {
                     const { creators } = store.getState();
-                    const expectedState = {
+                    const expectedState: CreatorState = {
                         ...creatorDefaultState,
                         loading: true,
                         error: Error(testErrorMessage)
@@ -1293,6 +1302,400 @@ describe('Client-side integration tests', () => {
                         error: Error(testErrorMessage)
                     };
                     expect(creators).toEqual(expectedState);
+                });
+            });
+        });
+    });
+
+    describe('Book redux routes [(Dispatch) -> Action Creator -> Service -> Reducer -> Store Update]', () => {
+        const clearBookState = () => {
+            store.dispatch<any>(appActions.reset);
+        };
+
+        const item1 = mongoose.Types.ObjectId().toHexString();
+        const item2 = mongoose.Types.ObjectId().toHexString();
+        const testBook: Book = {
+            title: 'test',
+            authors: [item1, item2],
+            artists: [item1],
+            colorer: [item1],
+            letterer: [item2],
+            publisher: item1,
+            language: 'test',
+            physical: true,
+            digital: false,
+            checkedOut: true,
+            checkedOutBy: item1,
+            listPrice: '$616.00',
+            image: 'http://www.imagehostedhere.com',
+            location: 'test',
+            type: bookTypes[0],
+            series: item1,
+            volume: 3,
+            isbn: 'test'
+        };
+        const testId = mongoose.Types.ObjectId().toHexString();
+        const testItem: Book & MongoId = {
+            ...testBook,
+            _id: testId
+        };
+        const testErrorMessage = 'test';
+
+        describe('Action | Create', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    bookService.create = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    store.dispatch<any>(bookActions.create(testBook));
+                });
+
+                afterAll(() => {
+                    clearBookState();
+                });
+
+                it('Calls the create() service method with expected parameters', () => {
+                    expect(bookService.create).toHaveBeenCalledWith(testBook);
+                });
+
+                it('Adds book to state correctly', () => {
+                    const { books } = store.getState();
+                    const expectedState: BookState = {
+                        ...bookDefaultState,
+                        allIds: [testItem._id],
+                        byId: {
+                            [testItem._id]: testBook
+                        }
+                    };
+                    expect(books).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies,
+                        creators
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                    expect(creators).toEqual(creatorDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    bookService.create = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(bookActions.create(testBook));
+                });
+
+                afterAll(() => {
+                    clearBookState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { books } = store.getState();
+                    const expectedState: BookState = {
+                        ...bookDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(books).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Get By ID', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    bookService.getById = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    store.dispatch<any>(bookActions.getById(testId));
+                });
+
+                afterAll(() => {
+                    clearBookState();
+                });
+
+                it('Calls the getById() service method with expected parameters', () => {
+                    expect(bookService.getById).toHaveBeenCalledWith(testId);
+                });
+
+                it('Adds the response to state correctly', () => {
+                    const { books } = store.getState();
+                    const expectedState: BookState = {
+                        ...bookDefaultState,
+                        selectedBook: testItem._id
+                    };
+                    expect(books).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies,
+                        creators
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                    expect(creators).toEqual(creatorDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    bookService.getById = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(bookActions.getById(testId));
+                });
+
+                afterAll(() => {
+                    clearBookState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { books } = store.getState();
+                    const expectedState: BookState = {
+                        ...bookDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(books).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Get All', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    bookService.getAll = jest.fn(() =>
+                        Promise.resolve([testItem])
+                    );
+                    store.dispatch<any>(bookActions.getAll());
+                });
+
+                afterAll(() => {
+                    clearBookState();
+                });
+
+                it('Calls the getAll() service method', () => {
+                    expect(bookService.getAll).toHaveBeenCalled();
+                });
+
+                it('Adds the response to state correctly', () => {
+                    const { books } = store.getState();
+                    const expectedState: BookState = {
+                        ...bookDefaultState,
+                        allIds: [testItem._id],
+                        byId: {
+                            [testItem._id]: testBook
+                        }
+                    };
+                    expect(books).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies,
+                        creators
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                    expect(creators).toEqual(creatorDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    bookService.getAll = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(bookActions.getAll());
+                });
+
+                afterAll(() => {
+                    clearBookState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { books } = store.getState();
+                    const expectedState: BookState = {
+                        ...bookDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(books).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Update', () => {
+            const testUpdate: Book = {
+                ...testItem,
+                checkedOut: !testItem.checkedOut
+            };
+
+            describe('On successful request', () => {
+                const expectedUpdate: Book = {
+                    ...testBook,
+                    checkedOut: !testBook.checkedOut
+                };
+
+                beforeAll(() => {
+                    bookService.create = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    bookService.update = jest.fn(() =>
+                        Promise.resolve(testUpdate)
+                    );
+                    store.dispatch<any>(bookActions.create(testBook));
+                    store.dispatch<any>(bookActions.update(testId, testUpdate));
+                });
+
+                afterAll(() => {
+                    clearBookState();
+                });
+
+                it('Calls the update() service method with expected parameters', () => {
+                    expect(bookService.update).toHaveBeenCalledWith(
+                        testId,
+                        testUpdate
+                    );
+                });
+
+                it('Updates the state correctly', () => {
+                    const { books } = store.getState();
+                    const expectedState: BookState = {
+                        ...bookDefaultState,
+                        allIds: [testItem._id],
+                        byId: {
+                            [testItem._id]: expectedUpdate
+                        }
+                    };
+                    expect(books).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies,
+                        creators
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                    expect(creators).toEqual(creatorDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    bookService.update = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(bookActions.update(testId, testBook));
+                });
+
+                afterAll(() => {
+                    clearBookState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { books } = store.getState();
+                    const expectedState: BookState = {
+                        ...bookDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(books).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Delete', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    bookService.create = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    bookService.delete = jest.fn(() => Promise.resolve());
+                    store.dispatch<any>(bookActions.create(testItem));
+                    store.dispatch<any>(bookActions.delete(testItem._id));
+                });
+
+                afterAll(() => {
+                    clearBookState();
+                });
+
+                it('Calls the delete() service method with expected parameters', () => {
+                    expect(bookService.delete).toHaveBeenCalledWith(
+                        testItem._id
+                    );
+                });
+
+                it('Removes the deleted item from state correctly', () => {
+                    const { books } = store.getState();
+                    const expectedState: BookState = {
+                        ...bookDefaultState
+                    };
+                    expect(books).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies,
+                        creators
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                    expect(creators).toEqual(creatorDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    bookService.delete = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(bookActions.delete(testId));
+                });
+
+                afterAll(() => {
+                    clearBookState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { books } = store.getState();
+                    const expectedState: BookState = {
+                        ...bookDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(books).toEqual(expectedState);
                 });
             });
         });
