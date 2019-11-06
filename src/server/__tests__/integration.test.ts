@@ -1,5 +1,5 @@
 import request from 'supertest';
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 import { connect } from '../_helpers/connect';
 import { disconnect } from '../_helpers/disconnect';
 import { invalidToken } from '../../lib/messages/error-handler.errorMessages';
@@ -25,19 +25,34 @@ import { userService } from '../users/user.service';
 import { seriesService } from '../series/series.service';
 import { getCleanedResponse } from '../_helpers/testHelpers';
 import { connectOptions } from '../_helpers/connectOptions';
-import { Company, Creator } from '../../lib/interfaces';
+import { Company, Creator, Book } from '../../lib/interfaces';
 import {
     duplicateCompany,
     companyNotFound,
     companyNameIsRequired
 } from '../../lib/messages/company.errorMessages';
 import { companyService } from '../companies/company.service';
+import { bookService } from '../books/book.service';
 import { ICompany } from '../companies/company.interface';
 import {
     firstNameIsRequired,
     creatorNotFound
 } from '../../lib/messages/creator.errorMessages';
 import { creatorService } from '../creators/creator.service';
+import { bookTypes } from '../../lib/formats';
+import {
+    bookNotFound,
+    authorIsRequired,
+    languageIsRequired,
+    invalidType,
+    typeIsRequired
+} from '../../lib/messages/book.errorMessages';
+import {
+    titleIsRequired,
+    physicalRequired,
+    digitalRequired,
+    publisherRequired
+} from '../../lib/messages/item.errorMessages';
 
 const testUser = {
     username: 'test',
@@ -1477,98 +1492,471 @@ describe('Integration Tests', () => {
                     expect(error).toBeUndefined();
                 }
             });
+        });
 
-            describe('Create Method', () => {
-                it('Adds a creator to the database', async () => {
-                    try {
-                        const creator: Creator = await creatorService.create(
-                            testCreator
-                        );
-                        const cleanedResponse = getCleanedResponse(creator);
-                        expect(cleanedResponse).toEqual(testCreator);
-                    } catch (error) {
-                        expect(error).toBeUndefined();
-                    }
+        describe('Create Method', () => {
+            it('Adds a creator to the database', async () => {
+                try {
+                    const creator: Creator = await creatorService.create(
+                        testCreator
+                    );
+                    const cleanedResponse = getCleanedResponse(creator);
+                    expect(cleanedResponse).toEqual(testCreator);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+        });
+
+        describe('Get By ID Method', () => {
+            it('Retrieves a specific creator from the database', async () => {
+                try {
+                    const creatorList = await creatorService.getAll();
+                    const expectedCreator = creatorList[0];
+                    const creator = await creatorService.getById(
+                        expectedCreator._id
+                    );
+                    expect(creator!._id).toEqual(expectedCreator._id);
+                    const cleanedResponse = getCleanedResponse(creator);
+                    const cleanedExpectation = getCleanedResponse(
+                        expectedCreator
+                    );
+                    expect(cleanedResponse).toEqual(cleanedExpectation);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+
+            it('Returns error if creator is not found', async () => {
+                try {
+                    const fakeId = mongoose.Types.ObjectId().toHexString();
+                    await creatorService.getById(fakeId);
+                } catch (error) {
+                    expect(error).toBeDefined();
+                    expect(error.message).toEqual(Error(creatorNotFound));
+                }
+            });
+        });
+
+        describe('Update Method', () => {
+            it('Updates a specific creator', async () => {
+                try {
+                    const creatorList = await creatorService.getAll();
+                    const creator: Creator = getCleanedResponse(creatorList[0]);
+                    const updatedCreator = {
+                        ...creator,
+                        works: [...creator.works!, 'update']
+                    };
+                    await creatorService.update(
+                        creatorList[0]._id,
+                        updatedCreator
+                    );
+                    const actualUpdate = await creatorService.getById(
+                        creatorList[0]._id
+                    );
+                    expect(actualUpdate!._id).toEqual(creatorList[0]._id);
+                    const cleanedResponse = getCleanedResponse(actualUpdate);
+                    expect(cleanedResponse).toEqual(updatedCreator);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+
+            it('Returns an error if creator not found', async () => {
+                try {
+                    const fakeId = mongoose.Types.ObjectId().toHexString();
+                    await creatorService.update(fakeId, testCreator);
+                } catch (error) {
+                    expect(error).toBeDefined();
+                    expect(error.message).toEqual(creatorNotFound);
+                }
+            });
+        });
+
+        describe('Delete Method', () => {
+            it('Deletes a specified creator from the database', async () => {
+                try {
+                    const creatorList = await creatorService.getAll();
+                    const id = creatorList[0]._id;
+                    await creatorService.delete(id);
+                    const actualCreator = await creatorService.getById(id);
+                    expect(actualCreator).toBeNull();
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+        });
+    });
+
+    describe('Book Service Calls [Service -> Model -> DB]', () => {
+        beforeAll(async () => {
+            await connect([connectOptions.dropBooks]);
+        });
+        afterAll(async () => {
+            await disconnect();
+        });
+
+        const item1 = mongoose.Types.ObjectId().toHexString();
+        const item2 = mongoose.Types.ObjectId().toHexString();
+        const testBook: Book = {
+            title: 'test',
+            authors: [item1, item2],
+            artists: [item1],
+            colorer: [item1],
+            letterer: [item2],
+            publisher: item1,
+            language: 'test',
+            physical: true,
+            digital: false,
+            checkedOut: true,
+            checkedOutBy: item1,
+            listPrice: '$616.00',
+            image: 'http://www.imagehostedhere.com',
+            location: 'test',
+            type: bookTypes[0],
+            series: item1,
+            volume: 3,
+            isbn: 'test'
+        };
+
+        describe('Get Method | Empty DB', () => {
+            it('Returns an empty array', async () => {
+                try {
+                    const books = await bookService.getAll();
+                    expect(books).toEqual([]);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+        });
+
+        describe('Create Method', () => {
+            it('Adds a creator to the database', async () => {
+                try {
+                    const book: Book = await bookService.create(testBook);
+                    const cleanedResponse = getCleanedResponse(book);
+                    expect(cleanedResponse).toEqual(testBook);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+        });
+
+        describe('Get By Id Method', () => {
+            it('Retrieves a specific book from the database', async () => {
+                try {
+                    const bookList = await bookService.getAll();
+                    const expectedBook = bookList[0];
+                    const book = await bookService.getById(expectedBook._id);
+                    expect(book!._id).toEqual(expectedBook._id);
+                    const cleanedResponse = getCleanedResponse(book);
+                    const cleanedExpectation = getCleanedResponse(expectedBook);
+                    expect(cleanedResponse).toEqual(cleanedExpectation);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+
+            it('Returns error if book not found', async () => {
+                try {
+                    const fakeId = mongoose.Types.ObjectId().toHexString();
+                    await bookService.getById(fakeId);
+                } catch (error) {
+                    expect(error).toBeDefined();
+                    expect(error.message).toEqual(Error(bookNotFound));
+                }
+            });
+        });
+
+        describe('Update Method', () => {
+            it('Updates a specific book', async () => {
+                try {
+                    const bookList = await bookService.getAll();
+                    const book = getCleanedResponse(bookList[0]);
+                    const updatedBook = {
+                        ...book,
+                        checkedOut: !book.checkedOut
+                    };
+                    await bookService.update(bookList[0]._id, updatedBook);
+                    const actualUpdate = await bookService.getById(
+                        bookList[0]._id
+                    );
+                    expect(actualUpdate!._id).toEqual(bookList[0]._id);
+                    const cleanedResponse = getCleanedResponse(actualUpdate);
+                    expect(cleanedResponse).toEqual(updatedBook);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+
+            it('Returns an error if book not found', async () => {
+                try {
+                    const fakeId = mongoose.Types.ObjectId().toHexString();
+                    await bookService.update(fakeId, testBook);
+                } catch (error) {
+                    expect(error).toBeDefined();
+                    expect(error.message).toEqual(bookNotFound);
+                }
+            });
+        });
+
+        describe('Delete Method', () => {
+            it('Deletes a specified book from the database', async () => {
+                try {
+                    const bookList = await bookService.getAll();
+                    const id = bookList[0]._id;
+                    await bookService.delete(id);
+                    const actualBook = await bookService.getById(id);
+                    expect(actualBook).toBeNull();
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+        });
+    });
+
+    describe('Book route requests [(Request) -> App -> Controller -> Service -> Model -> DB]', () => {
+        let token: string | null;
+        beforeAll(async () => {
+            await connect([connectOptions.dropBooks]);
+            token = await login();
+        });
+
+        afterAll(async () => {
+            await disconnect();
+        });
+
+        const item1 = mongoose.Types.ObjectId().toHexString();
+        const item2 = mongoose.Types.ObjectId().toHexString();
+        const testBook: Book = {
+            title: 'test',
+            authors: [item1, item2],
+            artists: [item1],
+            colorer: [item1],
+            letterer: [item2],
+            publisher: item1,
+            language: 'test',
+            physical: true,
+            digital: false,
+            checkedOut: true,
+            checkedOutBy: item1,
+            listPrice: '$616.00',
+            image: 'http://www.imagehostedhere.com',
+            location: 'test',
+            type: bookTypes[0],
+            series: item1,
+            volume: 3,
+            isbn: 'test'
+        };
+
+        describe('(Create) /books | POST', () => {
+            it('Adds a book to the database', async () => {
+                const postResponse = await request(app)
+                    .post('/books')
+                    .send({ data: testBook })
+                    .set('Authorization', 'Bearer ' + token);
+                const cleanedResponse = getCleanedResponse(postResponse.body);
+                expect(postResponse.status).toEqual(200);
+                expect(cleanedResponse).toEqual(testBook);
+            });
+
+            /**
+             * Validation Tests
+             */
+
+            it('Rejects when title not included', async () => {
+                const { title, ...bookWithoutTitle } = testBook;
+                const postResponse = await request(app)
+                    .post('/books')
+                    .send({ data: bookWithoutTitle })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: titleIsRequired
+                });
+            });
+            it('Rejects when physical not included', async () => {
+                const { physical, ...bookWithoutPhysical } = testBook;
+                const postResponse = await request(app)
+                    .post('/books')
+                    .send({ data: bookWithoutPhysical })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: physicalRequired
+                });
+            });
+            it('Rejects when digital not included', async () => {
+                const { digital, ...bookWithoutDigital } = testBook;
+                const postResponse = await request(app)
+                    .post('/books')
+                    .send({ data: bookWithoutDigital })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: digitalRequired
+                });
+            });
+            it('Rejects when publisher not included', async () => {
+                const { publisher, ...bookWithoutPublisher } = testBook;
+                const postResponse = await request(app)
+                    .post('/books')
+                    .send({ data: bookWithoutPublisher })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: publisherRequired
+                });
+            });
+            it('Rejects when authors not included', async () => {
+                const { authors, ...bookWithoutAuthors } = testBook;
+                const postResponse = await request(app)
+                    .post('/books')
+                    .send({ data: bookWithoutAuthors })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: authorIsRequired
+                });
+            });
+            it('Rejects when language not included', async () => {
+                const { language, ...bookWithoutLanguage } = testBook;
+                const postResponse = await request(app)
+                    .post('/books')
+                    .send({ data: bookWithoutLanguage })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: languageIsRequired
+                });
+            });
+            it('Rejects when type not included', async () => {
+                const { type, ...bookWithoutType } = testBook;
+                const postResponse = await request(app)
+                    .post('/books')
+                    .send({ data: bookWithoutType })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: typeIsRequired
                 });
             });
 
-            describe('Get By ID Method', () => {
-                it('Retrieves a specific creator from the database', async () => {
-                    try {
-                        const creatorList = await creatorService.getAll();
-                        const expectedCreator = creatorList[0];
-                        const creator = await creatorService.getById(
-                            expectedCreator._id
-                        );
-                        expect(creator!._id).toEqual(expectedCreator._id);
-                        const cleanedResponse = getCleanedResponse(creator);
-                        const cleanedExpectation = getCleanedResponse(
-                            expectedCreator
-                        );
-                        expect(cleanedResponse).toEqual(cleanedExpectation);
-                    } catch (error) {
-                        expect(error).toBeUndefined();
-                    }
-                });
-
-                it('Returns error if creator is not found', async () => {
-                    try {
-                        const fakeId = mongoose.Types.ObjectId().toHexString();
-                        await creatorService.getById(fakeId);
-                    } catch (error) {
-                        expect(error).toBeDefined();
-                        expect(error.message).toEqual(Error(creatorNotFound));
-                    }
+            it('Rejects when type is invalid', async () => {
+                const bookWithInvalidType = {
+                    ...testBook,
+                    type: 'test'
+                };
+                const postResponse = await request(app)
+                    .post('/books')
+                    .send({ data: bookWithInvalidType })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: invalidType
                 });
             });
+        });
 
-            describe('Update Method', () => {
-                it('Updates a specific creator', async () => {
-                    try {
-                        const creatorList = await creatorService.getAll();
-                        const creator = getCleanedResponse(creatorList[0]);
-                        const updatedCreator = {
-                            ...creator,
-                            titles: [...creator.titles, 'update']
-                        };
-                        await creatorService.update(
-                            creatorList[0]._id,
-                            updatedCreator
-                        );
-                        const actualUpdate = await creatorService.getById(
-                            creatorList[0]._id
-                        );
-                        expect(actualUpdate!._id).toEqual(creatorList[0]._id);
-                        const cleanedResponse = getCleanedResponse(
-                            actualUpdate
-                        );
-                        expect(cleanedResponse).toEqual(updatedCreator);
-                    } catch (error) {}
-                });
+        describe('(Get All) /books | GET', () => {
+            it('Returns a full list of books', async () => {
+                const getResponse = await request(app)
+                    .get('/books')
+                    .set('Authorization', 'Bearer ' + token);
+                const cleanedResponse = getCleanedResponse(getResponse.body);
+                const expectedResponse = [testBook];
+                expect(cleanedResponse).toEqual(expectedResponse);
+            });
+        });
 
-                it('Returns an error if creator not found', async () => {
-                    try {
-                        const fakeId = mongoose.Types.ObjectId().toHexString();
-                        await creatorService.update(fakeId, testCreator);
-                    } catch (error) {
-                        expect(error).toBeDefined();
-                        expect(error.message).toEqual(creatorNotFound);
-                    }
-                });
+        describe('(Get By Id) /books/:id | GET', () => {
+            it('Successfully retrieves a book by id', async () => {
+                const getResponse = await request(app)
+                    .get('/books')
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getResponse.status).toEqual(200);
+                expect(getResponse.body.length).toEqual(1);
+                expect(getResponse.body[0]._id).toBeDefined();
+                const id = getResponse.body[0]._id;
+                const expectedBook = getResponse.body[0];
+
+                const getByIdResponse = await request(app)
+                    .get(`/books/${id}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getByIdResponse.status).toEqual(200);
+                expect(getByIdResponse.body).toEqual(expectedBook);
             });
 
-            describe('Delete Method', () => {
-                it('Deletes a specified creator from the database', async () => {
-                    try {
-                        const creatorList = await creatorService.getAll();
-                        const id = creatorList[0]._id;
-                        await creatorService.delete(id);
-                        const actualCreator = await creatorService.getById(id);
-                        expect(actualCreator).toBeNull();
-                    } catch (error) {
-                        expect(error).toBeUndefined();
-                    }
-                });
+            it('Returns an error if book not found', async () => {
+                const randomId: string = mongoose.Types.ObjectId().toHexString();
+                const getResponse = await request(app)
+                    .get(`/books/${randomId}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getResponse.status).toEqual(404);
+                expect(getResponse.error).toBeDefined();
+            });
+        });
+
+        describe('(Update) /books/:id | PUT', () => {
+            let id: string;
+            let expectedBook: any;
+
+            beforeAll(async () => {
+                const getResponse = await request(app)
+                    .get('/books')
+                    .set('Authorization', 'Bearer ' + token);
+                expectedBook = getCleanedResponse(getResponse.body[0]);
+                id = getResponse.body[0]._id;
+            });
+
+            it('Successfully updates the selected book', async () => {
+                const expectedUpdate = {
+                    ...expectedBook,
+                    checkedOut: !expectedBook.checkedOut
+                };
+
+                const putResponse = await request(app)
+                    .put(`/books/${id}`)
+                    .set('Authorization', 'Bearer ' + token)
+                    .send({ data: expectedUpdate });
+                //expect(putResponse.status).toEqual(200);
+                const cleanedResponse = getCleanedResponse(putResponse.body);
+                expect(cleanedResponse).toEqual(expectedUpdate);
+            });
+        });
+
+        describe('(Delete) /books/:id | DELETE', () => {
+            it('Successfully deletes the book with selected id', async () => {
+                // Get id from first book returned
+                const getResponse = await request(app)
+                    .get('/books')
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getResponse.status).toEqual(200);
+                expect(getResponse.body.length).toEqual(1);
+                expect(getResponse.body[0]._id).toBeDefined();
+                const id = getResponse.body[0]._id;
+
+                // Use id to delete book
+                const deleteResponse = await request(app)
+                    .delete(`/books/${id}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(deleteResponse.status).toEqual(200);
+                expect(deleteResponse.body).toEqual({});
+
+                // Expect book to no longer be in DB
+                const getByIdResponse = await request(app)
+                    .get(`/books/${id}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getByIdResponse.status).toEqual(404);
+                expect(getByIdResponse.error).toBeDefined();
             });
         });
     });
