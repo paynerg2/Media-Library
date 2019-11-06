@@ -1,4 +1,4 @@
-import { CompanyState, IAction, SeriesState } from '../_interfaces';
+import { CompanyState, IAction } from '../_interfaces';
 import { companyConstants } from '../_constants';
 import { normalize } from '../_helpers/normalize';
 
