@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { creators, initialState } from '../creator.reducer';
 import { creatorConstants } from '../../_constants';
 import { CreatorState, IAction } from '../../_interfaces';
-import { Item } from '../../_interfaces';
+import { MongoId } from '../../_interfaces';
 import { Creator } from '../../../lib/interfaces';
 
 describe('Creators Reducer', () => {
@@ -15,11 +15,11 @@ describe('Creators Reducer', () => {
         lastName: 'tester',
         works: [item1, item2]
     };
-    const testItem: Creator & Item = {
+    const testItem: Creator & MongoId = {
         ...testCreator,
         _id: mongoose.Types.ObjectId().toHexString()
     };
-    const testItem2: Creator & Item = {
+    const testItem2: Creator & MongoId = {
         ...testCreator,
         _id: mongoose.Types.ObjectId().toHexString()
     };
@@ -145,7 +145,7 @@ describe('Creators Reducer', () => {
 
         describe('Update', () => {
             it('Correctly updates a creator', () => {
-                const testUpdate: Creator & Item = {
+                const testUpdate: Creator & MongoId = {
                     ...testItem,
                     works: [
                         ...testItem.works!,

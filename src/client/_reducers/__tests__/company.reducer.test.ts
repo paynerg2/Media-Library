@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { companies, initialState } from '../company.reducer';
 import { companyConstants } from '../../_constants';
 import { CompanyState, IAction } from '../../_interfaces';
-import { Item } from '../../_interfaces/';
+import { MongoId } from '../../_interfaces/';
 import { Company } from '../../../lib/interfaces';
 
 describe('Companies Reducer', () => {
@@ -13,11 +13,11 @@ describe('Companies Reducer', () => {
         name: 'test',
         titles: [item1, item2]
     };
-    const testItem: Company & Item = {
+    const testItem: Company & MongoId = {
         ...testCompany,
         _id: mongoose.Types.ObjectId().toHexString()
     };
-    const testItem2: Company & Item = {
+    const testItem2: Company & MongoId = {
         ...testCompany,
         _id: mongoose.Types.ObjectId().toHexString()
     };
@@ -145,7 +145,7 @@ describe('Companies Reducer', () => {
 
     describe('Update', () => {
         it('Correctly updates a company', async () => {
-            const testUpdate: Company & Item = {
+            const testUpdate: Company & MongoId = {
                 _id: testItem._id,
                 name: testItem.name,
                 titles: [
