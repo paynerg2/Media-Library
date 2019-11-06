@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { connections } from 'mongoose';
 import { env } from '../_helpers/env';
 import { logger } from '../_helpers/logger';
 import { connectOptions } from './connectOptions';
@@ -26,13 +26,20 @@ export const connect = async (options?: Array<string>) => {
             useFindAndModify: false
         })
         .then(async () => {
+            const collections = await mongoose.connection.db
+                .listCollections()
+                .toArray();
+            const collectionNames = collections.map(
+                collection => collection.name
+            );
             if (process.env.NODE_ENV !== 'test') {
                 logger.info('Successfully connected to database');
             }
             if (
                 options &&
                 options.includes(connectOptions.dropUsers) &&
-                process.env.NODE_ENV === 'test'
+                process.env.NODE_ENV === 'test' &&
+                collectionNames.includes('users')
             ) {
                 await mongoose.connection.db.dropCollection('users');
                 logger.info('Dropping collection: users');
@@ -40,7 +47,8 @@ export const connect = async (options?: Array<string>) => {
             if (
                 options &&
                 options.includes(connectOptions.dropSeries) &&
-                process.env.NODE_ENV === 'test'
+                process.env.NODE_ENV === 'test' &&
+                collectionNames.includes('series')
             ) {
                 await mongoose.connection.db.dropCollection('series');
                 logger.info('Dropping collection: series');
@@ -48,7 +56,8 @@ export const connect = async (options?: Array<string>) => {
             if (
                 options &&
                 options.includes(connectOptions.dropCompanies) &&
-                process.env.NODE_ENV === 'test'
+                process.env.NODE_ENV === 'test' &&
+                collectionNames.includes('companies')
             ) {
                 await mongoose.connection.db.dropCollection('companies');
                 logger.info('Dropping collection: companies');
@@ -56,14 +65,29 @@ export const connect = async (options?: Array<string>) => {
             if (
                 options &&
                 options.includes(connectOptions.dropCreators) &&
-                process.env.NODE_ENV === 'test'
+                process.env.NODE_ENV === 'test' &&
+                collectionNames.includes('creators')
             ) {
                 await mongoose.connection.db.dropCollection('creators');
                 logger.info('Dropping collection: creators');
             }
+            if (
+                options &&
+                options.includes(connectOptions.dropBooks) &&
+                process.env.NODE_ENV === 'test' &&
+                collectionNames.includes('books')
+            ) {
+                await mongoose.connection.db.dropCollection('books');
+                logger.info('Dropping collection: books');
+            }
         })
         .catch(err => {
             logger.error(`Error connecting to database: ${err}`);
+            console.log(
+                `Failure to connect using connection string: ${connectionString}`
+            );
+            console.log(`connection options: ${connectOptions}`);
+            console.log(`error message: ${err.message}`);
             return process.exit(1);
         });
 };

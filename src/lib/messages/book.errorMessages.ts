@@ -6,3 +6,4 @@ export const typeIsRequired = 'Type must be specified';
 export const languageIsRequired = 'Language must be specified';
 export const volumeMustBePositive =
     'Negative numbers for volume are not allowed';
+export const bookNotFound = 'Book not found';
