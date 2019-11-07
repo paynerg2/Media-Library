@@ -65,13 +65,13 @@ export const creators = (
         case creatorConstants.DELETE_SUCCESS:
             const deletedId = action.payload;
             const {
-                [deletedId]: deletedSeries,
-                ...remainingSeries
+                [deletedId]: deletedCreator,
+                ...remainingCreators
             } = state.byId;
             const remainingIds = state.allIds.filter(id => id !== deletedId);
             return {
                 ...state,
-                byId: remainingSeries,
+                byId: remainingCreators,
                 allIds: remainingIds,
                 loading: false,
                 error: undefined

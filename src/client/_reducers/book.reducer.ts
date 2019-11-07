@@ -60,14 +60,11 @@ export const books = (state = initialState, action: IAction) => {
             } as BookState;
         case bookConstants.DELETE_SUCCESS:
             const deletedId = action.payload;
-            const {
-                [deletedId]: deletedSeries,
-                ...remainingCompanies
-            } = state.byId;
+            const { [deletedId]: deletedBook, ...remainingBooks } = state.byId;
             const remainingIds = state.allIds.filter(id => id !== deletedId);
             return {
                 ...state,
-                byId: remainingCompanies,
+                byId: remainingBooks,
                 allIds: remainingIds,
                 loading: false
             };

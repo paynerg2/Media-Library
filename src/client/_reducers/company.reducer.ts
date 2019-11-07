@@ -64,7 +64,7 @@ export const companies = (
         case companyConstants.DELETE_SUCCESS:
             const deletedId = action.payload;
             const {
-                [deletedId]: deletedSeries,
+                [deletedId]: deletedCompany,
                 ...remainingCompanies
             } = state.byId;
             const remainingIds = state.allIds.filter(id => id !== deletedId);
