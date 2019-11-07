@@ -2,6 +2,35 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import { connect } from '../_helpers/connect';
 import { disconnect } from '../_helpers/disconnect';
+
+import { app } from '../app';
+import { getCleanedResponse } from '../_helpers/testHelpers';
+import { connectOptions } from '../_helpers/connectOptions';
+import { Company, Creator, Book, Disc } from '../../lib/interfaces';
+
+import { userService } from '../users/user.service';
+import { seriesService } from '../series/series.service';
+import { companyService } from '../companies/company.service';
+import { bookService } from '../books/book.service';
+import { discService } from '../discs/disc.service';
+import { creatorService } from '../creators/creator.service';
+import { bookTypes, discFormats } from '../../lib/formats';
+
+import {
+    seriesNameIsRequired,
+    duplicateSeries,
+    seriesNotFound
+} from '../../lib/messages/series.errorMessages';
+import {
+    duplicateCompany,
+    companyNotFound,
+    companyNameIsRequired
+} from '../../lib/messages/company.errorMessages';
+import {
+    firstNameIsRequired,
+    creatorNotFound
+} from '../../lib/messages/creator.errorMessages';
+
 import { invalidToken } from '../../lib/messages/error-handler.errorMessages';
 import {
     invalidUsernameOrPassword,
@@ -16,31 +45,6 @@ import {
     userNotFound
 } from '../../lib/messages/user.errorMessages';
 import {
-    seriesNameIsRequired,
-    duplicateSeries,
-    seriesNotFound
-} from '../../lib/messages/series.errorMessages';
-import { app } from '../app';
-import { userService } from '../users/user.service';
-import { seriesService } from '../series/series.service';
-import { getCleanedResponse } from '../_helpers/testHelpers';
-import { connectOptions } from '../_helpers/connectOptions';
-import { Company, Creator, Book } from '../../lib/interfaces';
-import {
-    duplicateCompany,
-    companyNotFound,
-    companyNameIsRequired
-} from '../../lib/messages/company.errorMessages';
-import { companyService } from '../companies/company.service';
-import { bookService } from '../books/book.service';
-import { ICompany } from '../companies/company.interface';
-import {
-    firstNameIsRequired,
-    creatorNotFound
-} from '../../lib/messages/creator.errorMessages';
-import { creatorService } from '../creators/creator.service';
-import { bookTypes } from '../../lib/formats';
-import {
     bookNotFound,
     authorIsRequired,
     languageIsRequired,
@@ -53,6 +57,13 @@ import {
     digitalRequired,
     publisherRequired
 } from '../../lib/messages/item.errorMessages';
+import {
+    discNotFound,
+    formatIsRequired,
+    invalidFormat,
+    mustBePostive,
+    discLanguageIsRequired
+} from '../../lib/messages/disc.errorMessages';
 
 const testUser = {
     username: 'test',
@@ -1927,7 +1938,7 @@ describe('Integration Tests', () => {
                     .put(`/books/${id}`)
                     .set('Authorization', 'Bearer ' + token)
                     .send({ data: expectedUpdate });
-                //expect(putResponse.status).toEqual(200);
+                expect(putResponse.status).toEqual(200);
                 const cleanedResponse = getCleanedResponse(putResponse.body);
                 expect(cleanedResponse).toEqual(expectedUpdate);
             });
@@ -1954,6 +1965,373 @@ describe('Integration Tests', () => {
                 // Expect book to no longer be in DB
                 const getByIdResponse = await request(app)
                     .get(`/books/${id}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getByIdResponse.status).toEqual(404);
+                expect(getByIdResponse.error).toBeDefined();
+            });
+        });
+    });
+
+    describe('Disc Service Calls [Service -> Model -> DB]', () => {
+        beforeAll(async () => {
+            await connect([connectOptions.dropDiscs]);
+        });
+        afterAll(async () => {
+            await disconnect();
+        });
+
+        const item1 = mongoose.Types.ObjectId().toHexString();
+        const item2 = mongoose.Types.ObjectId().toHexString();
+        const testDisc: Disc = {
+            title: 'test',
+            checkedOut: true,
+            checkedOutBy: item1,
+            physical: true,
+            digital: true,
+            series: item2,
+            publisher: item1,
+            listPrice: '$616.00',
+            image: 'http://www.imagehost.com',
+            location: 'test',
+            format: [discFormats[0], discFormats[1]],
+            languages: ['English', 'Test'],
+            subtitles: ['English', 'Test'],
+            volume: 3,
+            studio: item2,
+            isCollection: false
+        };
+
+        describe('Get Method | Empty DB', () => {
+            it('Returns an empty array', async () => {
+                try {
+                    const books = await bookService.getAll();
+                    expect(books).toEqual([]);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+        });
+
+        describe('Create Method', () => {
+            it('Adds a disc to the database', async () => {
+                try {
+                    const disc: Disc = await discService.create(testDisc);
+                    const cleanedResponse = getCleanedResponse(disc);
+                    expect(cleanedResponse).toEqual(testDisc);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+        });
+
+        describe('Get By Id Method', () => {
+            it('Retrives a specific disc from the database', async () => {
+                try {
+                    const discList = await discService.getAll();
+                    const expectedDisc = discList[0];
+                    const disc = await discService.getById(expectedDisc._id);
+                    expect(disc!._id).toEqual(expectedDisc._id);
+                    const cleanedResponse = getCleanedResponse(disc);
+                    const cleanedExpectation = getCleanedResponse(expectedDisc);
+                    expect(cleanedResponse).toEqual(cleanedExpectation);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+
+            it('Returns an error if disc is not found', async () => {
+                try {
+                    const fakeId = mongoose.Types.ObjectId().toHexString();
+                    await bookService.getById(fakeId);
+                } catch (error) {
+                    expect(error).toBeDefined();
+                    expect(error.message).toEqual(Error(discNotFound));
+                }
+            });
+        });
+
+        describe('Update Method', () => {
+            it('Updates a specific disc', async () => {
+                try {
+                    const discList = await discService.getAll();
+                    const disc: Disc = getCleanedResponse(discList[0]);
+                    const updatedDisc = {
+                        ...disc,
+                        checkedOut: !disc.checkedOut
+                    };
+                    await discService.update(discList[0]._id, updatedDisc);
+                    const actualUpdate = await discService.getById(
+                        discList[0]._id
+                    );
+                    expect(actualUpdate!._id).toEqual(discList[0]._id);
+                    const cleanedResponse = getCleanedResponse(actualUpdate);
+                    expect(cleanedResponse).toEqual(updatedDisc);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+
+            it('Returns an error if disc not found', async () => {
+                try {
+                    const fakeId = mongoose.Types.ObjectId().toHexString();
+                    await discService.update(fakeId, testDisc);
+                } catch (error) {
+                    expect(error).toBeDefined();
+                    expect(error.message).toEqual(discNotFound);
+                }
+            });
+        });
+
+        describe('Delete Method', () => {
+            it('Deletes a specified disc from the database', async () => {
+                try {
+                    const discList = await discService.getAll();
+                    const id = discList[0]._id;
+                    await discService.delete(id);
+                    const actualDisc = await discService.getById(id);
+                    expect(actualDisc).toBeNull();
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+        });
+    });
+
+    describe('Disc route requests [(Request) -> App -> Controller -> Service -> Model -> DB]', () => {
+        let token: string | null;
+        beforeAll(async () => {
+            await connect([connectOptions.dropDiscs]);
+            token = await login();
+        });
+
+        afterAll(async () => {
+            await disconnect();
+        });
+
+        const item1 = mongoose.Types.ObjectId().toHexString();
+        const item2 = mongoose.Types.ObjectId().toHexString();
+        const testDisc: Disc = {
+            title: 'test',
+            checkedOut: true,
+            checkedOutBy: item1,
+            physical: true,
+            digital: true,
+            series: item2,
+            publisher: item1,
+            listPrice: '$616.00',
+            image: 'http://www.imagehost.com',
+            location: 'test',
+            format: [discFormats[0], discFormats[1]],
+            languages: ['English', 'Test'],
+            subtitles: ['English', 'Test'],
+            volume: 3,
+            studio: item2,
+            isCollection: false
+        };
+
+        describe('(Create) /discs | POST', () => {
+            it('Adds a disc to the database', async () => {
+                const postResponse = await request(app)
+                    .post('/discs')
+                    .send({ data: testDisc })
+                    .set('Authorization', 'Bearer ' + token);
+                const cleanedResponse = getCleanedResponse(postResponse.body);
+                expect(postResponse.status).toEqual(200);
+                expect(cleanedResponse).toEqual(testDisc);
+            });
+
+            it('Rejects when title not included', async () => {
+                const { title, ...discWithoutTitle } = testDisc;
+                const postResponse = await request(app)
+                    .post('/discs')
+                    .send({ data: discWithoutTitle })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: titleIsRequired
+                });
+            });
+            it('Rejects when physical not included', async () => {
+                const { physical, ...discWithoutPhysical } = testDisc;
+                const postResponse = await request(app)
+                    .post('/discs')
+                    .send({ data: discWithoutPhysical })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: physicalRequired
+                });
+            });
+            it('Rejects when digital not included', async () => {
+                const { digital, ...discWithoutDigital } = testDisc;
+                const postResponse = await request(app)
+                    .post('/discs')
+                    .send({ data: discWithoutDigital })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: digitalRequired
+                });
+            });
+            it('Rejects when publisher not included', async () => {
+                const { publisher, ...discWithoutPublisher } = testDisc;
+                const postResponse = await request(app)
+                    .post('/discs')
+                    .send({ data: discWithoutPublisher })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: publisherRequired
+                });
+            });
+            it('Rejects when format not included', async () => {
+                const { format, ...discWithoutFormat } = testDisc;
+                const postResponse = await request(app)
+                    .post('/discs')
+                    .send({ data: discWithoutFormat })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: formatIsRequired
+                });
+            });
+            it('Rejects when format is invalid', async () => {
+                const discWithInvalidFormat = {
+                    ...testDisc,
+                    format: ['test']
+                };
+                const postResponse = await request(app)
+                    .post('/discs')
+                    .send({ data: discWithInvalidFormat })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: invalidFormat
+                });
+            });
+            it('Rejects when languages not included', async () => {
+                const { languages, ...discWithoutLanguages } = testDisc;
+                const postResponse = await request(app)
+                    .post('/discs')
+                    .send({ data: discWithoutLanguages })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: discLanguageIsRequired
+                });
+            });
+            it('Rejects when volume is invalid', async () => {
+                const discWithInvalidVolume = {
+                    ...testDisc,
+                    volume: -1
+                };
+                const postResponse = await request(app)
+                    .post('/discs')
+                    .send({ data: discWithInvalidVolume })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: mustBePostive
+                });
+            });
+        });
+
+        describe('(Get All) /discs | GET', () => {
+            it('Returns a full list of discs', async () => {
+                const getResponse = await request(app)
+                    .get('/discs')
+                    .set('Authorization', 'Bearer ' + token);
+                const cleanedResponse = getCleanedResponse(getResponse.body);
+                const expectedResponse = [testDisc];
+                expect(cleanedResponse).toEqual(expectedResponse);
+            });
+        });
+
+        describe('(Get By Id) /discs/:id | GET', () => {
+            it('Successfully retrieves a disc by id', async () => {
+                const getResponse = await request(app)
+                    .get('/discs')
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getResponse.status).toEqual(200);
+                expect(getResponse.body.length).toEqual(1);
+                expect(getResponse.body[0]._id).toBeDefined();
+                const id = getResponse.body[0]._id;
+                const expectedDisc = getResponse.body[0];
+
+                const getByIdResponse = await request(app)
+                    .get(`/discs/${id}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getByIdResponse.status).toEqual(200);
+                expect(getByIdResponse.body).toEqual(expectedDisc);
+            });
+
+            it('Returns an error if disc not found', async () => {
+                const randomId: string = mongoose.Types.ObjectId().toHexString();
+                const getResponse = await request(app)
+                    .get(`/discs/${randomId}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getResponse.status).toEqual(404);
+                expect(getResponse.error).toBeDefined();
+            });
+        });
+
+        describe('(Update) /discs/:id | PUT', () => {
+            let id: string;
+            let expectedDisc: any;
+
+            beforeAll(async () => {
+                const getResponse = await request(app)
+                    .get('/discs')
+                    .set('Authorization', 'Bearer ' + token);
+                expectedDisc = getCleanedResponse(getResponse.body[0]);
+                id = getResponse.body[0]._id;
+            });
+
+            it('Successfully updates the selected book', async () => {
+                const expectedUpdate = {
+                    ...expectedDisc,
+                    checkedOut: !expectedDisc.checkedOut
+                };
+
+                const putResponse = await request(app)
+                    .put(`/discs/${id}`)
+                    .set('Authorization', 'Bearer ' + token)
+                    .send({ data: expectedUpdate });
+                expect(putResponse.status).toEqual(200);
+                const cleanedResponse = getCleanedResponse(putResponse.body);
+                expect(cleanedResponse).toEqual(expectedUpdate);
+            });
+        });
+
+        describe('(Delete) /discs/:id | DELETE', () => {
+            it('Successfully deletes the disc with selected id', async () => {
+                // Get id from first disc returned
+                const getResponse = await request(app)
+                    .get('/discs')
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getResponse.status).toEqual(200);
+                expect(getResponse.body.length).toEqual(1);
+                expect(getResponse.body[0]._id).toBeDefined();
+                const id = getResponse.body[0]._id;
+
+                // Use id to delete disc
+                const deleteResponse = await request(app)
+                    .delete(`/discs/${id}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(deleteResponse.status).toEqual(200);
+                expect(deleteResponse.body).toEqual({});
+
+                // Expect disc to no longer by in DB
+                const getByIdResponse = await request(app)
+                    .get(`/discs/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getByIdResponse.status).toEqual(404);
                 expect(getByIdResponse.error).toBeDefined();
