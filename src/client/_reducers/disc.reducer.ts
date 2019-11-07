@@ -1,0 +1,74 @@
+import { DiscState, IAction } from '../_interfaces';
+import { discConstants } from '../_constants';
+import { normalize } from '../_helpers/normalize';
+
+export const initialState: DiscState = {
+    allIds: [],
+    byId: {},
+    selectedDisc: null,
+    loading: false,
+    error: undefined
+};
+
+export const discs = (state = initialState, action: IAction) => {
+    switch (action.type) {
+        case discConstants.CREATE_REQUEST:
+        case discConstants.GET_REQUEST:
+        case discConstants.GET_BY_ID_REQUEST:
+        case discConstants.UPDATE_REQUEST:
+        case discConstants.DELETE_REQUEST:
+            return {
+                ...state,
+                loading: true
+            } as DiscState;
+        case discConstants.CREATE_FAILURE:
+        case discConstants.GET_FAILURE:
+        case discConstants.GET_BY_ID_FAILURE:
+        case discConstants.UPDATE_FAILURE:
+        case discConstants.DELETE_FAILURE:
+            return {
+                ...state,
+                error: action.error
+            } as DiscState;
+        case discConstants.CREATE_SUCCESS:
+            const { _id: id, ...payloadWithoutId } = action.payload;
+            return {
+                ...initialState,
+                allIds: [...state.allIds, id],
+                byId: { ...state.byId, [id]: payloadWithoutId },
+                loading: false
+            } as DiscState;
+        case discConstants.GET_SUCCESS:
+            return {
+                ...initialState,
+                allIds: action.payload.map((item: any) => item._id),
+                byId: normalize(action.payload),
+                loading: false
+            } as DiscState;
+        case discConstants.GET_BY_ID_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                selectedDisc: action.payload._id
+            } as DiscState;
+        case discConstants.UPDATE_SUCCESS:
+            const { _id, ...updatedItem } = action.payload;
+            return {
+                ...state,
+                byId: { ...state.byId, [_id]: updatedItem },
+                loading: false
+            } as DiscState;
+        case discConstants.DELETE_SUCCESS:
+            const deletedId = action.payload;
+            const { [deletedId]: deletedDisc, ...remainingDiscs } = state.byId;
+            const remainingIds = state.allIds.filter(id => id !== deletedId);
+            return {
+                ...state,
+                byId: remainingDiscs,
+                allIds: remainingIds,
+                loading: false
+            };
+        default:
+            return state;
+    }
+};

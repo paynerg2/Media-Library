@@ -5,6 +5,7 @@ import { series } from './series.reducer';
 import { companies } from './company.reducer';
 import { creators } from './creator.reducer';
 import { books } from './book.reducer';
+import { discs } from './disc.reducer';
 import { appActions } from '../_actions';
 
 const appReducer = combineReducers({
@@ -13,7 +14,8 @@ const appReducer = combineReducers({
     series,
     companies,
     creators,
-    books
+    books,
+    discs
 });
 
 export type RootState = ReturnType<typeof appReducer>;

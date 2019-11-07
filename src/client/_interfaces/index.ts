@@ -9,6 +9,7 @@ export * from './seriesState.interface';
 export * from './companyState.interface';
 export * from './creatorState.interface';
 export * from './bookState.interface';
+export * from './discState.interface';
 
 // Other
 export * from './actionTypes';
