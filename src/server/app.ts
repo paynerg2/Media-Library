@@ -31,6 +31,7 @@ app.use('/series', require('./series/series.controller'));
 app.use('/companies', require('./companies/company.controller'));
 app.use('/creators', require('./creators/creator.controller'));
 app.use('/books', require('./books/book.controller'));
+app.use('/discs', require('./discs/disc.controller'));
 
 // Global Error Handler
 app.use(errorHandler);

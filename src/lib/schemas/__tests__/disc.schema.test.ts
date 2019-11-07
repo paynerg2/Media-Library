@@ -1,7 +1,7 @@
 import { discSchema } from '../';
 import {
     formatIsRequired,
-    languageIsRequired
+    discLanguageIsRequired
 } from '../../messages/disc.errorMessages';
 import { validate } from '@babel/types';
 
@@ -96,7 +96,7 @@ describe('Disc Schema', () => {
         const error2 = await validateDisc(testDisc2);
         expect(error.path).toEqual('languages');
         expect(error2.path).toEqual('languages');
-        expect(error.message).toEqual(languageIsRequired);
-        expect(error2.message).toEqual(languageIsRequired);
+        expect(error.message).toEqual(discLanguageIsRequired);
+        expect(error2.message).toEqual(discLanguageIsRequired);
     });
 });
