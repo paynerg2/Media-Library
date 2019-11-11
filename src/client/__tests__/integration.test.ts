@@ -6,9 +6,9 @@ import { initialState as seriesDefaultState } from '../_reducers/series.reducer'
 import { initialState as companyDefaultState } from '../_reducers/company.reducer';
 import { initialState as creatorDefaultState } from '../_reducers/creator.reducer';
 import {
-    initialState as bookDefaultState,
-    books
-} from '../_reducers/book.reducer';
+    initialState as discDefaultState,
+} from '../_reducers/disc.reducer';
+import { initialState as bookDefaultState } from '../_reducers/book.reducer';
 import {
     userActions,
     authenticationActions,
@@ -16,7 +16,8 @@ import {
     appActions,
     companyActions,
     creatorActions,
-    bookActions
+    bookActions,
+    discActions
 } from '../_actions';
 import {
     userService,
@@ -24,7 +25,8 @@ import {
     seriesService,
     companyService,
     creatorService,
-    bookService
+    bookService,
+    discService
 } from '../_services';
 import {
     User,
@@ -33,11 +35,12 @@ import {
     SeriesState,
     CompanyState,
     CreatorState,
-    BookState
+    BookState,
+    DiscState
 } from '../_interfaces';
 import { MongoId } from '../_interfaces/mongoId.interface';
-import { Series, Company, Creator, Book } from '../../lib/interfaces';
-import { bookTypes } from '../../lib/formats';
+import { Series, Company, Creator, Book, Disc } from '../../lib/interfaces';
+import { bookTypes, discFormats } from '../../lib/formats';
 
 describe('Client-side integration tests', () => {
     it('Initializes store with expected default values', () => {
@@ -47,7 +50,8 @@ describe('Client-side integration tests', () => {
             series: seriesDefaultState,
             companies: companyDefaultState,
             creators: creatorDefaultState,
-            books: bookDefaultState
+            books: bookDefaultState,
+            discs: discDefaultState
         };
         const state = store.getState();
         expect(state).toEqual(expectedState);
@@ -1696,6 +1700,407 @@ describe('Client-side integration tests', () => {
                         error: Error(testErrorMessage)
                     };
                     expect(books).toEqual(expectedState);
+                });
+            });
+        });
+    });
+
+    describe('Disc redux routes [(Dispatch) -> Action Creator -> Service -> Reducer -> Store Update]', () => {
+        const clearDiscState = () => {
+            store.dispatch<any>(appActions.reset);
+        };
+        const item1 = mongoose.Types.ObjectId().toHexString();
+        const item2 = mongoose.Types.ObjectId().toHexString();
+        const testDisc: Disc = {
+            title: 'test',
+            checkedOut: true,
+            checkedOutBy: item1,
+            physical: true,
+            digital: true,
+            series: item2,
+            publisher: item1,
+            listPrice: '$616.00',
+            image: 'http://www.imagehost.com',
+            location: 'test',
+            format: [discFormats[0], discFormats[1]],
+            languages: ['English', 'Test'],
+            subtitles: ['English', 'Test'],
+            volume: 3,
+            studio: item2,
+            isCollection: false
+        };
+        const testId = mongoose.Types.ObjectId().toHexString();
+        const testItem: Disc & MongoId = {
+            ...testDisc,
+            _id: testId
+        };
+        const testErrorMessage = 'test';
+
+        describe('Action | Create', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    discService.create = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    store.dispatch<any>(discActions.create(testDisc));
+                });
+
+                afterAll(() => {
+                    clearDiscState();
+                });
+
+                it('Calls the create() service method with expected parameters', () => {
+                    expect(discService.create).toHaveBeenCalledWith(testDisc);
+                });
+
+                it('Adds disc to state correctly', () => {
+                    const { discs } = store.getState();
+                    const expectedState: DiscState = {
+                        ...discDefaultState,
+                        allIds: [testItem._id],
+                        byId: {
+                            [testItem._id]: testDisc
+                        }
+                    };
+                    expect(discs).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies,
+                        creators,
+                        books
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                    expect(creators).toEqual(creatorDefaultState);
+                    expect(books).toEqual(bookDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    discService.create = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(discActions.create(testDisc));
+                });
+
+                afterAll(() => {
+                    clearDiscState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { discs } = store.getState();
+                    const expectedState: DiscState = {
+                        ...discDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(discs).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Get By ID', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    discService.getById = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    store.dispatch<any>(discActions.getById(testId));
+                });
+
+                afterAll(() => {
+                    clearDiscState();
+                });
+
+                it('Calls the getById() service method with expected parameters', () => {
+                    expect(discService.getById).toHaveBeenCalledWith(testId);
+                });
+
+                it('Adds the response to state correctly', () => {
+                    const { discs } = store.getState();
+                    const expectedState: DiscState = {
+                        ...discDefaultState,
+                        selectedDisc: testItem._id
+                    };
+                    expect(discs).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies,
+                        creators,
+                        books
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                    expect(creators).toEqual(creatorDefaultState);
+                    expect(books).toEqual(bookDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    discService.getById = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(discActions.getById(testId));
+                });
+
+                afterAll(() => {
+                    clearDiscState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { discs } = store.getState();
+                    const expectedState: DiscState = {
+                        ...discDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(discs).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Get All', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    discService.getAll = jest.fn(() =>
+                        Promise.resolve([testItem])
+                    );
+                    store.dispatch<any>(discActions.getAll());
+                });
+
+                afterAll(() => {
+                    clearDiscState();
+                });
+
+                it('Calls the getAll() service method', () => {
+                    expect(discService.getAll).toHaveBeenCalled();
+                });
+
+                it('Adds the response to state correctly', () => {
+                    const { discs } = store.getState();
+                    const expectedState: DiscState = {
+                        ...discDefaultState,
+                        allIds: [testItem._id],
+                        byId: {
+                            [testItem._id]: testDisc
+                        }
+                    };
+                    expect(discs).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies,
+                        creators,
+                        books
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                    expect(creators).toEqual(creatorDefaultState);
+                    expect(books).toEqual(bookDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    discService.getAll = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(discActions.getAll());
+                });
+
+                afterAll(() => {
+                    clearDiscState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { discs } = store.getState();
+                    const expectedState: DiscState = {
+                        ...discDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(discs).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Update', () => {
+            const testUpdate: Disc = {
+                ...testItem,
+                checkedOut: !testItem.checkedOut
+            };
+
+            describe('On successful request', () => {
+                const expectedUpdate: Disc = {
+                    ...testDisc,
+                    checkedOut: !testDisc.checkedOut
+                };
+
+                beforeAll(() => {
+                    discService.create = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    discService.update = jest.fn(() =>
+                        Promise.resolve(testUpdate)
+                    );
+                    store.dispatch<any>(discActions.create(testDisc));
+                    store.dispatch<any>(discActions.update(testId, testUpdate));
+                });
+
+                afterAll(() => {
+                    clearDiscState();
+                });
+
+                it('Calls the update() service method with expected parameters', () => {
+                    expect(discService.update).toHaveBeenCalledWith(
+                        testId,
+                        testUpdate
+                    );
+                });
+
+                it('Updates the state correctly', () => {
+                    const { discs } = store.getState();
+                    const expectedState: DiscState = {
+                        ...discDefaultState,
+                        allIds: [testItem._id],
+                        byId: {
+                            [testItem._id]: expectedUpdate
+                        }
+                    };
+                    expect(discs).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies,
+                        creators,
+                        books
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                    expect(creators).toEqual(creatorDefaultState);
+                    expect(books).toEqual(bookDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    discService.update = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(discActions.update(testId, testDisc));
+                });
+
+                afterAll(() => {
+                    clearDiscState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { discs } = store.getState();
+                    const expectedState: DiscState = {
+                        ...discDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(discs).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Delete', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    discService.create = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    discService.delete = jest.fn(() => Promise.resolve());
+                    store.dispatch<any>(discActions.create(testItem));
+                    store.dispatch<any>(discActions.delete(testItem._id));
+                });
+
+                afterAll(() => {
+                    clearDiscState();
+                });
+
+                it('Calls the delete() service method with expected parameters', () => {
+                    expect(discService.delete).toHaveBeenCalledWith(
+                        testItem._id
+                    );
+                });
+
+                it('Removes the deleted item from state correctly', () => {
+                    const { discs } = store.getState();
+                    const expectedState: DiscState = {
+                        ...discDefaultState
+                    };
+                    expect(discs).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies,
+                        creators,
+                        books
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                    expect(creators).toEqual(creatorDefaultState);
+                    expect(books).toEqual(bookDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    discService.delete = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(discActions.delete(testId));
+                });
+
+                afterAll(() => {
+                    clearDiscState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { discs } = store.getState();
+                    const expectedState: DiscState = {
+                        ...discDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(discs).toEqual(expectedState);
                 });
             });
         });
