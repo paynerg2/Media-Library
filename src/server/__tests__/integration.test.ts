@@ -6,7 +6,7 @@ import { disconnect } from '../_helpers/disconnect';
 import { app } from '../app';
 import { getCleanedResponse } from '../_helpers/testHelpers';
 import { connectOptions } from '../_helpers/connectOptions';
-import { Company, Creator, Book, Disc } from '../../lib/interfaces';
+import { Company, Creator, Book, Disc, Game } from '../../lib/interfaces';
 
 import { userService } from '../users/user.service';
 import { seriesService } from '../series/series.service';
@@ -14,6 +14,7 @@ import { companyService } from '../companies/company.service';
 import { bookService } from '../books/book.service';
 import { discService } from '../discs/disc.service';
 import { creatorService } from '../creators/creator.service';
+import { gameService } from '../games/game.service';
 import { bookTypes, discFormats } from '../../lib/formats';
 
 import {
@@ -64,6 +65,11 @@ import {
     mustBePostive,
     discLanguageIsRequired
 } from '../../lib/messages/disc.errorMessages';
+import {
+    gameNotFound,
+    platformIsRequired,
+    multiplayerMustBeIndicated
+} from '../../lib/messages/game.errorMessages';
 
 const testUser = {
     username: 'test',
@@ -2332,6 +2338,339 @@ describe('Integration Tests', () => {
                 // Expect disc to no longer by in DB
                 const getByIdResponse = await request(app)
                     .get(`/discs/${id}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getByIdResponse.status).toEqual(404);
+                expect(getByIdResponse.error).toBeDefined();
+            });
+        });
+    });
+
+    describe('Game Service Calls [Service -> Model -> DB]', () => {
+        beforeAll(async () => {
+            await connect([connectOptions.dropGames]);
+        });
+        afterAll(async () => {
+            await disconnect();
+        });
+
+        const item1 = mongoose.Types.ObjectId().toHexString();
+        const item2 = mongoose.Types.ObjectId().toHexString();
+        const testGame: Game = {
+            title: 'test',
+            checkedOut: true,
+            checkedOutBy: item1,
+            physical: true,
+            digital: true,
+            series: item2,
+            publisher: item1,
+            listPrice: '$616.00',
+            image: 'http://www.imagehost.com',
+            location: 'test',
+            platforms: [item1, item2],
+            languages: ['English', 'Test'],
+            multiplayer: true,
+            genre: 'test'
+        };
+
+        describe('Get Method | Empty DB', () => {
+            it('Returns an empty array', async () => {
+                try {
+                    const games = await gameService.getAll();
+                    expect(games).toEqual([]);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+        });
+
+        describe('Create Method', () => {
+            it('Adds a game to the database', async () => {
+                try {
+                    const game: Game = await gameService.create(testGame);
+                    const cleanedResponse = getCleanedResponse(game);
+                    expect(cleanedResponse).toEqual(testGame);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+        });
+
+        describe('Get By Id Method', () => {
+            it('Retrives a specific game from the database', async () => {
+                try {
+                    const gameList = await gameService.getAll();
+                    const expectedGame = gameList[0];
+                    const game = await gameService.getById(expectedGame._id);
+                    expect(game!._id).toEqual(expectedGame._id);
+                    const cleanedResponse = getCleanedResponse(game);
+                    const cleanedExpectation = getCleanedResponse(expectedGame);
+                    expect(cleanedResponse).toEqual(cleanedExpectation);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+
+            it('Returns an error if game is not found', async () => {
+                try {
+                    const fakeId = mongoose.Types.ObjectId().toHexString();
+                    await gameService.getById(fakeId);
+                } catch (error) {
+                    expect(error).toBeDefined();
+                    expect(error.message).toEqual(Error(gameNotFound));
+                }
+            });
+        });
+
+        describe('Update Method', () => {
+            it('Updates a specific game', async () => {
+                try {
+                    const gameList = await gameService.getAll();
+                    const game: Game = getCleanedResponse(gameList[0]);
+                    const updatedGame = {
+                        ...game,
+                        checkedOut: !game.checkedOut
+                    };
+                    await gameService.update(gameList[0]._id, updatedGame);
+                    const actualUpdate = await gameService.getById(
+                        gameList[0]._id
+                    );
+                    expect(actualUpdate!._id).toEqual(gameList[0]._id);
+                    const cleanedResponse = getCleanedResponse(actualUpdate);
+                    expect(cleanedResponse).toEqual(updatedGame);
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+
+            it('Returns an error if game not found', async () => {
+                try {
+                    const fakeId = mongoose.Types.ObjectId().toHexString();
+                    await gameService.update(fakeId, testGame);
+                } catch (error) {
+                    expect(error).toBeDefined();
+                    expect(error.message).toEqual(gameNotFound);
+                }
+            });
+        });
+
+        describe('Delete Method', () => {
+            it('Deletes a specific game from the database', async () => {
+                try {
+                    const gameList = await gameService.getAll();
+                    const id = gameList[0]._id;
+                    await gameService.delete(id);
+                    const actualGame = await gameService.getById(id);
+                    expect(actualGame).toBeNull();
+                } catch (error) {
+                    expect(error).toBeUndefined();
+                }
+            });
+        });
+    });
+
+    describe('Game route requests [(Request) -> App -> Controller -> Service -> Model -> DB]', () => {
+        let token: string | null;
+        beforeAll(async () => {
+            await connect([connectOptions.dropGames]);
+            token = await login();
+        });
+        afterAll(async () => {
+            await disconnect();
+        });
+
+        const item1 = mongoose.Types.ObjectId().toHexString();
+        const item2 = mongoose.Types.ObjectId().toHexString();
+        const testGame: Game = {
+            title: 'test',
+            checkedOut: true,
+            checkedOutBy: item1,
+            physical: true,
+            digital: true,
+            series: item2,
+            publisher: item1,
+            listPrice: '$616.00',
+            image: 'http://www.imagehost.com',
+            location: 'test',
+            platforms: [item1, item2],
+            languages: ['English', 'Test'],
+            multiplayer: true,
+            genre: 'test'
+        };
+
+        describe('(Create) /games | POST', () => {
+            it('Adds a game to the database', async () => {
+                const postResponse = await request(app)
+                    .post('/games')
+                    .send({ data: testGame })
+                    .set('Authorization', 'Bearer ' + token);
+                const cleanedResponse = getCleanedResponse(postResponse.body);
+                expect(postResponse.status).toEqual(200);
+                expect(cleanedResponse).toEqual(testGame);
+            });
+
+            it('Rejects when title is not included', async () => {
+                const { title, ...gameWithoutTitle } = testGame;
+                const postResponse = await request(app)
+                    .post('/games')
+                    .send({ data: gameWithoutTitle })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: titleIsRequired
+                });
+            });
+            it('Rejects when physical is not included', async () => {
+                const { physical, ...gameWithoutPhysical } = testGame;
+                const postResponse = await request(app)
+                    .post('/games')
+                    .send({ data: gameWithoutPhysical })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: physicalRequired
+                });
+            });
+            it('Rejects when digital is not included', async () => {
+                const { digital, ...gameWithoutDigital } = testGame;
+                const postResponse = await request(app)
+                    .post('/games')
+                    .send({ data: gameWithoutDigital })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: digitalRequired
+                });
+            });
+            it('Rejects when publisher is not included', async () => {
+                const { publisher, ...gameWithoutPublisher } = testGame;
+                const postResponse = await request(app)
+                    .post('/games')
+                    .send({ data: gameWithoutPublisher })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: publisherRequired
+                });
+            });
+            it('Rejects when platforms is not included', async () => {
+                const { platforms, ...gameWithoutPlatforms } = testGame;
+                const postResponse = await request(app)
+                    .post('/games')
+                    .send({ data: gameWithoutPlatforms })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: platformIsRequired
+                });
+            });
+
+            it('Rejects when multiplayer is not included', async () => {
+                const { multiplayer, ...gameWithoutMultiplayer } = testGame;
+                const postResponse = await request(app)
+                    .post('/games')
+                    .send({ data: gameWithoutMultiplayer })
+                    .set('Authorization', 'Bearer ' + token);
+                expect(postResponse.status).toEqual(400);
+                expect(postResponse.error).toBeDefined();
+                expect(postResponse.body).toEqual({
+                    message: multiplayerMustBeIndicated
+                });
+            });
+        });
+
+        describe('(Get All) /games | GET', () => {
+            it('Returns a full list of games', async () => {
+                const getResponse = await request(app)
+                    .get('/games')
+                    .set('Authorization', 'Bearer ' + token);
+                const cleanedResponse = getCleanedResponse(getResponse.body);
+                const expectedResponse = [testGame];
+                expect(cleanedResponse).toEqual(expectedResponse);
+            });
+        });
+
+        describe('(Get By Id) /games/:id | GET', () => {
+            it('Successfully retrieves a game by id', async () => {
+                const getResponse = await request(app)
+                    .get('/games')
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getResponse.status).toEqual(200);
+                expect(getResponse.body.length).toEqual(1);
+                expect(getResponse.body[0]._id).toBeDefined();
+                const id = getResponse.body[0]._id;
+                const expectedDisc = getResponse.body[0];
+
+                const getByIdResponse = await request(app)
+                    .get(`/games/${id}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getByIdResponse.status).toEqual(200);
+                expect(getByIdResponse.body).toEqual(expectedDisc);
+            });
+
+            it('Returns an error if game not found', async () => {
+                const randomId: string = mongoose.Types.ObjectId().toHexString();
+                const getResponse = await request(app)
+                    .get(`/games/${randomId}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getResponse.status).toEqual(404);
+                expect(getResponse.error).toBeDefined();
+            });
+        });
+
+        describe('(Update) /games/:id | PUT', () => {
+            let id: string;
+            let expectedGame: any;
+
+            beforeAll(async () => {
+                const getResponse = await request(app)
+                    .get('/games')
+                    .set('Authorization', 'Bearer ' + token);
+                expectedGame = getCleanedResponse(getResponse.body[0]);
+                id = getResponse.body[0]._id;
+            });
+
+            it('Successfully updates the selected book', async () => {
+                const expectedUpdate = {
+                    ...expectedGame,
+                    checkedOut: !expectedGame.checkedOut
+                };
+
+                const putResponse = await request(app)
+                    .put(`/games/${id}`)
+                    .set('Authorization', 'Bearer ' + token)
+                    .send({ data: expectedUpdate });
+                expect(putResponse.status).toEqual(200);
+                const cleanedResponse = getCleanedResponse(putResponse.body);
+                expect(cleanedResponse).toEqual(expectedUpdate);
+            });
+        });
+
+        describe('(Delete) /games/:id | DELETE', () => {
+            it('Successfully deletes the game with selected id', async () => {
+                // Get id from first game returned
+                const getResponse = await request(app)
+                    .get('/games')
+                    .set('Authorization', 'Bearer ' + token);
+                expect(getResponse.status).toEqual(200);
+                expect(getResponse.body.length).toEqual(1);
+                expect(getResponse.body[0]._id).toBeDefined();
+                const id = getResponse.body[0]._id;
+
+                // Use id to delete game
+                const deleteResponse = await request(app)
+                    .delete(`/games/${id}`)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(deleteResponse.status).toEqual(200);
+                expect(deleteResponse.body).toEqual({});
+
+                // Expect game to no longer by in DB
+                const getByIdResponse = await request(app)
+                    .get(`/games/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getByIdResponse.status).toEqual(404);
                 expect(getByIdResponse.error).toBeDefined();
