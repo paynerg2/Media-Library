@@ -32,6 +32,7 @@ app.use('/companies', require('./companies/company.controller'));
 app.use('/creators', require('./creators/creator.controller'));
 app.use('/books', require('./books/book.controller'));
 app.use('/discs', require('./discs/disc.controller'));
+app.use('/games', require('./games/game.controller'));
 
 // Global Error Handler
 app.use(errorHandler);
