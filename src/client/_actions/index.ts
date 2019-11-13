@@ -6,3 +6,4 @@ export * from './company.actions';
 export * from './creator.actions';
 export * from './book.actions';
 export * from './disc.actions';
+export * from './game.actions';
