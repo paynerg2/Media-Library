@@ -5,10 +5,9 @@ import { initialState as authDefaultState } from '../_reducers/authentication.re
 import { initialState as seriesDefaultState } from '../_reducers/series.reducer';
 import { initialState as companyDefaultState } from '../_reducers/company.reducer';
 import { initialState as creatorDefaultState } from '../_reducers/creator.reducer';
-import {
-    initialState as discDefaultState,
-} from '../_reducers/disc.reducer';
+import { initialState as discDefaultState } from '../_reducers/disc.reducer';
 import { initialState as bookDefaultState } from '../_reducers/book.reducer';
+import { initialState as gameDefaultState } from '../_reducers/game.reducer';
 import {
     userActions,
     authenticationActions,
@@ -17,7 +16,8 @@ import {
     companyActions,
     creatorActions,
     bookActions,
-    discActions
+    discActions,
+    gameActions
 } from '../_actions';
 import {
     userService,
@@ -26,7 +26,8 @@ import {
     companyService,
     creatorService,
     bookService,
-    discService
+    discService,
+    gameService
 } from '../_services';
 import {
     User,
@@ -36,10 +37,18 @@ import {
     CompanyState,
     CreatorState,
     BookState,
-    DiscState
+    DiscState,
+    GameState
 } from '../_interfaces';
 import { MongoId } from '../_interfaces/mongoId.interface';
-import { Series, Company, Creator, Book, Disc } from '../../lib/interfaces';
+import {
+    Series,
+    Company,
+    Creator,
+    Book,
+    Disc,
+    Game
+} from '../../lib/interfaces';
 import { bookTypes, discFormats } from '../../lib/formats';
 
 describe('Client-side integration tests', () => {
@@ -51,7 +60,8 @@ describe('Client-side integration tests', () => {
             companies: companyDefaultState,
             creators: creatorDefaultState,
             books: bookDefaultState,
-            discs: discDefaultState
+            discs: discDefaultState,
+            games: gameDefaultState
         };
         const state = store.getState();
         expect(state).toEqual(expectedState);
@@ -2101,6 +2111,415 @@ describe('Client-side integration tests', () => {
                         error: Error(testErrorMessage)
                     };
                     expect(discs).toEqual(expectedState);
+                });
+            });
+        });
+    });
+
+    describe('Game redux routes [(Dispatch) -> Action Creator -> Service -> Reducer -> Store Update]', () => {
+        const clearGameState = () => {
+            store.dispatch<any>(appActions.reset);
+        };
+        const item1 = mongoose.Types.ObjectId().toHexString();
+        const item2 = mongoose.Types.ObjectId().toHexString();
+        const testGame: Game = {
+            title: 'test',
+            checkedOut: true,
+            checkedOutBy: item1,
+            physical: true,
+            digital: true,
+            series: item2,
+            publisher: item1,
+            listPrice: '$616.00',
+            image: 'http://www.imagehost.com',
+            location: 'test',
+            platforms: [item1, item2],
+            languages: ['English', 'Test'],
+            multiplayer: true,
+            genre: 'test'
+        };
+        const testId = mongoose.Types.ObjectId().toHexString();
+        const testItem: Game & MongoId = {
+            ...testGame,
+            _id: testId
+        };
+        const testErrorMessage = 'test';
+
+        describe('Action | Create', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    gameService.create = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    store.dispatch<any>(gameActions.create(testGame));
+                });
+
+                afterAll(() => {
+                    clearGameState();
+                });
+
+                it('Calls the create() service method with expected parameters', () => {
+                    expect(gameService.create).toHaveBeenCalledWith(testGame);
+                });
+
+                it('Adds disc to state correctly', () => {
+                    const { games } = store.getState();
+                    const expectedState: GameState = {
+                        ...gameDefaultState,
+                        allIds: [testItem._id],
+                        byId: {
+                            [testItem._id]: testGame
+                        }
+                    };
+                    expect(games).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies,
+                        creators,
+                        books,
+                        discs
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                    expect(creators).toEqual(creatorDefaultState);
+                    expect(books).toEqual(bookDefaultState);
+                    expect(discs).toEqual(discDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    gameService.create = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(gameActions.create(testGame));
+                });
+
+                afterAll(() => {
+                    clearGameState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { games } = store.getState();
+                    const expectedState: GameState = {
+                        ...gameDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(games).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Get By ID', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    gameService.getById = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    store.dispatch<any>(gameActions.getById(testId));
+                });
+
+                afterAll(() => {
+                    clearGameState();
+                });
+
+                it('Calls the getById() service method with expected parameters', () => {
+                    expect(gameService.getById).toHaveBeenCalledWith(testId);
+                });
+
+                it('Adds the response to state correctly', () => {
+                    const { games } = store.getState();
+                    const expectedState: GameState = {
+                        ...gameDefaultState,
+                        selectedGame: testItem._id
+                    };
+                    expect(games).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies,
+                        creators,
+                        books,
+                        discs
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                    expect(creators).toEqual(creatorDefaultState);
+                    expect(books).toEqual(bookDefaultState);
+                    expect(discs).toEqual(discDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    gameService.getById = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(gameActions.getById(testId));
+                });
+
+                afterAll(() => {
+                    clearGameState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { games } = store.getState();
+                    const expectedState: GameState = {
+                        ...gameDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(games).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Get All', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    gameService.getAll = jest.fn(() =>
+                        Promise.resolve([testItem])
+                    );
+                    store.dispatch<any>(gameActions.getAll());
+                });
+
+                afterAll(() => {
+                    clearGameState();
+                });
+
+                it('Calls the getAll() service method', () => {
+                    expect(gameService.getAll).toHaveBeenCalled();
+                });
+
+                it('Adds the response to state correctly', () => {
+                    const { games } = store.getState();
+                    const expectedState: GameState = {
+                        ...gameDefaultState,
+                        allIds: [testItem._id],
+                        byId: {
+                            [testItem._id]: testGame
+                        }
+                    };
+                    expect(games).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies,
+                        creators,
+                        books,
+                        discs
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                    expect(creators).toEqual(creatorDefaultState);
+                    expect(books).toEqual(bookDefaultState);
+                    expect(discs).toEqual(discDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    gameService.getAll = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(gameActions.getAll());
+                });
+
+                afterAll(() => {
+                    clearGameState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { games } = store.getState();
+                    const expectedState: GameState = {
+                        ...gameDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(games).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Update', () => {
+            const testUpdate: Game = {
+                ...testItem,
+                checkedOut: !testItem.checkedOut
+            };
+
+            describe('On successful request', () => {
+                const expectedUpdate: Game = {
+                    ...testGame,
+                    checkedOut: !testGame.checkedOut
+                };
+
+                beforeAll(() => {
+                    gameService.create = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    gameService.update = jest.fn(() =>
+                        Promise.resolve(testUpdate)
+                    );
+                    store.dispatch<any>(gameActions.create(testGame));
+                    store.dispatch<any>(gameActions.update(testId, testUpdate));
+                });
+
+                afterAll(() => {
+                    clearGameState();
+                });
+
+                it('Calls the update() service method with expected parameters', () => {
+                    expect(gameService.update).toHaveBeenCalledWith(
+                        testId,
+                        testUpdate
+                    );
+                });
+
+                it('Updates the state correctly', () => {
+                    const { games } = store.getState();
+                    const expectedState: GameState = {
+                        ...gameDefaultState,
+                        allIds: [testItem._id],
+                        byId: {
+                            [testItem._id]: expectedUpdate
+                        }
+                    };
+                    expect(games).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies,
+                        creators,
+                        books,
+                        discs
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                    expect(creators).toEqual(creatorDefaultState);
+                    expect(books).toEqual(bookDefaultState);
+                    expect(discs).toEqual(discDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    gameService.update = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(gameActions.update(testId, testGame));
+                });
+
+                afterAll(() => {
+                    clearGameState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { games } = store.getState();
+                    const expectedState: GameState = {
+                        ...gameDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(games).toEqual(expectedState);
+                });
+            });
+        });
+
+        describe('Action | Delete', () => {
+            describe('On successful request', () => {
+                beforeAll(() => {
+                    gameService.create = jest.fn(() =>
+                        Promise.resolve(testItem)
+                    );
+                    gameService.delete = jest.fn(() => Promise.resolve());
+                    store.dispatch<any>(gameActions.create(testItem));
+                    store.dispatch<any>(gameActions.delete(testItem._id));
+                });
+
+                afterAll(() => {
+                    clearGameState();
+                });
+
+                it('Calls the delete() service method with expected parameters', () => {
+                    expect(gameService.delete).toHaveBeenCalledWith(
+                        testItem._id
+                    );
+                });
+
+                it('Removes the deleted item from state correctly', () => {
+                    const { games } = store.getState();
+                    const expectedState: GameState = {
+                        ...gameDefaultState
+                    };
+                    expect(games).toEqual(expectedState);
+                });
+
+                it('Has no side-effects on other state', () => {
+                    const {
+                        users,
+                        authentication,
+                        series,
+                        companies,
+                        creators,
+                        books,
+                        discs
+                    } = store.getState();
+                    expect(users).toEqual(userDefaultState);
+                    expect(authentication).toEqual(authDefaultState);
+                    expect(series).toEqual(seriesDefaultState);
+                    expect(companies).toEqual(companyDefaultState);
+                    expect(creators).toEqual(creatorDefaultState);
+                    expect(books).toEqual(bookDefaultState);
+                    expect(discs).toEqual(discDefaultState);
+                });
+            });
+
+            describe('On unsuccessful request', () => {
+                beforeAll(() => {
+                    gameService.delete = jest.fn(() =>
+                        Promise.reject(Error(testErrorMessage))
+                    );
+                    store.dispatch<any>(gameActions.delete(testId));
+                });
+
+                afterAll(() => {
+                    clearGameState();
+                });
+
+                it('Reaches an error state', () => {
+                    const { games } = store.getState();
+                    const expectedState: GameState = {
+                        ...gameDefaultState,
+                        loading: true,
+                        error: Error(testErrorMessage)
+                    };
+                    expect(games).toEqual(expectedState);
                 });
             });
         });
