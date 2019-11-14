@@ -1,10 +1,6 @@
-import { StringTMap } from './stringTMap.interface';
 import { Series } from '../../lib/interfaces/series.interface';
+import { State } from './state.interface';
 
-export interface SeriesState {
-    allIds: String[];
-    byId: StringTMap<Series>;
-    selectedSeries: String | null;
-    loading: Boolean;
-    error?: Error;
+export interface SeriesState extends State<Series> {
+    selectedSeries: string | null;
 }

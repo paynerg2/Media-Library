@@ -1,10 +1,6 @@
-import { StringTMap } from './stringTMap.interface';
 import { Creator } from '../../lib/interfaces/creator.interface';
+import { State } from './state.interface';
 
-export interface CreatorState {
-    allIds: String[];
-    byId: StringTMap<Creator>;
-    selectedCreator: String | null;
-    loading: Boolean;
-    error?: Error;
+export interface CreatorState extends State<Creator> {
+    selectedCreator: string | null;
 }

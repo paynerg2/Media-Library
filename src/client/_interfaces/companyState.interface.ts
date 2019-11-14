@@ -1,10 +1,6 @@
-import { StringTMap } from './stringTMap.interface';
 import { Company } from '../../lib/interfaces';
+import { State } from './state.interface';
 
-export interface CompanyState {
-    allIds: String[];
-    byId: StringTMap<Company>;
-    selectedCompany: String | null;
-    loading: Boolean;
-    error?: Error;
+export interface CompanyState extends State<Company> {
+    selectedCompany: string | null;
 }
