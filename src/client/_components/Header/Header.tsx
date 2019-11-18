@@ -1,12 +1,12 @@
 import React, { Fragment } from 'react';
 import { useSelector } from '../../_helpers/useSelector';
 import { authenticationActions } from '../../_actions';
-import { useDispatch, shallowEqual } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { history } from '../../_helpers/history';
 
 const Header: React.FC = () => {
-    const isLoggedIn = useSelector(state => state.authentication.loggedIn);
-    console.log(`isloggedin: ${isLoggedIn}`);
+    const { loggedIn, user } = useSelector(state => state.authentication);
+    console.log(`isloggedin: ${loggedIn}`);
     const dispatch = useDispatch();
 
     const handleLogout = () => {
@@ -16,11 +16,11 @@ const Header: React.FC = () => {
 
     return (
         <Fragment>
-            <span>Header: {isLoggedIn}</span>
+            <span>Header: {loggedIn}</span>
             <div>
-                {isLoggedIn && (
+                {loggedIn && (
                     <div>
-                        <div>'user is logged in!'</div>
+                        {user && <div>logged in as {user.username}</div>}
                         <button onClick={handleLogout}>Logout</button>
                     </div>
                 )}
