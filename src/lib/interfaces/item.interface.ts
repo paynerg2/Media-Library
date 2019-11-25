@@ -10,3 +10,16 @@ export interface Item {
     location?: string;
     checkedOutBy?: string;
 }
+
+export const defaultItem: Item = {
+    title: '',
+    checkedOut: false,
+    physical: false,
+    digital: false,
+    series: '',
+    publisher: '',
+    listPrice: '',
+    image: '',
+    location: '',
+    checkedOutBy: ''
+};
