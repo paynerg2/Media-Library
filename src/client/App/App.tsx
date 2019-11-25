@@ -7,14 +7,22 @@ import RegistrationPage from '../Views/RegistrationPage/RegistrationPage';
 import LoginPage from '../Views/LoginPage/LoginPage';
 import Header from '../_components/Header/Header';
 import HomePage from '../Views/HomePage/HomePage';
+import NewBookPage from '../Views/NewBookPage/NewBookPage';
 import { useDispatch } from 'react-redux';
-import { seriesActions, companyActions, bookActions } from '../_actions';
+import {
+    seriesActions,
+    companyActions,
+    bookActions,
+    creatorActions
+} from '../_actions';
 import { useSelector } from '../_helpers/useSelector';
 
 export const App: React.FC = () => {
     const { loggedIn } = useSelector(state => state.authentication);
     const dispatch = useDispatch();
     useEffect(() => {
+        dispatch(companyActions.getAll());
+        dispatch(creatorActions.getAll());
         dispatch(seriesActions.getAll());
         dispatch(bookActions.getAll());
     }, [loggedIn]);
@@ -28,6 +36,7 @@ export const App: React.FC = () => {
                 <Route path="/login" component={LoginPage} />
 
                 <PrivateRoute path="/" exact component={HomePage} />
+                <PrivateRoute path="/books/new" exact component={NewBookPage} />
             </Switch>
         </Router>
     );
