@@ -1,4 +1,4 @@
 export interface Series {
-    name: String;
+    name: string;
     items: Array<any>;
 }
