@@ -1,4 +1,5 @@
 import { Item, defaultItem } from './item.interface';
+import { bookTypes } from '../formats';
 
 export interface Book extends Item {
     authors: Array<string>;
@@ -15,7 +16,7 @@ export const defaultBook: Book = {
     ...defaultItem,
     authors: [],
     language: '',
-    type: '',
+    type: bookTypes[0],
     artists: [],
     colorer: [],
     letterer: [],
