@@ -22,6 +22,7 @@ export const ItemContainer: FunctionComponent<ItemContainerProps> = ({
             <Link to={itemDetailPage}>
                 {!isCollapsed && <div>Image Here</div>}
                 <div>{item.title}</div>
+                <div>{id}</div>
             </Link>
         </li>
     );
