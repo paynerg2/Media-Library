@@ -10,7 +10,7 @@ const CompanySchema: Schema = new Schema({
     owners: { type: [String], default: [] },
     predecessor: { type: String },
     parent: { type: String },
-    website: { type: String, unique: true },
+    website: { type: String },
     status: { type: String, enum: ['Active', 'Inactive'] }
 });
 
