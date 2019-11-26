@@ -66,7 +66,7 @@ const NewBookPage: React.FC = () => {
                             onChange={handleChange}
                             value={values.title}
                             type="text"
-                            placehodler="Title"
+                            placeholder="Title"
                         />
                         <ErrorMessage name="title" />
                         <label htmlFor="authors">Authors:</label>
@@ -134,7 +134,7 @@ const NewBookPage: React.FC = () => {
                             onChange={handleChange}
                             value={values.series}
                             type="text"
-                            placehodler="Series"
+                            placeholder="Series"
                         />
                         <ErrorMessage name="series" />
 
@@ -146,7 +146,7 @@ const NewBookPage: React.FC = () => {
                             onChange={handleChange}
                             value={values.publisher}
                             type="text"
-                            placehodler="Publisher"
+                            placeholder="Publisher"
                         />
                         <ErrorMessage name="publisher" />
 
@@ -158,7 +158,7 @@ const NewBookPage: React.FC = () => {
                             onChange={handleChange}
                             value={values.language}
                             type="text"
-                            placehodler="Language"
+                            placeholder="Language"
                         />
                         <ErrorMessage name="language" />
 
@@ -170,7 +170,7 @@ const NewBookPage: React.FC = () => {
                             onChange={handleChange}
                             value={values.listPrice}
                             type="text"
-                            placehodler="List Price"
+                            placeholder="List Price"
                         />
                         <ErrorMessage name="listPrice" />
 
@@ -182,7 +182,7 @@ const NewBookPage: React.FC = () => {
                             onChange={handleChange}
                             value={values.location}
                             type="text"
-                            placehodler="Location"
+                            placeholder="Location"
                         />
                         <ErrorMessage name="location" />
 
@@ -369,7 +369,7 @@ const NewBookPage: React.FC = () => {
                             onChange={handleChange}
                             value={values.isbn}
                             type="text"
-                            placehodler="ISBN"
+                            placeholder="ISBN"
                         />
                         <ErrorMessage name="isbn" />
 
@@ -381,7 +381,7 @@ const NewBookPage: React.FC = () => {
                             onChange={handleChange}
                             value={values.volume}
                             type="number"
-                            placehodler="Volume"
+                            placeholder="Volume"
                         />
                         <ErrorMessage name="volume" />
 
