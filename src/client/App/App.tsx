@@ -13,9 +13,12 @@ import {
     seriesActions,
     companyActions,
     bookActions,
-    creatorActions
+    creatorActions,
+    discActions,
+    gameActions
 } from '../_actions';
 import { useSelector } from '../_helpers/useSelector';
+import NewDiscPage from '../Views/NewDisc/NewDiscPage';
 
 export const App: React.FC = () => {
     const { loggedIn } = useSelector(state => state.authentication);
@@ -25,6 +28,8 @@ export const App: React.FC = () => {
         dispatch(creatorActions.getAll());
         dispatch(seriesActions.getAll());
         dispatch(bookActions.getAll());
+        dispatch(discActions.getAll());
+        dispatch(gameActions.getAll());
     }, [loggedIn]);
 
     return (
@@ -37,6 +42,7 @@ export const App: React.FC = () => {
 
                 <PrivateRoute path="/" exact component={HomePage} />
                 <PrivateRoute path="/books/new" exact component={NewBookPage} />
+                <PrivateRoute path="/discs/new" exact component={NewDiscPage} />
             </Switch>
         </Router>
     );
