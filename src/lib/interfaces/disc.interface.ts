@@ -1,4 +1,5 @@
-import { Item } from './item.interface';
+import { Item, defaultItem } from './item.interface';
+import { discFormats } from '../formats';
 
 export interface Disc extends Item {
     format: Array<string>;
@@ -9,3 +10,14 @@ export interface Disc extends Item {
     director?: string;
     studio?: string;
 }
+
+export const defaultDisc: Disc = {
+    ...defaultItem,
+    format: [discFormats[0]],
+    isCollection: false,
+    languages: [],
+    subtitles: [],
+    volume: 1,
+    director: '',
+    studio: ''
+};
