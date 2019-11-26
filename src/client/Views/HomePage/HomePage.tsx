@@ -51,7 +51,9 @@ const HomePage: React.FC = () => {
             <div>Discs</div>
             {visibility[1] && (
                 <ListScroller>
-                    <ItemList length={length}>{discList}</ItemList>
+                    <ItemList length={singleView ? discList.length : length}>
+                        {discList}
+                    </ItemList>
                 </ListScroller>
             )}
             <button
@@ -62,11 +64,18 @@ const HomePage: React.FC = () => {
             >
                 View All
             </button>
+            {singleView && visibility[1] && (
+                <button>
+                    <Link to="/discs/new">+</Link>
+                </button>
+            )}
             <br />
             <div>Games</div>
             {visibility[2] && (
                 <ListScroller>
-                    <ItemList length={length}>{gameList}</ItemList>
+                    <ItemList length={singleView ? gameList.length : length}>
+                        {gameList}
+                    </ItemList>
                 </ListScroller>
             )}
             <button
@@ -77,6 +86,11 @@ const HomePage: React.FC = () => {
             >
                 View All
             </button>
+            {singleView && visibility[2] && (
+                <button>
+                    <Link to="/games/new">+</Link>
+                </button>
+            )}
             <br />
         </Fragment>
     );
