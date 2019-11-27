@@ -193,7 +193,7 @@ const NewBookPage: React.FC = () => {
                                 <div>
                                     {values.artists &&
                                     values.artists.length > 0 ? (
-                                        values.artists.map((author, index) => (
+                                        values.artists.map((artist, index) => (
                                             <div key={index}>
                                                 <Field
                                                     id={`artists.${index}`}

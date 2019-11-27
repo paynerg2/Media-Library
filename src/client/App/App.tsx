@@ -19,6 +19,7 @@ import {
 } from '../_actions';
 import { useSelector } from '../_helpers/useSelector';
 import NewDiscPage from '../Views/NewDisc/NewDiscPage';
+import NewGamePage from '../Views/NewGamePage/NewGamePage';
 
 export const App: React.FC = () => {
     const { loggedIn } = useSelector(state => state.authentication);
@@ -43,6 +44,7 @@ export const App: React.FC = () => {
                 <PrivateRoute path="/" exact component={HomePage} />
                 <PrivateRoute path="/books/new" exact component={NewBookPage} />
                 <PrivateRoute path="/discs/new" exact component={NewDiscPage} />
+                <PrivateRoute path="/games/new" exact component={NewGamePage} />
             </Switch>
         </Router>
     );
