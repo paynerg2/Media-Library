@@ -9,7 +9,9 @@ interface PrivateRouteProps extends RouteProps {
 
 export const PrivateRoute = (props: PrivateRouteProps) => {
     const { component: Component, ...rest } = props;
-    const isSignedIn = useSelector(state => state.authentication.loggedIn);
+    const user = localStorage.getItem('user');
+    const { token } = user && JSON.parse(user);
+    const isSignedIn = token !== null;
 
     return (
         <Route
