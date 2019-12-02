@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Fragment } from 'react';
 import { Router, Route, Switch } from 'react-router-dom';
 
 import { history } from '../_helpers/history';
@@ -20,6 +20,10 @@ import {
 import { useSelector } from '../_helpers/useSelector';
 import NewDiscPage from '../Views/NewDisc/NewDiscPage';
 import NewGamePage from '../Views/NewGamePage/NewGamePage';
+import BookDisplayPage from '../Views/BookDisplayPage/BookDisplayPage';
+import DiscDisplayPage from '../Views/DiscDisplayPage/DiscDisplayPage';
+import GameDisplayPage from '../Views/GameDisplayPage/GameDisplayPage';
+import SeriesDisplayPage from '../Views/SeriesDisplayPage/SeriesDisplayPage';
 
 export const App: React.FC = () => {
     const { loggedIn } = useSelector(state => state.authentication);
@@ -45,6 +49,55 @@ export const App: React.FC = () => {
                 <PrivateRoute path="/books/new" exact component={NewBookPage} />
                 <PrivateRoute path="/discs/new" exact component={NewDiscPage} />
                 <PrivateRoute path="/games/new" exact component={NewGamePage} />
+
+                <Route
+                    path="/books"
+                    render={({ match: { path } }) => (
+                        <Fragment>
+                            <PrivateRoute
+                                path={`${path}/:id`}
+                                component={BookDisplayPage}
+                                exact
+                            />
+                        </Fragment>
+                    )}
+                />
+                <Route
+                    path="/discs"
+                    render={({ match: { path } }) => (
+                        <Fragment>
+                            <PrivateRoute
+                                path={`${path}/:id`}
+                                component={DiscDisplayPage}
+                                exact
+                            />
+                        </Fragment>
+                    )}
+                />
+                <Route
+                    path="/games"
+                    render={({ match: { path } }) => (
+                        <Fragment>
+                            <PrivateRoute
+                                path={`${path}/:id`}
+                                component={GameDisplayPage}
+                                exact
+                            />
+                        </Fragment>
+                    )}
+                />
+                <Route
+                    path="/series"
+                    render={({ match: { path } }) => (
+                        <Fragment>
+                            <PrivateRoute
+                                path={`${path}/:id`}
+                                component={SeriesDisplayPage}
+                                exact
+                            />
+                        </Fragment>
+                    )}
+                />
             </Switch>
         </Router>
     );
