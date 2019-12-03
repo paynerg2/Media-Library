@@ -2,5 +2,5 @@ export interface Creator {
     firstName: string;
     middleInitials?: string;
     lastName?: string;
-    works?: Array<any>;
+    works: Array<any>;
 }
