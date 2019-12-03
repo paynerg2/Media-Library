@@ -1,10 +1,12 @@
 import { SeriesState, IAction } from '../_interfaces';
 import { seriesConstants } from '../_constants';
 import { normalize } from '../_helpers/normalize';
+import { getTitleIdMap } from '../_helpers/getTitleIdMap';
 
 export const initialState: SeriesState = {
     allIds: [],
     byId: {},
+    byTitle: {},
     selectedSeries: null,
     loading: false,
     error: undefined
@@ -31,18 +33,21 @@ export const series = (state = initialState, action: IAction): SeriesState => {
                 error: action.error
             } as SeriesState;
         case seriesConstants.CREATE_SUCCESS:
+            const { name } = action.payload;
             const { _id: id, ...payloadWithoutId } = action.payload;
             return {
                 ...initialState,
                 allIds: [...state.allIds, id],
-                byId: { ...state.byId, [id]: payloadWithoutId }
+                byId: { ...state.byId, [id]: payloadWithoutId },
+                byTitle: { ...state.byTitle, [name]: id }
             } as SeriesState;
 
         case seriesConstants.GET_SUCCESS:
             return {
                 ...initialState,
                 allIds: action.payload.map((item: any) => item._id),
-                byId: normalize(action.payload)
+                byId: normalize(action.payload),
+                byTitle: getTitleIdMap(action.payload)
             } as SeriesState;
         case seriesConstants.GET_BY_ID_SUCCESS:
             return {
@@ -65,11 +70,16 @@ export const series = (state = initialState, action: IAction): SeriesState => {
                 [deletedId]: deletedSeries,
                 ...remainingSeries
             } = state.byId;
+            const {
+                [deletedSeries.name]: delId,
+                ...remainingTitles
+            } = state.byTitle;
             const remainingIds = state.allIds.filter(id => id !== deletedId);
             return {
                 ...state,
                 byId: remainingSeries,
                 allIds: remainingIds,
+                byTitle: remainingTitles,
                 loading: false,
                 error: undefined
             } as SeriesState;

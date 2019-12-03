@@ -21,6 +21,7 @@ describe('Series Reducer', () => {
     const initialState: SeriesState = {
         allIds: [],
         byId: {},
+        byTitle: {},
         selectedSeries: null,
         loading: false,
         error: undefined
@@ -112,12 +113,15 @@ describe('Series Reducer', () => {
                     byId: {
                         [testItem._id]: testSeries
                     },
-                    allIds: [testItem._id]
+                    allIds: [testItem._id],
+                    byTitle: {
+                        [testSeries.name]: testItem._id
+                    }
                 };
                 expect(series(requestState, action)).toEqual(expectedState);
             });
         });
-
+        // TODO: Update reducer tests to match new state shape
         describe('Get All', () => {
             const action: IAction = {
                 type: seriesConstants.GET_SUCCESS,
@@ -131,7 +135,11 @@ describe('Series Reducer', () => {
                         [testItem._id]: testSeries,
                         [testItem2._id]: testSeries
                     },
-                    allIds: [testItem._id, testItem2._id]
+                    allIds: [testItem._id, testItem2._id],
+                    byTitle: {
+                        [testItem.name]: testItem._id,
+                        [testItem2.name]: testItem2._id
+                    }
                 };
                 expect(series(requestState, action)).toEqual(expectedState);
             });
@@ -193,12 +201,16 @@ describe('Series Reducer', () => {
                     byId: {
                         [testItem._id]: testSeries
                     },
-                    allIds: [testItem._id]
+                    allIds: [testItem._id],
+                    byTitle: {
+                        [testItem.name]: testItem._id
+                    }
                 };
                 const expectedState = {
                     ...preDeleteState,
                     byId: {},
                     allIds: [],
+                    byTitle: {},
                     loading: false
                 };
                 expect(series(preDeleteState, action)).toEqual(expectedState);
