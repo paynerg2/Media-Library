@@ -308,7 +308,8 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: testSeries
-                        }
+                        },
+                        byTitle: { [testItem.name]: testItem._id }
                     };
                     expect(series).toEqual(expectedState);
                 });
@@ -369,6 +370,9 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: testSeries
+                        },
+                        byTitle: {
+                            [testItem.name]: testItem._id
                         }
                     };
                     expect(series).toEqual(expectedState);
@@ -503,6 +507,9 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: expectedUpdate
+                        },
+                        byTitle: {
+                            [testItem.name]: testItem._id
                         }
                     };
                     expect(series).toEqual(expectedState);
@@ -1344,7 +1351,7 @@ describe('Client-side integration tests', () => {
             image: 'http://www.imagehostedhere.com',
             location: 'test',
             type: bookTypes[0],
-            series: item1,
+            series: 'test',
             volume: 3,
             isbn: 'test'
         };
@@ -1379,6 +1386,9 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: testBook
+                        },
+                        bySeriesName: {
+                            [testItem.series]: [testItem._id]
                         }
                     };
                     expect(books).toEqual(expectedState);
@@ -1514,6 +1524,9 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: testBook
+                        },
+                        bySeriesName: {
+                            [testItem.series]: [testItem._id]
                         }
                     };
                     expect(books).toEqual(expectedState);
@@ -1600,6 +1613,9 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: expectedUpdate
+                        },
+                        bySeriesName: {
+                            [testItem.series]: [testItem._id]
                         }
                     };
                     expect(books).toEqual(expectedState);
@@ -1669,7 +1685,10 @@ describe('Client-side integration tests', () => {
                 it('Removes the deleted item from state correctly', () => {
                     const { books } = store.getState();
                     const expectedState: BookState = {
-                        ...bookDefaultState
+                        ...bookDefaultState,
+                        bySeriesName: {
+                            [testItem.series]: []
+                        }
                     };
                     expect(books).toEqual(expectedState);
                 });

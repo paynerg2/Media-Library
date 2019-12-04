@@ -118,7 +118,10 @@ describe('Books Reducer', () => {
                     byId: {
                         [testItem._id]: testBook
                     },
-                    allIds: [testItem._id]
+                    allIds: [testItem._id],
+                    bySeriesName: {
+                        [testItem.series]: [testItem._id]
+                    }
                 };
                 expect(books(requestState, action)).toEqual(expectedState);
             });
@@ -138,7 +141,10 @@ describe('Books Reducer', () => {
                     [testItem._id]: testBook,
                     [testItem2._id]: testBook
                 },
-                allIds: [testItem._id, testItem2._id]
+                allIds: [testItem._id, testItem2._id],
+                bySeriesName: {
+                    [testItem.series]: [testItem._id, testItem2._id]
+                }
             };
             expect(books(requestState, action)).toEqual(expectedState);
         });
