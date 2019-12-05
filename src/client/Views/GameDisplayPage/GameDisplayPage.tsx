@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { useSelector } from '../../_helpers/useSelector';
+import { useSelector } from '../../_hooks';
 import { Game } from '../../../lib/interfaces';
 
 const GameDisplayPage: React.FunctionComponent<GameDisplayPageProps> = props => {

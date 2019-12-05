@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { useSelector } from '../../_helpers/useSelector';
+import { useSelector } from '../../_hooks';
 import { authenticationActions } from '../../_actions';
 import { useDispatch } from 'react-redux';
 import { history } from '../../_helpers/history';

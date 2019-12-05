@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import { Formik, Field, FieldArray, ErrorMessage } from 'formik';
 import { validationErrorExists } from '../../_helpers/validationErrorExists';
-import { useSelector } from '../../_helpers/useSelector';
+import { useSelector } from '../../_hooks';
 import {
     assureCompanyExists,
     assureCreatorExists,

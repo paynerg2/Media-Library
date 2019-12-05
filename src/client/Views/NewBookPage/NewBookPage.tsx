@@ -7,7 +7,7 @@ import { bookActions } from '../../_actions';
 import { history } from '../../_helpers/history';
 import { Book, defaultBook } from '../../../lib/interfaces';
 import { bookTypes } from '../../../lib/formats';
-import { useSelector } from '../../_helpers/useSelector';
+import { useSelector } from '../../_hooks';
 import {
     assureCompanyExists,
     assureCreatorExists,

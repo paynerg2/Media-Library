@@ -17,7 +17,7 @@ import {
     discActions,
     gameActions
 } from '../_actions';
-import { useSelector } from '../_helpers/useSelector';
+import { useSelector } from '../_hooks';
 import NewDiscPage from '../Views/NewDisc/NewDiscPage';
 import NewGamePage from '../Views/NewGamePage/NewGamePage';
 import BookDisplayPage from '../Views/BookDisplayPage/BookDisplayPage';

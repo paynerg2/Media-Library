@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ItemContainer } from '../../_components/ItemContainer';
 import { ItemList } from '../../_components/ItemList';
 import { ListScroller } from '../../_components/ListScroller';
-import { useSelector } from '../../_helpers/useSelector';
+import { useSelector } from '../../_hooks';
 
 const HomePage: React.FC = () => {
     const length: number = 3;

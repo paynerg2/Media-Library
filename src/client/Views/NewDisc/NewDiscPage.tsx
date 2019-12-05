@@ -6,7 +6,7 @@ import { discSchema } from '../../../lib/schemas';
 import { discActions } from '../../_actions';
 import { Disc, defaultDisc } from '../../../lib/interfaces';
 import { discFormats } from '../../../lib/formats';
-import { useSelector } from '../../_helpers/useSelector';
+import { useSelector } from '../../_hooks';
 import {
     assureCompanyExists,
     assureCreatorExists,
