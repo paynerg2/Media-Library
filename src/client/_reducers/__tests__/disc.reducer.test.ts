@@ -116,7 +116,10 @@ describe('Discs Reducer', () => {
                     byId: {
                         [testItem._id]: testDisc
                     },
-                    allIds: [testItem._id]
+                    allIds: [testItem._id],
+                    bySeriesName: {
+                        [testItem.series]: [testItem._id]
+                    }
                 };
                 expect(discs(requestState, action)).toEqual(expectedState);
             });
@@ -136,7 +139,10 @@ describe('Discs Reducer', () => {
                     [testItem._id]: testDisc,
                     [testItem2._id]: testDisc
                 },
-                allIds: [testItem._id, testItem2._id]
+                allIds: [testItem._id, testItem2._id],
+                bySeriesName: {
+                    [testItem.series]: [testItem._id, testItem2._id]
+                }
             };
             expect(discs(requestState, action)).toEqual(expectedState);
         });

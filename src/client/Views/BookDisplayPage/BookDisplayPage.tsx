@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { useSelector } from '../../_hooks';
+import { useSelector, useSeriesId } from '../../_hooks';
 import { Book } from '../../../lib/interfaces';
 import { Link } from 'react-router-dom';
 
@@ -8,14 +8,10 @@ const BookDisplayPage: React.FunctionComponent<BookDisplayPageProps> = props => 
     const { id } = props.match.params;
     const [book, setBook] = useState({} as Book);
     const selectedBook = useSelector(state => state.books.byId[id]);
-    const useSeriesId = (name: string): string => {
-        return useSelector(state => state.series.byTitle[name]);
-    };
+
     useEffect(() => {
         setBook(selectedBook);
-    }, [id]);
-    console.log('book display page');
-    console.log(book);
+    }, [id, selectedBook]);
 
     return (
         <Fragment>

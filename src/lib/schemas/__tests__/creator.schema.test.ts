@@ -15,7 +15,8 @@ describe('Creator Schema', () => {
 
     it('Does not reject when all required fields are present', async () => {
         const testCreator: Creator = {
-            firstName: 'test'
+            firstName: 'test',
+            works: ['test', 'test']
         };
         const error = await validateCreator(testCreator);
         expect(error).toBeUndefined();

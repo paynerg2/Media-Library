@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { useSelector } from '../../_hooks';
+import { useSelector, useSeriesId } from '../../_hooks';
 import { Game } from '../../../lib/interfaces';
+import { Link } from 'react-router-dom';
 
 const GameDisplayPage: React.FunctionComponent<GameDisplayPageProps> = props => {
     const { id } = props.match.params;
@@ -9,12 +10,15 @@ const GameDisplayPage: React.FunctionComponent<GameDisplayPageProps> = props => 
     const selectedGame = useSelector(state => state.games.byId[id]);
     useEffect(() => {
         setGame(selectedGame);
-    }, [id]);
+    }, [id, selectedGame]);
 
     return (
         <Fragment>
             <div>{game.title}</div>
             <div>{id}</div>
+            <Link to={`../series/${useSeriesId(game.series)}`}>
+                {game.series}
+            </Link>
         </Fragment>
     );
 };

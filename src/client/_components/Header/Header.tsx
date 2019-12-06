@@ -6,7 +6,6 @@ import { history } from '../../_helpers/history';
 
 const Header: React.FC = () => {
     const { loggedIn, user } = useSelector(state => state.authentication);
-    console.log(`isloggedin: ${loggedIn}`);
     const dispatch = useDispatch();
 
     const handleLogout = () => {

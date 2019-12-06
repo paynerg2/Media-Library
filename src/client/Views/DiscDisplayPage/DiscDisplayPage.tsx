@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { useSelector } from '../../_hooks';
+import { useSelector, useSeriesId } from '../../_hooks';
 import { Disc } from '../../../lib/interfaces';
+import { Link } from 'react-router-dom';
 
 const DiscDisplayPage: React.FunctionComponent<DiscDisplayPageProps> = props => {
     const { id } = props.match.params;
@@ -9,12 +10,15 @@ const DiscDisplayPage: React.FunctionComponent<DiscDisplayPageProps> = props => 
     const selectedDisc = useSelector(state => state.discs.byId[id]);
     useEffect(() => {
         setDisc(selectedDisc);
-    }, [id]);
+    }, [id, selectedDisc]);
 
     return (
         <Fragment>
             <div>{disc.title}</div>
             <div>{id}</div>
+            <Link to={`../series/${useSeriesId(disc.series)}`}>
+                {disc.series}
+            </Link>
         </Fragment>
     );
 };

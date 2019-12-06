@@ -5,7 +5,7 @@ import { filterByKeys } from '../_helpers/filterByKeys';
 import { useSelector } from '.';
 
 export const useDiscs = (id: string, type: string): Disc[] => {
-    const [discIds] = useItemIds(id, type);
+    const [, discIds] = useItemIds(id, type);
     const discsObject: StringTMap<Disc> = useSelector(state =>
         filterByKeys(state.discs.byId, discIds)
     );

@@ -1789,6 +1789,9 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: testDisc
+                        },
+                        bySeriesName: {
+                            [testItem.series]: [testItem._id]
                         }
                     };
                     expect(discs).toEqual(expectedState);
@@ -1928,6 +1931,9 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: testDisc
+                        },
+                        bySeriesName: {
+                            [testItem.series]: [testItem._id]
                         }
                     };
                     expect(discs).toEqual(expectedState);
@@ -2016,6 +2022,9 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: expectedUpdate
+                        },
+                        bySeriesName: {
+                            [testItem.series]: [testItem._id]
                         }
                     };
                     expect(discs).toEqual(expectedState);
@@ -2087,7 +2096,10 @@ describe('Client-side integration tests', () => {
                 it('Removes the deleted item from state correctly', () => {
                     const { discs } = store.getState();
                     const expectedState: DiscState = {
-                        ...discDefaultState
+                        ...discDefaultState,
+                        bySeriesName: {
+                            [testItem.series]: []
+                        }
                     };
                     expect(discs).toEqual(expectedState);
                 });
@@ -2188,6 +2200,9 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: testGame
+                        },
+                        bySeriesName: {
+                            [testItem.series]: [testItem._id]
                         }
                     };
                     expect(games).toEqual(expectedState);
@@ -2331,6 +2346,9 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: testGame
+                        },
+                        bySeriesName: {
+                            [testItem.series]: [testItem._id]
                         }
                     };
                     expect(games).toEqual(expectedState);
@@ -2421,6 +2439,9 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: expectedUpdate
+                        },
+                        bySeriesName: {
+                            [testItem.series]: [testItem._id]
                         }
                     };
                     expect(games).toEqual(expectedState);
@@ -2494,7 +2515,10 @@ describe('Client-side integration tests', () => {
                 it('Removes the deleted item from state correctly', () => {
                     const { games } = store.getState();
                     const expectedState: GameState = {
-                        ...gameDefaultState
+                        ...gameDefaultState,
+                        bySeriesName: {
+                            [testItem.series]: []
+                        }
                     };
                     expect(games).toEqual(expectedState);
                 });
