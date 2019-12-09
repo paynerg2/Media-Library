@@ -13,12 +13,16 @@ describe('Companies Reducer', () => {
         name: 'test',
         titles: [item1, item2]
     };
+    const testCompany2: Company = {
+        ...testCompany,
+        name: 'test2'
+    };
     const testItem: Company & MongoId = {
         ...testCompany,
         _id: mongoose.Types.ObjectId().toHexString()
     };
     const testItem2: Company & MongoId = {
-        ...testCompany,
+        ...testCompany2,
         _id: mongoose.Types.ObjectId().toHexString()
     };
     const requestState: CompanyState = {
@@ -102,7 +106,10 @@ describe('Companies Reducer', () => {
                     byId: {
                         [testItem._id]: testCompany
                     },
-                    allIds: [testItem._id]
+                    allIds: [testItem._id],
+                    byName: {
+                        [testItem.name]: testItem._id
+                    }
                 };
                 expect(companies(requestState, action)).toEqual(expectedState);
             });
@@ -120,9 +127,13 @@ describe('Companies Reducer', () => {
                 loading: false,
                 byId: {
                     [testItem._id]: testCompany,
-                    [testItem2._id]: testCompany
+                    [testItem2._id]: testCompany2
                 },
-                allIds: [testItem._id, testItem2._id]
+                allIds: [testItem._id, testItem2._id],
+                byName: {
+                    [testItem.name]: testItem._id,
+                    [testItem2.name]: testItem2._id
+                }
             };
             expect(companies(requestState, action)).toEqual(expectedState);
         });
@@ -163,7 +174,11 @@ describe('Companies Reducer', () => {
                 byId: {
                     [testItem._id]: testCompany
                 },
-                allIds: [testItem._id]
+                allIds: [testItem._id],
+                byName: {
+                    [testItem.name]: testItem._id,
+                    [testItem2.name]: testItem2._id
+                }
             };
             const expectedState: CompanyState = {
                 ...preUpdateState,
@@ -182,19 +197,25 @@ describe('Companies Reducer', () => {
                 type: companyConstants.DELETE_SUCCESS,
                 payload: testItem._id
             };
-            const id = mongoose.Types.ObjectId().toHexString();
             const preDeleteState = {
                 ...requestState,
                 byId: {
                     [testItem._id]: testCompany,
-                    [id]: testCompany
+                    [testItem2._id]: testCompany
                 },
-                allIds: [testItem._id, id]
+                allIds: [testItem._id, testItem2._id],
+                byName: {
+                    [testItem.name]: testItem._id,
+                    [testItem2.name]: testItem2._id
+                }
             };
             const expectedState = {
                 ...preDeleteState,
-                byId: { [id]: testCompany },
-                allIds: [id],
+                byId: { [testItem2._id]: testCompany },
+                allIds: [testItem2._id],
+                byName: {
+                    [testItem2.name]: testItem2._id
+                },
                 loading: false
             };
             expect(companies(preDeleteState, action)).toEqual(expectedState);

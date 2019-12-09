@@ -1,10 +1,13 @@
 import { CreatorState, IAction } from '../_interfaces';
 import { creatorConstants } from '../_constants';
 import { normalize } from '../_helpers/normalize';
+import { getFullName } from '../_helpers/getFullName';
+import { getNameIdMap } from '../_helpers/getNameIdMap';
 
 export const initialState: CreatorState = {
     allIds: [],
     byId: {},
+    byName: {},
     selectedCreator: null,
     loading: false,
     error: undefined
@@ -38,14 +41,16 @@ export const creators = (
             return {
                 ...initialState,
                 allIds: [...state.allIds, id],
-                byId: { ...state.byId, [id]: payloadWithoutId }
+                byId: { ...state.byId, [id]: payloadWithoutId },
+                byName: { ...state.byName, [getFullName(payloadWithoutId)]: id }
             } as CreatorState;
 
         case creatorConstants.GET_SUCCESS:
             return {
                 ...initialState,
                 allIds: action.payload.map((item: any) => item._id),
-                byId: normalize(action.payload)
+                byId: normalize(action.payload),
+                byName: getNameIdMap(action.payload)
             } as CreatorState;
         case creatorConstants.GET_BY_ID_SUCCESS:
             return {
@@ -69,10 +74,15 @@ export const creators = (
                 ...remainingCreators
             } = state.byId;
             const remainingIds = state.allIds.filter(id => id !== deletedId);
+            const {
+                [getFullName(deletedCreator)]: delId,
+                ...remainingNames
+            } = state.byName;
             return {
                 ...state,
                 byId: remainingCreators,
                 allIds: remainingIds,
+                byName: remainingNames,
                 loading: false,
                 error: undefined
             } as CreatorState;

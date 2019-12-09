@@ -4,6 +4,7 @@ import { creatorConstants } from '../../_constants';
 import { CreatorState, IAction } from '../../_interfaces';
 import { MongoId } from '../../_interfaces';
 import { Creator } from '../../../lib/interfaces';
+import { getFullName } from '../../_helpers/getFullName';
 
 describe('Creators Reducer', () => {
     const testErrorMessage = 'test';
@@ -15,12 +16,16 @@ describe('Creators Reducer', () => {
         lastName: 'tester',
         works: [item1, item2]
     };
+    const testCreator2: Creator = {
+        ...testCreator,
+        middleInitials: 'D.'
+    };
     const testItem: Creator & MongoId = {
         ...testCreator,
         _id: mongoose.Types.ObjectId().toHexString()
     };
     const testItem2: Creator & MongoId = {
-        ...testCreator,
+        ...testCreator2,
         _id: mongoose.Types.ObjectId().toHexString()
     };
     const requestState: CreatorState = {
@@ -103,7 +108,8 @@ describe('Creators Reducer', () => {
                     byId: {
                         [testItem._id]: testCreator
                     },
-                    allIds: [testItem._id]
+                    allIds: [testItem._id],
+                    byName: { [getFullName(testCreator)]: testItem._id }
                 };
                 expect(creators(requestState, action)).toEqual(expectedState);
             });
@@ -120,9 +126,13 @@ describe('Creators Reducer', () => {
                     loading: false,
                     byId: {
                         [testItem._id]: testCreator,
-                        [testItem2._id]: testCreator
+                        [testItem2._id]: testCreator2
                     },
-                    allIds: [testItem._id, testItem2._id]
+                    allIds: [testItem._id, testItem2._id],
+                    byName: {
+                        [getFullName(testCreator)]: testItem._id,
+                        [getFullName(testCreator2)]: testItem2._id
+                    }
                 };
                 expect(creators(requestState, action)).toEqual(expectedState);
             });
@@ -162,7 +172,11 @@ describe('Creators Reducer', () => {
                     byId: {
                         [testItem._id]: testCreator
                     },
-                    allIds: [testItem._id]
+                    allIds: [testItem._id],
+                    byName: {
+                        [getFullName(testCreator)]: testItem._id,
+                        [getFullName(testCreator2)]: testItem2._id
+                    }
                 };
                 const expectedState: CreatorState = {
                     ...preUpdateState,
@@ -181,19 +195,23 @@ describe('Creators Reducer', () => {
                     type: creatorConstants.DELETE_SUCCESS,
                     payload: testItem._id
                 };
-                const id = mongoose.Types.ObjectId().toHexString();
                 const preDeleteState: CreatorState = {
                     ...requestState,
                     byId: {
                         [testItem._id]: testCreator,
-                        [id]: testCreator
+                        [testItem2._id]: testCreator2
                     },
-                    allIds: [testItem._id, id]
+                    allIds: [testItem._id, testItem2._id],
+                    byName: {
+                        [getFullName(testCreator)]: testItem._id,
+                        [getFullName(testCreator2)]: testItem2._id
+                    }
                 };
                 const expectedState = {
                     ...preDeleteState,
-                    byId: { [id]: testCreator },
-                    allIds: [id],
+                    byId: { [testItem2._id]: testCreator2 },
+                    allIds: [testItem2._id],
+                    byName: { [getFullName(testCreator2)]: testItem2._id },
                     loading: false
                 };
                 expect(creators(preDeleteState, action)).toEqual(expectedState);
