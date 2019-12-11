@@ -106,10 +106,9 @@ describe('Creators Reducer', () => {
                     ...requestState,
                     loading: false,
                     byId: {
-                        [testItem._id]: testCreator
+                        [testItem._id]: testItem
                     },
-                    allIds: [testItem._id],
-                    byName: { [getFullName(testCreator)]: testItem._id }
+                    allIds: [testItem._id]
                 };
                 expect(creators(requestState, action)).toEqual(expectedState);
             });
@@ -125,14 +124,10 @@ describe('Creators Reducer', () => {
                     ...requestState,
                     loading: false,
                     byId: {
-                        [testItem._id]: testCreator,
-                        [testItem2._id]: testCreator2
+                        [testItem._id]: testItem,
+                        [testItem2._id]: testItem2
                     },
-                    allIds: [testItem._id, testItem2._id],
-                    byName: {
-                        [getFullName(testCreator)]: testItem._id,
-                        [getFullName(testCreator2)]: testItem2._id
-                    }
+                    allIds: [testItem._id, testItem2._id]
                 };
                 expect(creators(requestState, action)).toEqual(expectedState);
             });
@@ -162,26 +157,21 @@ describe('Creators Reducer', () => {
                         mongoose.Types.ObjectId().toHexString()
                     ]
                 };
-                const { _id, ...testCreatorUpdate } = testUpdate;
                 const action: IAction = {
                     type: creatorConstants.UPDATE_SUCCESS,
                     payload: testUpdate
                 };
-                const preUpdateState = {
+                const preUpdateState: CreatorState = {
                     ...requestState,
                     byId: {
-                        [testItem._id]: testCreator
+                        [testItem._id]: testItem
                     },
-                    allIds: [testItem._id],
-                    byName: {
-                        [getFullName(testCreator)]: testItem._id,
-                        [getFullName(testCreator2)]: testItem2._id
-                    }
+                    allIds: [testItem._id]
                 };
                 const expectedState: CreatorState = {
                     ...preUpdateState,
                     byId: {
-                        [testUpdate._id]: testCreatorUpdate as Creator
+                        [testUpdate._id]: testUpdate
                     },
                     loading: false
                 };
@@ -198,20 +188,15 @@ describe('Creators Reducer', () => {
                 const preDeleteState: CreatorState = {
                     ...requestState,
                     byId: {
-                        [testItem._id]: testCreator,
-                        [testItem2._id]: testCreator2
+                        [testItem._id]: testItem,
+                        [testItem2._id]: testItem2
                     },
-                    allIds: [testItem._id, testItem2._id],
-                    byName: {
-                        [getFullName(testCreator)]: testItem._id,
-                        [getFullName(testCreator2)]: testItem2._id
-                    }
+                    allIds: [testItem._id, testItem2._id]
                 };
-                const expectedState = {
+                const expectedState: CreatorState = {
                     ...preDeleteState,
-                    byId: { [testItem2._id]: testCreator2 },
+                    byId: { [testItem2._id]: testItem2 },
                     allIds: [testItem2._id],
-                    byName: { [getFullName(testCreator2)]: testItem2._id },
                     loading: false
                 };
                 expect(creators(preDeleteState, action)).toEqual(expectedState);

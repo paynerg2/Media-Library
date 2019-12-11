@@ -1,12 +1,10 @@
 import { CompanyState, IAction } from '../_interfaces';
 import { companyConstants } from '../_constants';
 import { normalize } from '../_helpers/normalize';
-import { getTitleIdMap } from '../_helpers/getTitleIdMap';
 
 export const initialState: CompanyState = {
     allIds: [],
     byId: {},
-    byName: {},
     selectedCompany: null,
     loading: false,
     error: undefined
@@ -36,13 +34,11 @@ export const companies = (
                 error: action.error
             } as CompanyState;
         case companyConstants.CREATE_SUCCESS:
-            const { name } = action.payload;
-            const { _id: id, ...payloadWithoutId } = action.payload;
+            const { _id: id } = action.payload;
             return {
                 ...initialState,
                 allIds: [...state.allIds, id],
-                byId: { ...state.byId, [id]: payloadWithoutId },
-                byName: { ...state.byName, [name]: id },
+                byId: { ...state.byId, [id]: action.payload },
                 loading: false
             } as CompanyState;
         case companyConstants.GET_SUCCESS:
@@ -50,7 +46,6 @@ export const companies = (
                 ...initialState,
                 allIds: action.payload.map((item: any) => item._id),
                 byId: normalize(action.payload),
-                byName: getTitleIdMap(action.payload),
                 loading: false
             } as CompanyState;
         case companyConstants.GET_BY_ID_SUCCESS:
@@ -60,10 +55,10 @@ export const companies = (
                 selectedCompany: action.payload._id
             } as CompanyState;
         case companyConstants.UPDATE_SUCCESS:
-            const { _id, ...updatedItem } = action.payload;
+            const { _id } = action.payload;
             return {
                 ...state,
-                byId: { ...state.byId, [_id]: updatedItem },
+                byId: { ...state.byId, [_id]: action.payload },
                 loading: false
             } as CompanyState;
         case companyConstants.DELETE_SUCCESS:
@@ -72,16 +67,11 @@ export const companies = (
                 [deletedId]: deletedCompany,
                 ...remainingCompanies
             } = state.byId;
-            const {
-                [deletedCompany.name]: delId,
-                ...remainingNames
-            } = state.byName;
             const remainingIds = state.allIds.filter(id => id !== deletedId);
             return {
                 ...state,
                 byId: remainingCompanies,
                 allIds: remainingIds,
-                byName: remainingNames,
                 loading: false
             };
         default:

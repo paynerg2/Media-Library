@@ -111,17 +111,14 @@ describe('Series Reducer', () => {
                     ...requestState,
                     loading: false,
                     byId: {
-                        [testItem._id]: testSeries
+                        [testItem._id]: testItem
                     },
-                    allIds: [testItem._id],
-                    byTitle: {
-                        [testSeries.name]: testItem._id
-                    }
+                    allIds: [testItem._id]
                 };
                 expect(series(requestState, action)).toEqual(expectedState);
             });
         });
-        // TODO: Update reducer tests to match new state shape
+
         describe('Get All', () => {
             const action: IAction = {
                 type: seriesConstants.GET_SUCCESS,
@@ -132,14 +129,10 @@ describe('Series Reducer', () => {
                     ...requestState,
                     loading: false,
                     byId: {
-                        [testItem._id]: testSeries,
-                        [testItem2._id]: testSeries
+                        [testItem._id]: testItem,
+                        [testItem2._id]: testItem2
                     },
-                    allIds: [testItem._id, testItem2._id],
-                    byTitle: {
-                        [testItem.name]: testItem._id,
-                        [testItem2.name]: testItem2._id
-                    }
+                    allIds: [testItem._id, testItem2._id]
                 };
                 expect(series(requestState, action)).toEqual(expectedState);
             });
@@ -167,22 +160,21 @@ describe('Series Reducer', () => {
                     name: testItem.name,
                     items: [...testItem.items, 'update']
                 };
-                const { _id, ...testUpdatedSeries } = testUpdate;
                 const action: IAction = {
                     type: seriesConstants.UPDATE_SUCCESS,
                     payload: testUpdate
                 };
-                const preUpdateState = {
+                const preUpdateState: SeriesState = {
                     ...requestState,
                     byId: {
-                        [testItem._id]: testSeries
+                        [testItem._id]: testItem
                     },
                     allIds: [testItem._id]
                 };
                 const expectedState: SeriesState = {
                     ...preUpdateState,
                     byId: {
-                        [testUpdate._id]: testUpdatedSeries as Series
+                        [testUpdate._id]: testUpdate
                     },
                     loading: false
                 };
@@ -194,23 +186,22 @@ describe('Series Reducer', () => {
             it('Correctly removes a series from state', () => {
                 const action = {
                     type: seriesConstants.DELETE_SUCCESS,
-                    payload: testItem._id
+                    payload: testItem2._id
                 };
-                const preDeleteState = {
+                const preDeleteState: SeriesState = {
                     ...requestState,
                     byId: {
-                        [testItem._id]: testSeries
+                        [testItem._id]: testItem,
+                        [testItem2._id]: testItem2
+                    },
+                    allIds: [testItem._id, testItem2._id]
+                };
+                const expectedState: SeriesState = {
+                    ...preDeleteState,
+                    byId: {
+                        [testItem._id]: testItem
                     },
                     allIds: [testItem._id],
-                    byTitle: {
-                        [testItem.name]: testItem._id
-                    }
-                };
-                const expectedState = {
-                    ...preDeleteState,
-                    byId: {},
-                    allIds: [],
-                    byTitle: {},
                     loading: false
                 };
                 expect(series(preDeleteState, action)).toEqual(expectedState);

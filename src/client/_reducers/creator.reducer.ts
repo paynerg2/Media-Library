@@ -1,13 +1,10 @@
 import { CreatorState, IAction } from '../_interfaces';
 import { creatorConstants } from '../_constants';
 import { normalize } from '../_helpers/normalize';
-import { getFullName } from '../_helpers/getFullName';
-import { getNameIdMap } from '../_helpers/getNameIdMap';
 
 export const initialState: CreatorState = {
     allIds: [],
     byId: {},
-    byName: {},
     selectedCreator: null,
     loading: false,
     error: undefined
@@ -37,20 +34,18 @@ export const creators = (
                 error: action.error
             } as CreatorState;
         case creatorConstants.CREATE_SUCCESS:
-            const { _id: id, ...payloadWithoutId } = action.payload;
+            const { _id: id } = action.payload;
             return {
                 ...initialState,
                 allIds: [...state.allIds, id],
-                byId: { ...state.byId, [id]: payloadWithoutId },
-                byName: { ...state.byName, [getFullName(payloadWithoutId)]: id }
+                byId: { ...state.byId, [id]: action.payload }
             } as CreatorState;
 
         case creatorConstants.GET_SUCCESS:
             return {
                 ...initialState,
                 allIds: action.payload.map((item: any) => item._id),
-                byId: normalize(action.payload),
-                byName: getNameIdMap(action.payload)
+                byId: normalize(action.payload)
             } as CreatorState;
         case creatorConstants.GET_BY_ID_SUCCESS:
             return {
@@ -60,10 +55,10 @@ export const creators = (
                 error: undefined
             } as CreatorState;
         case creatorConstants.UPDATE_SUCCESS:
-            const { _id, ...updatedItem } = action.payload;
+            const { _id } = action.payload;
             return {
                 ...state,
-                byId: { ...state.byId, [_id]: updatedItem },
+                byId: { ...state.byId, [_id]: action.payload },
                 loading: false,
                 error: undefined
             } as CreatorState;
@@ -74,15 +69,10 @@ export const creators = (
                 ...remainingCreators
             } = state.byId;
             const remainingIds = state.allIds.filter(id => id !== deletedId);
-            const {
-                [getFullName(deletedCreator)]: delId,
-                ...remainingNames
-            } = state.byName;
             return {
                 ...state,
                 byId: remainingCreators,
                 allIds: remainingIds,
-                byName: remainingNames,
                 loading: false,
                 error: undefined
             } as CreatorState;

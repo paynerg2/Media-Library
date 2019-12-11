@@ -111,12 +111,9 @@ describe('Games Reducer', () => {
                     ...requestState,
                     loading: false,
                     byId: {
-                        [testItem._id]: testGame
+                        [testItem._id]: testItem
                     },
-                    allIds: [testItem._id],
-                    bySeriesName: {
-                        [testItem.series]: [testItem._id]
-                    }
+                    allIds: [testItem._id]
                 };
                 expect(games(requestState, action)).toEqual(expectedState);
             });
@@ -132,13 +129,10 @@ describe('Games Reducer', () => {
                     ...requestState,
                     loading: false,
                     byId: {
-                        [testItem._id]: testGame,
-                        [testItem2._id]: testGame
+                        [testItem._id]: testItem,
+                        [testItem2._id]: testItem2
                     },
-                    allIds: [testItem._id, testItem2._id],
-                    bySeriesName: {
-                        [testItem.series]: [testItem._id, testItem2._id]
-                    }
+                    allIds: [testItem._id, testItem2._id]
                 };
                 expect(games(requestState, action)).toEqual(expectedState);
             });
@@ -165,22 +159,21 @@ describe('Games Reducer', () => {
                     ...testItem,
                     checkedOut: !testItem.checkedOut
                 };
-                const { _id, ...testUpdatedGame } = testUpdate;
                 const action: IAction = {
                     type: gameConstants.UPDATE_SUCCESS,
                     payload: testUpdate
                 };
-                const preUpdateState = {
+                const preUpdateState: GameState = {
                     ...requestState,
                     byId: {
-                        [testItem._id]: testGame
+                        [testItem._id]: testItem
                     },
                     allIds: [testItem._id]
                 };
                 const expectedState: GameState = {
                     ...preUpdateState,
                     byId: {
-                        [testUpdate._id]: testUpdatedGame as Game
+                        [testUpdate._id]: testUpdate
                     },
                     loading: false
                 };
@@ -192,20 +185,19 @@ describe('Games Reducer', () => {
             it('Correctly removes a company from state', () => {
                 const action = {
                     type: gameConstants.DELETE_SUCCESS,
-                    payload: testItem._id
+                    payload: testItem2._id
                 };
-                const id = mongoose.Types.ObjectId().toHexString();
-                const preDeleteState = {
+                const preDeleteState: GameState = {
                     ...requestState,
                     byId: {
-                        [testItem._id]: testGame,
-                        [id]: testGame
+                        [testItem._id]: testItem,
+                        [testItem2._id]: testItem2
                     },
                     allIds: [testItem._id, id]
                 };
-                const expectedState = {
+                const expectedState: GameState = {
                     ...preDeleteState,
-                    byId: { [id]: testGame },
+                    byId: { [id]: testItem },
                     allIds: [id],
                     loading: false
                 };

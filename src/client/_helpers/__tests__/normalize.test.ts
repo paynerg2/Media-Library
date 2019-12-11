@@ -8,14 +8,17 @@ describe('Normalize Helper Method', () => {
     ];
     const expectedNormalizedTestData = {
         1: {
+            _id: 1,
             property1: 'test',
             property2: 'test2'
         },
         2: {
+            _id: 2,
             property1: 'test3',
             property2: 'test4'
         },
         3: {
+            _id: 3,
             property1: 'test4',
             property2: 'test5'
         }

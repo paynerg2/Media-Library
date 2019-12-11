@@ -116,12 +116,9 @@ describe('Books Reducer', () => {
                     ...requestState,
                     loading: false,
                     byId: {
-                        [testItem._id]: testBook
+                        [testItem._id]: testItem
                     },
-                    allIds: [testItem._id],
-                    bySeriesName: {
-                        [testItem.series]: [testItem._id]
-                    }
+                    allIds: [testItem._id]
                 };
                 expect(books(requestState, action)).toEqual(expectedState);
             });
@@ -138,13 +135,10 @@ describe('Books Reducer', () => {
                 ...requestState,
                 loading: false,
                 byId: {
-                    [testItem._id]: testBook,
-                    [testItem2._id]: testBook
+                    [testItem._id]: testItem,
+                    [testItem2._id]: testItem2
                 },
-                allIds: [testItem._id, testItem2._id],
-                bySeriesName: {
-                    [testItem.series]: [testItem._id, testItem2._id]
-                }
+                allIds: [testItem._id, testItem2._id]
             };
             expect(books(requestState, action)).toEqual(expectedState);
         });
@@ -171,22 +165,21 @@ describe('Books Reducer', () => {
                 ...testItem,
                 checkedOut: !testItem.checkedOut
             };
-            const { _id, ...testUpdatedBook } = testUpdate;
             const action: IAction = {
                 type: bookConstants.UPDATE_SUCCESS,
                 payload: testUpdate
             };
-            const preUpdateState = {
+            const preUpdateState: BookState = {
                 ...requestState,
                 byId: {
-                    [testItem._id]: testBook
+                    [testItem._id]: testItem
                 },
                 allIds: [testItem._id]
             };
             const expectedState: BookState = {
                 ...preUpdateState,
                 byId: {
-                    [testUpdate._id]: testUpdatedBook as Book
+                    [testUpdate._id]: testUpdate
                 },
                 loading: false
             };
@@ -198,21 +191,20 @@ describe('Books Reducer', () => {
         it('Correctly removes a company from state', () => {
             const action = {
                 type: bookConstants.DELETE_SUCCESS,
-                payload: testItem._id
+                payload: testItem2._id
             };
-            const id = mongoose.Types.ObjectId().toHexString();
-            const preDeleteState = {
+            const preDeleteState: BookState = {
                 ...requestState,
                 byId: {
-                    [testItem._id]: testBook,
-                    [id]: testBook
+                    [testItem._id]: testItem,
+                    [testItem2._id]: testItem2
                 },
-                allIds: [testItem._id, id]
+                allIds: [testItem._id, testItem2._id]
             };
-            const expectedState = {
+            const expectedState: BookState = {
                 ...preDeleteState,
-                byId: { [id]: testBook },
-                allIds: [id],
+                byId: { [testItem._id]: testItem },
+                allIds: [testItem._id],
                 loading: false
             };
             expect(books(preDeleteState, action)).toEqual(expectedState);

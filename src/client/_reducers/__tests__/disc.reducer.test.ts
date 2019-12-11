@@ -114,12 +114,9 @@ describe('Discs Reducer', () => {
                     ...requestState,
                     loading: false,
                     byId: {
-                        [testItem._id]: testDisc
+                        [testItem._id]: testItem
                     },
-                    allIds: [testItem._id],
-                    bySeriesName: {
-                        [testItem.series]: [testItem._id]
-                    }
+                    allIds: [testItem._id]
                 };
                 expect(discs(requestState, action)).toEqual(expectedState);
             });
@@ -136,13 +133,10 @@ describe('Discs Reducer', () => {
                 ...requestState,
                 loading: false,
                 byId: {
-                    [testItem._id]: testDisc,
-                    [testItem2._id]: testDisc
+                    [testItem._id]: testItem,
+                    [testItem2._id]: testItem2
                 },
-                allIds: [testItem._id, testItem2._id],
-                bySeriesName: {
-                    [testItem.series]: [testItem._id, testItem2._id]
-                }
+                allIds: [testItem._id, testItem2._id]
             };
             expect(discs(requestState, action)).toEqual(expectedState);
         });
@@ -169,22 +163,21 @@ describe('Discs Reducer', () => {
                 ...testItem,
                 checkedOut: !testItem.checkedOut
             };
-            const { _id, ...testUpdatedDisc } = testUpdate;
             const action: IAction = {
                 type: discConstants.UPDATE_SUCCESS,
                 payload: testUpdate
             };
-            const preUpdateState = {
+            const preUpdateState: DiscState = {
                 ...requestState,
                 byId: {
-                    [testItem._id]: testDisc
+                    [testItem._id]: testItem
                 },
                 allIds: [testItem._id]
             };
             const expectedState: DiscState = {
                 ...preUpdateState,
                 byId: {
-                    [testUpdate._id]: testUpdatedDisc as Disc
+                    [testUpdate._id]: testUpdate
                 },
                 loading: false
             };
@@ -196,21 +189,20 @@ describe('Discs Reducer', () => {
         it('Correctly removes a company from state', () => {
             const action = {
                 type: discConstants.DELETE_SUCCESS,
-                payload: testItem._id
+                payload: testItem2._id
             };
-            const id = mongoose.Types.ObjectId().toHexString();
-            const preDeleteState = {
+            const preDeleteState: DiscState = {
                 ...requestState,
                 byId: {
-                    [testItem._id]: testDisc,
-                    [id]: testDisc
+                    [testItem._id]: testItem,
+                    [testItem2._id]: testItem2
                 },
-                allIds: [testItem._id, id]
+                allIds: [testItem._id, testItem2._id]
             };
-            const expectedState = {
+            const expectedState: DiscState = {
                 ...preDeleteState,
-                byId: { [id]: testDisc },
-                allIds: [id],
+                byId: { [testItem._id]: testItem },
+                allIds: [testItem._id],
                 loading: false
             };
             expect(discs(preDeleteState, action)).toEqual(expectedState);
