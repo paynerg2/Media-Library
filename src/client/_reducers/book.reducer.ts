@@ -6,7 +6,7 @@ export const initialState: BookState = {
     allIds: [],
     byId: {},
     selectedBook: null,
-    loading: false,
+    loading: true,
     error: undefined
 };
 

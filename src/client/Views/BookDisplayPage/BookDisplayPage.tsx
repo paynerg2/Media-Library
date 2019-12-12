@@ -1,25 +1,42 @@
 import React, { Fragment, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { useSelector, useSeriesId } from '../../_hooks';
-import { Book } from '../../../lib/interfaces';
-import { Link } from 'react-router-dom';
+import Book from '../../_components/Book/Book';
+import { useSelector } from '../../_hooks';
+import { bookActions } from '../../_actions';
 
 const BookDisplayPage: React.FunctionComponent<BookDisplayPageProps> = props => {
     const { id } = props.match.params;
-    const [book, setBook] = useState({} as Book);
-    const selectedBook = useSelector(state => state.books.byId[id]);
-
+    const dispatch = useDispatch();
+    const [loading, setLoading] = useState(true);
+    const loadingStatus = useSelector(state => state.books.loading);
+    // ToDO: Fix all kinda shit.
+    // * Use component to house hook calls, and call that component conditionally.
     useEffect(() => {
-        setBook(selectedBook);
-    }, [id, selectedBook]);
+        //dispatch(bookActions.getAll());
+        setLoading(loadingStatus);
+        console.log(loadingStatus);
+    }, [loadingStatus]);
+
+    const handleEdit = () => {
+        props.history.push(`/books/edit/${id}`);
+    };
+
+    const handleDelete = () => {
+        dispatch(bookActions.delete(id));
+    };
 
     return (
         <Fragment>
-            <div>{book.title}</div>
-            <div>{id}</div>
-            <Link to={`../series/${useSeriesId(book.series)}`}>
-                {book.series}
-            </Link>
+            {loading ? (
+                <div>Loading...</div>
+            ) : (
+                <Fragment>
+                    <Book id={id} />
+                    <button onClick={handleEdit}>Edit</button>
+                    <button onClick={handleDelete}>Delete</button>
+                </Fragment>
+            )}
         </Fragment>
     );
 };
