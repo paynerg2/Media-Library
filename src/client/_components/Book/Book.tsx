@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import { useSeriesId, useBook } from '../../_hooks';
+import { useBook } from '../../_hooks';
 import { Book as IBook } from '../../../lib/interfaces';
 import { Link } from 'react-router-dom';
 import { getFullName } from '../../_helpers/getFullName';
@@ -11,7 +11,6 @@ interface BookProps {
 const Book: React.FunctionComponent<BookProps> = props => {
     const { id } = props;
     const [book, setBook] = useState({} as IBook);
-    //const selectedBook: IBook = useSelector(state => state.books.byId[id]);
     const {
         book: selectedBook,
         authors,
@@ -22,8 +21,6 @@ const Book: React.FunctionComponent<BookProps> = props => {
         publisher
     } = useBook(id);
 
-    console.log(book);
-    console.log(publisher);
     useEffect(() => {
         setBook(selectedBook);
     }, [selectedBook]);
@@ -84,9 +81,7 @@ const Book: React.FunctionComponent<BookProps> = props => {
                 </div>
             )}
             {book.volume ? <div>{`volume ${book.volume}`}</div> : null}
-            <div>Language:</div>
-            <div>{book.language}</div>
-            <div>{book.type}</div>
+            <div>{`${book.language} language ${book.type}`}</div>
             {book.listPrice ? (
                 <Fragment>
                     <div>List Price:</div>
