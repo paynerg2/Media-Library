@@ -6,7 +6,7 @@ export const initialState: GameState = {
     allIds: [],
     byId: {},
     selectedGame: null,
-    loading: false,
+    loading: true,
     error: undefined
 };
 

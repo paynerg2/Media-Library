@@ -6,7 +6,7 @@ export const initialState: DiscState = {
     allIds: [],
     byId: {},
     selectedDisc: null,
-    loading: false,
+    loading: true,
     error: undefined
 };
 
