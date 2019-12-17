@@ -10,12 +10,9 @@ const BookDisplayPage: React.FunctionComponent<BookDisplayPageProps> = props => 
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
     const loadingStatus = useSelector(state => state.books.loading);
-    // ToDO: Fix all kinda shit.
-    // * Use component to house hook calls, and call that component conditionally.
+
     useEffect(() => {
-        //dispatch(bookActions.getAll());
         setLoading(loadingStatus);
-        console.log(loadingStatus);
     }, [loadingStatus]);
 
     const handleEdit = () => {

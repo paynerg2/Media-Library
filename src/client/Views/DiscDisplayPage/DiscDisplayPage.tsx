@@ -1,24 +1,39 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { useSelector, useSeriesId } from '../../_hooks';
-import { Disc } from '../../../lib/interfaces';
-import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import Disc from '../../_components/Disc/Disc';
+import { discActions } from '../../_actions';
+import { useSelector } from '../../_hooks';
 
 const DiscDisplayPage: React.FunctionComponent<DiscDisplayPageProps> = props => {
     const { id } = props.match.params;
-    const [disc, setDisc] = useState({} as Disc);
-    const selectedDisc = useSelector(state => state.discs.byId[id]);
+    const dispatch = useDispatch();
+    const [loading, setLoading] = useState(true);
+    const loadingStatus = useSelector(state => state.discs.loading);
+
     useEffect(() => {
-        setDisc(selectedDisc);
-    }, [id, selectedDisc]);
+        setLoading(loadingStatus);
+    }, [loadingStatus]);
+
+    const handleEdit = () => {
+        props.history.push(`/discs/edit/${id}`);
+    };
+
+    const handleDelete = () => {
+        dispatch(discActions.delete(id));
+    };
 
     return (
         <Fragment>
-            <div>{disc.title}</div>
-            <div>{id}</div>
-            <Link to={`../series/${useSeriesId(disc.series)}`}>
-                {disc.series}
-            </Link>
+            {loading ? (
+                <div>Loading...</div>
+            ) : (
+                <Fragment>
+                    <Disc id={id} />
+                    <button onClick={handleEdit}>Edit</button>
+                    <button onClick={handleDelete}>Delete</button>
+                </Fragment>
+            )}
         </Fragment>
     );
 };
