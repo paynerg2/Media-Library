@@ -12,40 +12,49 @@ import {
     assureCreatorExists,
     assureSeriesExists
 } from '../../_helpers/formSubmissionHelpers';
+import { RouteComponentProps, withRouter } from 'react-router';
 
-const NewDiscPage: React.FC = () => {
+interface MatchProps {
+    id: string;
+}
+
+const NewDiscPage: React.FunctionComponent<RouteComponentProps<
+    MatchProps
+>> = props => {
+    const { id } = props.match.params;
     const dispatch = useDispatch();
     const creatorsById = useSelector(state => state.creators.byId);
     const seriesById = useSelector(state => state.series.byId);
     const companiesById = useSelector(state => state.companies.byId);
 
+    const selectedDisc = useSelector(state => state.discs.byId[id]);
+    const initialValues = selectedDisc ? selectedDisc : defaultDisc;
+
     const handleSubmit = async (props: Disc) => {
         // Create new disc
-        await dispatch(discActions.create(props));
+        id
+            ? await dispatch(discActions.update(id, props))
+            : await dispatch(discActions.create(props));
 
         // Ensure that any creators, companies or series related to
         // the new disc also have database entries.
-        const { director, studio } = props;
-        let expectedStaff = [];
-        director && expectedStaff.push(director);
-        studio && expectedStaff.push(studio);
-        expectedStaff.forEach(member =>
-            assureCreatorExists(creatorsById, dispatch, member, props.title)
+        const { director, studio, publisher } = props;
+
+        director &&
+            assureCreatorExists(creatorsById, dispatch, director, props.title);
+        let expectedCompanies = [];
+        publisher && expectedCompanies.push(publisher);
+        studio && expectedCompanies.push(studio);
+        expectedCompanies.forEach(company =>
+            assureCompanyExists(companiesById, dispatch, company, props.title)
         );
         assureSeriesExists(seriesById, dispatch, props.series, props.title);
-        props.publisher &&
-            assureCompanyExists(
-                companiesById,
-                dispatch,
-                props.publisher,
-                props.title
-            );
     };
 
     return (
         <Fragment>
             <Formik
-                initialValues={defaultDisc}
+                initialValues={initialValues}
                 onSubmit={handleSubmit}
                 validationSchema={discSchema}
             >
@@ -331,7 +340,7 @@ const NewDiscPage: React.FC = () => {
                                 validationErrorExists(errors, touched)
                             }
                         >
-                            Add Disc
+                            {id ? 'Edit Disc' : 'Add Disc'}
                         </button>
                     </form>
                 )}
@@ -340,4 +349,4 @@ const NewDiscPage: React.FC = () => {
     );
 };
 
-export default NewDiscPage;
+export default withRouter(NewDiscPage);

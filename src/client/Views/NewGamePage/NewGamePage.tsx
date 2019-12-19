@@ -5,21 +5,33 @@ import { validationErrorExists } from '../../_helpers/validationErrorExists';
 import { useSelector } from '../../_hooks';
 import {
     assureCompanyExists,
-    assureCreatorExists,
     assureSeriesExists
 } from '../../_helpers/formSubmissionHelpers';
 
 import { gameSchema } from '../../../lib/schemas';
 import { gameActions } from '../../_actions';
 import { Game, defaultGame } from '../../../lib/interfaces';
+import { RouteComponentProps, withRouter } from 'react-router';
 
-const NewGamePage: React.FC = () => {
+interface MatchProps {
+    id: string;
+}
+
+const NewGamePage: React.FunctionComponent<RouteComponentProps<
+    MatchProps
+>> = props => {
+    const { id } = props.match.params;
     const dispatch = useDispatch();
     const seriesById = useSelector(state => state.series.byId);
     const companiesById = useSelector(state => state.companies.byId);
 
+    const selectedGame = useSelector(state => state.games.byId[id]);
+    const initialValues: Game = selectedGame ? selectedGame : defaultGame;
+
     const handleSubmit = async (props: Game) => {
-        await dispatch(gameActions.create(props));
+        id
+            ? await dispatch(gameActions.update(id, props))
+            : await dispatch(gameActions.create(props));
 
         assureSeriesExists(seriesById, dispatch, props.series, props.title);
         props.publisher &&
@@ -34,7 +46,7 @@ const NewGamePage: React.FC = () => {
     return (
         <Fragment>
             <Formik
-                initialValues={defaultGame}
+                initialValues={initialValues}
                 onSubmit={handleSubmit}
                 validationSchema={gameSchema}
             >
@@ -273,7 +285,7 @@ const NewGamePage: React.FC = () => {
                                 validationErrorExists(errors, touched)
                             }
                         >
-                            Add Game
+                            {id ? 'Edit Game' : 'Add Game'}
                         </button>
                     </form>
                 )}
@@ -282,4 +294,4 @@ const NewGamePage: React.FC = () => {
     );
 };
 
-export default NewGamePage;
+export default withRouter(NewGamePage);

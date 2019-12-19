@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
+import { RouteComponentProps, withRouter } from 'react-router';
 import { Formik, Field, FieldArray, ErrorMessage } from 'formik';
 import { validationErrorExists } from '../../_helpers/validationErrorExists';
 import { bookSchema } from '../../../lib/schemas';
 import { bookActions } from '../../_actions';
-import { history } from '../../_helpers/history';
 import { Book, defaultBook } from '../../../lib/interfaces';
 import { bookTypes } from '../../../lib/formats';
 import { useSelector } from '../../_hooks';
@@ -13,14 +13,27 @@ import {
     assureCreatorExists,
     assureSeriesExists
 } from '../../_helpers/formSubmissionHelpers';
-const NewBookPage: React.FC = () => {
+
+interface MatchProps {
+    id: string;
+}
+
+const NewBookPage: React.FunctionComponent<RouteComponentProps<
+    MatchProps
+>> = props => {
     const dispatch = useDispatch();
     const creatorsById = useSelector(state => state.creators.byId);
     const seriesById = useSelector(state => state.series.byId);
     const companiesById = useSelector(state => state.companies.byId);
+    const { id } = props.match.params;
+    const selectedBook = useSelector(state => state.books.byId[id]);
+    console.log(selectedBook);
+    const initialValues: Book = selectedBook ? selectedBook : defaultBook;
 
     const handleSubmit = async (props: Book) => {
-        await dispatch(bookActions.create(props));
+        id
+            ? await dispatch(bookActions.update(id, props))
+            : await dispatch(bookActions.create(props));
 
         const { authors, colorer, letterer, artists } = props;
         let expectedCreators = authors;
@@ -44,7 +57,7 @@ const NewBookPage: React.FC = () => {
     return (
         <Fragment>
             <Formik
-                initialValues={defaultBook}
+                initialValues={initialValues}
                 onSubmit={handleSubmit}
                 validationSchema={bookSchema}
             >
@@ -430,7 +443,7 @@ const NewBookPage: React.FC = () => {
                                 validationErrorExists(errors, touched)
                             }
                         >
-                            Add Book
+                            {id ? 'Edit Book' : 'Add Book'}
                         </button>
                     </form>
                 )}
@@ -439,4 +452,4 @@ const NewBookPage: React.FC = () => {
     );
 };
 
-export default NewBookPage;
+export default withRouter(NewBookPage);
