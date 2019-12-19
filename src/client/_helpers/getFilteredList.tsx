@@ -13,20 +13,25 @@ export const getFilteredList = (
                       .toLocaleLowerCase()
                       .includes(searchTerm.toLocaleLowerCase())
               )
-              .map((id: string) => (
+              .map((id: string) => items.byId[id])
+              .sort((a: any, b: any) => a.title.localeCompare(b.title))
+              .map((item: any) => (
                   <ItemContainer
-                      key={id}
-                      id={id}
-                      item={items.byId[id]}
+                      key={item._id}
+                      id={item._id}
+                      item={item}
                       route={route}
                   />
               ))
-        : items.allIds.map((id: string) => (
-              <ItemContainer
-                  key={id}
-                  id={id}
-                  item={items.byId[id]}
-                  route={route}
-              />
-          ));
+        : items.allIds
+              .map((id: string) => items.byId[id])
+              .sort((a: any, b: any) => a.title.localeCompare(b.title))
+              .map((item: any) => (
+                  <ItemContainer
+                      key={item._id}
+                      id={item._id}
+                      item={item}
+                      route={route}
+                  />
+              ));
 };
