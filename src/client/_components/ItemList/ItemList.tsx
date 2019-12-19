@@ -12,7 +12,7 @@ export const ItemList: FunctionComponent<ItemListProps> = ({
 }) => {
     let listSection = null;
     if (Array.isArray(children)) {
-        if (length > children.length) {
+        if (length > children.length - 1) {
             listSection = children;
         } else {
             // Ensure minimum length of the array
