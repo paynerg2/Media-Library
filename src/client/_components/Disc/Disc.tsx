@@ -1,8 +1,7 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { useDisc } from '../../_hooks';
-import { Disc as IDisc, Creator } from '../../../lib/interfaces';
+import { Disc as IDisc } from '../../../lib/interfaces';
 import { Link } from 'react-router-dom';
-import { getFullName } from '../../_helpers/getFullName';
 
 interface DiscProps {
     id: string;
@@ -17,7 +16,7 @@ const Disc: React.FunctionComponent<DiscProps> = props => {
 
     useEffect(() => {
         setDisc(selectedDisc);
-    }, []);
+    }, [selectedDisc]);
 
     return (
         <Fragment>
@@ -77,6 +76,13 @@ const Disc: React.FunctionComponent<DiscProps> = props => {
             ) : null}
             {disc.physical && <div>Physical Copy Available</div>}
             {disc.digital && <div>Digital Copy Available</div>}
+            {disc.image ? (
+                <img
+                    src={disc.image}
+                    alt={`${disc.title} Cover`}
+                    height="400"
+                />
+            ) : null}
         </Fragment>
     );
 };

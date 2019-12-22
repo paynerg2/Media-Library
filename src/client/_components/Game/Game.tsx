@@ -11,11 +11,9 @@ const Game: React.FunctionComponent<GameProps> = props => {
     const { id } = props;
     const [game, setGame] = useState({} as IGame);
     const { game: selectedGame, series, publisher } = useGame(id);
-    console.log(selectedGame);
     useEffect(() => {
         setGame(selectedGame);
-        console.log('setting game');
-    }, []);
+    }, [selectedGame]);
 
     return (
         <Fragment>
@@ -52,6 +50,13 @@ const Game: React.FunctionComponent<GameProps> = props => {
             ) : null}
             {game.physical && <div>Physical Copy Available</div>}
             {game.digital && <div>Digital Copy Available</div>}
+            {game.image ? (
+                <img
+                    src={game.image}
+                    alt={`${game.title} Cover`}
+                    height="400"
+                />
+            ) : null}
         </Fragment>
     );
 };

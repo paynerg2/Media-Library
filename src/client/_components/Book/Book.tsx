@@ -94,6 +94,13 @@ const Book: React.FunctionComponent<BookProps> = props => {
             {book.physical && <div>Physical Copy Available</div>}
             {book.digital && <div>Digital Copy Available</div>}
             {book.isbn ? <div>{`ISBN: ${book.isbn}`}</div> : null}
+            {book.image ? (
+                <img
+                    src={book.image}
+                    alt={`${book.title} Cover`}
+                    height="400"
+                />
+            ) : null}
         </Fragment>
     );
 };

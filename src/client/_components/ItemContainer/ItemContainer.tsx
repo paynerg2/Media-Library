@@ -20,9 +20,14 @@ export const ItemContainer: FunctionComponent<ItemContainerProps> = ({
     return (
         <li>
             <Link to={itemDetailPage}>
-                {!isCollapsed && <div>Image Here</div>}
+                {!isCollapsed && item.image && (
+                    <img
+                        src={item.image}
+                        alt={`${item.title} Cover`}
+                        height="100"
+                    />
+                )}
                 <div>{item.title}</div>
-                <div>{id}</div>
             </Link>
         </li>
     );
