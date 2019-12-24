@@ -22,6 +22,7 @@ const NewDiscPage: React.FunctionComponent<RouteComponentProps<
     MatchProps
 >> = props => {
     const { id } = props.match.params;
+    const { history } = props;
     const dispatch = useDispatch();
     const creatorsById = useSelector(state => state.creators.byId);
     const seriesById = useSelector(state => state.series.byId);
@@ -49,6 +50,7 @@ const NewDiscPage: React.FunctionComponent<RouteComponentProps<
             assureCompanyExists(companiesById, dispatch, company, props.title)
         );
         assureSeriesExists(seriesById, dispatch, props.series, props.title);
+        history.push('/');
     };
 
     return (
@@ -333,6 +335,16 @@ const NewDiscPage: React.FunctionComponent<RouteComponentProps<
                             ))}
                         </Field>
                         <ErrorMessage name="format" />
+                        <label htmlFor="image">Image:</label>
+                        <Field
+                            name="image"
+                            id="image"
+                            value={values.image}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            type="text"
+                        />
+                        <ErrorMessage name="image" />
                         <button
                             type="submit"
                             disabled={

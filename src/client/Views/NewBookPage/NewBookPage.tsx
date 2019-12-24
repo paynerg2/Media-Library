@@ -26,6 +26,7 @@ const NewBookPage: React.FunctionComponent<RouteComponentProps<
     const seriesById = useSelector(state => state.series.byId);
     const companiesById = useSelector(state => state.companies.byId);
     const { id } = props.match.params;
+    const { history } = props;
     const selectedBook = useSelector(state => state.books.byId[id]);
     console.log(selectedBook);
     const initialValues: Book = selectedBook ? selectedBook : defaultBook;
@@ -52,6 +53,7 @@ const NewBookPage: React.FunctionComponent<RouteComponentProps<
                 props.publisher,
                 props.title
             );
+        history.push('/');
     };
 
     return (
@@ -435,6 +437,17 @@ const NewBookPage: React.FunctionComponent<RouteComponentProps<
                             ))}
                         </select>
                         <ErrorMessage name="type" />
+
+                        <label htmlFor="image">Image:</label>
+                        <Field
+                            name="image"
+                            id="image"
+                            value={values.image}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            type="text"
+                        />
+                        <ErrorMessage name="image" />
 
                         <button
                             type="submit"

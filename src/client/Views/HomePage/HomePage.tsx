@@ -1,96 +1,116 @@
 import React, { Fragment, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ItemContainer } from '../../_components/ItemContainer';
 import { ItemList } from '../../_components/ItemList';
 import { ListScroller } from '../../_components/ListScroller';
 import { useSelector } from '../../_hooks';
+import { SearchBar } from '../../_components/SearchBar/';
+import { getFilteredList } from '../../_helpers/getFilteredList';
 
 const HomePage: React.FC = () => {
     const length: number = 3;
+    const [searchTerm, setSearchTerm] = useState('');
     const { books, discs, games } = useSelector(state => state);
 
-    const bookList: JSX.Element[] = books.allIds.map(id => (
-        <ItemContainer key={id} id={id} item={books.byId[id]} route={'books'} />
-    ));
-    const discList: JSX.Element[] = discs.allIds.map(id => (
-        <ItemContainer key={id} id={id} item={discs.byId[id]} route={'discs'} />
-    ));
-    const gameList: JSX.Element[] = games.allIds.map(id => (
-        <ItemContainer key={id} id={id} item={games.byId[id]} route={'games'} />
-    ));
+    const bookList: JSX.Element[] = getFilteredList(books, searchTerm, 'books');
+    const discList: JSX.Element[] = getFilteredList(discs, searchTerm, 'discs');
+    const gameList: JSX.Element[] = getFilteredList(games, searchTerm, 'games');
 
     const [visibility, setVisibility] = useState([true, true, true]);
     const [singleView, setSingleView] = useState(false);
 
+    const handleVisibilityToggle = (visibility: boolean[]) => {
+        singleView
+            ? setVisibility([true, true, true])
+            : setVisibility(visibility);
+        setSingleView(prev => !prev);
+    };
+
+    const getButtonText = () => {
+        return singleView ? 'Back' : 'View All';
+    };
+
     return (
         <Fragment>
+            <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
             <div>Library</div>
             <br />
             <div>Books</div>
             {visibility[0] && (
-                <ListScroller>
-                    <ItemList length={singleView ? bookList.length : length}>
-                        {bookList}
-                    </ItemList>
-                </ListScroller>
+                <div>
+                    <ListScroller>
+                        <ItemList
+                            length={singleView ? bookList.length : length}
+                        >
+                            {bookList}
+                        </ItemList>
+                    </ListScroller>
+                    <button
+                        onClick={() =>
+                            handleVisibilityToggle([true, false, false])
+                        }
+                    >
+                        {getButtonText()}
+                    </button>
+                    {singleView && (
+                        <button>
+                            <Link to="/books/new">+</Link>
+                        </button>
+                    )}
+                </div>
             )}
-            <button
-                onClick={() => {
-                    setVisibility([true, false, false]);
-                    setSingleView(true);
-                }}
-            >
-                View All
-            </button>
-            {singleView && visibility[0] && (
-                <button>
-                    <Link to="/books/new">+</Link>
-                </button>
-            )}
+
             <br />
             <div>Discs</div>
             {visibility[1] && (
-                <ListScroller>
-                    <ItemList length={singleView ? discList.length : length}>
-                        {discList}
-                    </ItemList>
-                </ListScroller>
+                <div>
+                    <ListScroller>
+                        <ItemList
+                            length={singleView ? discList.length : length}
+                        >
+                            {discList}
+                        </ItemList>
+                    </ListScroller>
+                    <button
+                        onClick={() =>
+                            handleVisibilityToggle([false, true, false])
+                        }
+                    >
+                        {getButtonText()}
+                    </button>
+                    {singleView && (
+                        <button>
+                            <Link to="/discs/new">+</Link>
+                        </button>
+                    )}
+                </div>
             )}
-            <button
-                onClick={() => {
-                    setVisibility([false, true, false]);
-                    setSingleView(true);
-                }}
-            >
-                View All
-            </button>
-            {singleView && visibility[1] && (
-                <button>
-                    <Link to="/discs/new">+</Link>
-                </button>
-            )}
+
             <br />
             <div>Games</div>
             {visibility[2] && (
-                <ListScroller>
-                    <ItemList length={singleView ? gameList.length : length}>
-                        {gameList}
-                    </ItemList>
-                </ListScroller>
+                <div>
+                    <ListScroller>
+                        <ItemList
+                            length={singleView ? gameList.length : length}
+                        >
+                            {gameList}
+                        </ItemList>
+                    </ListScroller>
+                    <button
+                        onClick={() =>
+                            handleVisibilityToggle([false, false, true])
+                        }
+                    >
+                        {getButtonText()}
+                    </button>
+                    {singleView && visibility[2] && (
+                        <button>
+                            <Link to="/games/new">+</Link>
+                        </button>
+                    )}
+                </div>
             )}
-            <button
-                onClick={() => {
-                    setVisibility([false, false, true]);
-                    setSingleView(true);
-                }}
-            >
-                View All
-            </button>
-            {singleView && visibility[2] && (
-                <button>
-                    <Link to="/games/new">+</Link>
-                </button>
-            )}
+
             <br />
         </Fragment>
     );

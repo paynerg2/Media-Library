@@ -21,6 +21,7 @@ const NewGamePage: React.FunctionComponent<RouteComponentProps<
     MatchProps
 >> = props => {
     const { id } = props.match.params;
+    const { history } = props;
     const dispatch = useDispatch();
     const seriesById = useSelector(state => state.series.byId);
     const companiesById = useSelector(state => state.companies.byId);
@@ -41,6 +42,7 @@ const NewGamePage: React.FunctionComponent<RouteComponentProps<
                 props.publisher,
                 props.title
             );
+        history.push('/');
     };
 
     return (
@@ -278,6 +280,16 @@ const NewGamePage: React.FunctionComponent<RouteComponentProps<
                             type="checkbox"
                         />
                         <ErrorMessage name="physical" />
+                        <label htmlFor="image">Image:</label>
+                        <Field
+                            name="image"
+                            id="image"
+                            value={values.image}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            type="text"
+                        />
+                        <ErrorMessage name="image" />
                         <button
                             type="submit"
                             disabled={
