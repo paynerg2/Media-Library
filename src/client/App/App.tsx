@@ -24,6 +24,8 @@ import BookDisplayPage from '../Views/BookDisplayPage/BookDisplayPage';
 import DiscDisplayPage from '../Views/DiscDisplayPage/DiscDisplayPage';
 import GameDisplayPage from '../Views/GameDisplayPage/GameDisplayPage';
 import SeriesDisplayPage from '../Views/SeriesDisplayPage/SeriesDisplayPage';
+import CreatorDisplayPage from '../Views/CreatorDisplayPage/CreatorDisplayPage';
+import CompanyDisplayPage from '../Views/CompanyDisplayPage/CompanyDisplayPage';
 
 export const App: React.FC = () => {
     const { loggedIn } = useSelector(state => state.authentication);
@@ -35,7 +37,7 @@ export const App: React.FC = () => {
         dispatch(bookActions.getAll());
         dispatch(discActions.getAll());
         dispatch(gameActions.getAll());
-    }, [loggedIn]);
+    }, [loggedIn, dispatch]);
 
     return (
         <Router history={history}>
@@ -59,6 +61,11 @@ export const App: React.FC = () => {
                                 component={BookDisplayPage}
                                 exact
                             />
+                            <PrivateRoute
+                                path={`${path}/edit/:id`}
+                                component={NewBookPage}
+                                exact
+                            />
                         </Fragment>
                     )}
                 />
@@ -69,6 +76,11 @@ export const App: React.FC = () => {
                             <PrivateRoute
                                 path={`${path}/:id`}
                                 component={DiscDisplayPage}
+                                exact
+                            />
+                            <PrivateRoute
+                                path={`${path}/edit/:id`}
+                                component={NewDiscPage}
                                 exact
                             />
                         </Fragment>
@@ -83,6 +95,11 @@ export const App: React.FC = () => {
                                 component={GameDisplayPage}
                                 exact
                             />
+                            <PrivateRoute
+                                path={`${path}/edit/:id`}
+                                component={NewGamePage}
+                                exact
+                            />
                         </Fragment>
                     )}
                 />
@@ -93,6 +110,30 @@ export const App: React.FC = () => {
                             <PrivateRoute
                                 path={`${path}/:id`}
                                 component={SeriesDisplayPage}
+                                exact
+                            />
+                        </Fragment>
+                    )}
+                />
+                <Route
+                    path="/creators"
+                    render={({ match: { path } }) => (
+                        <Fragment>
+                            <PrivateRoute
+                                path={`${path}/:id`}
+                                component={CreatorDisplayPage}
+                                exact
+                            />
+                        </Fragment>
+                    )}
+                />
+                <Route
+                    path="/companies"
+                    render={({ match: { path } }) => (
+                        <Fragment>
+                            <PrivateRoute
+                                path={`${path}/:id`}
+                                component={CompanyDisplayPage}
                                 exact
                             />
                         </Fragment>

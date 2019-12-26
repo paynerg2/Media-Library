@@ -43,9 +43,9 @@ const CreatorDisplayPage: React.FunctionComponent<CreatorDisplayProps> = props =
                     <ul>
                         {books
                             .sort((a, b) =>
-                                b.title
+                                a.title
                                     .toLowerCase()
-                                    .localeCompare(a.title.toLowerCase())
+                                    .localeCompare(b.title.toLowerCase())
                             )
                             .map(book => (
                                 <ItemContainer
@@ -64,9 +64,9 @@ const CreatorDisplayPage: React.FunctionComponent<CreatorDisplayProps> = props =
                     <ul>
                         {discs
                             .sort((a, b) =>
-                                b.title
+                                a.title
                                     .toLowerCase()
-                                    .localeCompare(a.title.toLowerCase())
+                                    .localeCompare(b.title.toLowerCase())
                             )
                             .map(disc => (
                                 <ItemContainer

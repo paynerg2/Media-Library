@@ -50,6 +50,7 @@ import {
     Game
 } from '../../lib/interfaces';
 import { bookTypes, discFormats } from '../../lib/formats';
+import { getFullName } from '../_helpers/getFullName';
 
 describe('Client-side integration tests', () => {
     it('Initializes store with expected default values', () => {
@@ -652,6 +653,9 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: testCompany
+                        },
+                        byName: {
+                            [testItem.name]: testItem._id
                         }
                     };
                     expect(companies).toEqual(expectedState);
@@ -771,6 +775,9 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: testCompany
+                        },
+                        byName: {
+                            [testItem.name]: testItem._id
                         }
                     };
                     expect(companies).toEqual(expectedState);
@@ -851,6 +858,9 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: expectedUpdate
+                        },
+                        byName: {
+                            [testItem.name]: testItem._id
                         }
                     };
                     expect(companies).toEqual(expectedState);
@@ -997,6 +1007,9 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: testCreator
+                        },
+                        byName: {
+                            [getFullName(testCreator)]: testItem._id
                         }
                     };
                     expect(creators).toEqual(expectedState);
@@ -1128,6 +1141,9 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: testCreator
+                        },
+                        byName: {
+                            [getFullName(testCreator)]: testItem._id
                         }
                     };
                     expect(creators).toEqual(expectedState);
@@ -1215,6 +1231,9 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: expectedUpdate
+                        },
+                        byName: {
+                            [getFullName(testCreator)]: testItem._id
                         }
                     };
                     expect(creators).toEqual(expectedState);

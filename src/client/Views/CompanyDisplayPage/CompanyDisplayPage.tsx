@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { ItemContainer } from '../../_components/ItemContainer';
-import { ItemList } from '../../_components/ItemList';
 import { useSelector } from '../../_hooks/useSelector';
 import { Company, Book, Disc, Game } from '../../../lib/interfaces';
 import { MongoId } from '../../_interfaces';
@@ -51,9 +50,9 @@ const CompanyDisplayPage: React.FunctionComponent<CompanyDisplayPageProps> = pro
                     <ul>
                         {books
                             .sort((a, b) =>
-                                b.title
+                                a.title
                                     .toLowerCase()
-                                    .localeCompare(a.title.toLowerCase())
+                                    .localeCompare(b.title.toLowerCase())
                             )
                             .map(book => (
                                 <ItemContainer
@@ -72,9 +71,9 @@ const CompanyDisplayPage: React.FunctionComponent<CompanyDisplayPageProps> = pro
                     <ul>
                         {discs
                             .sort((a, b) =>
-                                b.title
+                                a.title
                                     .toLowerCase()
-                                    .localeCompare(a.title.toLowerCase())
+                                    .localeCompare(b.title.toLowerCase())
                             )
                             .map(disc => (
                                 <ItemContainer
@@ -93,9 +92,9 @@ const CompanyDisplayPage: React.FunctionComponent<CompanyDisplayPageProps> = pro
                     <ul>
                         {games
                             .sort((a, b) =>
-                                b.title
+                                a.title
                                     .toLowerCase()
-                                    .localeCompare(a.title.toLowerCase())
+                                    .localeCompare(b.title.toLowerCase())
                             )
                             .map(game => (
                                 <ItemContainer
