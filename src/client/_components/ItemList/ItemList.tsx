@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import styled from 'styled-components';
 
 type ItemListProps = {
     length: number;
@@ -24,5 +25,13 @@ export const ItemList: FunctionComponent<ItemListProps> = ({
         }
     }
 
-    return <ul>{listSection}</ul>;
+    return <List>{listSection}</List>;
 };
+
+const List = styled.ul`
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    list-style-type: none;
+    margin: 0;
+`;

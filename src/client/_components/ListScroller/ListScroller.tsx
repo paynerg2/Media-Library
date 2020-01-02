@@ -4,6 +4,8 @@ import React, {
     useState,
     ReactElement
 } from 'react';
+import { Scroller } from './scroller';
+import styled from 'styled-components';
 
 type ListScrollerProps = {};
 
@@ -20,10 +22,15 @@ export const ListScroller: FunctionComponent<ListScrollerProps> = ({
     };
 
     return (
-        <Fragment>
-            <button disabled={offset === 0} onClick={decOffset}>{`<`}</button>
+        <Container>
+            <Scroller disabled={offset === 0} onClick={decOffset} />
             {React.cloneElement(children as ReactElement, { offset: offset })}
-            <button onClick={incOffset}>{`>`}</button>
-        </Fragment>
+            <Scroller onClick={incOffset} right />
+        </Container>
     );
 };
+
+const Container = styled.div`
+    display: flex;
+    flex-direction: row;
+`;
