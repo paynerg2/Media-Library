@@ -1,6 +1,8 @@
 import React, { useEffect, Fragment } from 'react';
 import { Router, Route, Switch } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
 
+import { theme } from './theme';
 import { history } from '../_helpers/history';
 import { PrivateRoute } from '../_components/PrivateRoute';
 import RegistrationPage from '../Views/RegistrationPage/RegistrationPage';
@@ -40,106 +42,120 @@ export const App: React.FC = () => {
     }, [loggedIn, dispatch]);
 
     return (
-        <Router history={history}>
-            <Route path="/" component={Header} />
-            {/* Add things like footer, sidebar, breadcrumbs, etc. here */}
-            <Switch>
-                <Route path="/register" component={RegistrationPage} />
-                <Route path="/login" component={LoginPage} />
+        <ThemeProvider theme={theme}>
+            <Router history={history}>
+                <Route path="/" component={Header} />
+                {/* Add things like footer, sidebar, breadcrumbs, etc. here */}
+                <Switch>
+                    <Route path="/register" component={RegistrationPage} />
+                    <Route path="/login" component={LoginPage} />
 
-                <PrivateRoute path="/" exact component={HomePage} />
-                <PrivateRoute path="/books/new" exact component={NewBookPage} />
-                <PrivateRoute path="/discs/new" exact component={NewDiscPage} />
-                <PrivateRoute path="/games/new" exact component={NewGamePage} />
+                    <PrivateRoute path="/" exact component={HomePage} />
+                    <PrivateRoute
+                        path="/books/new"
+                        exact
+                        component={NewBookPage}
+                    />
+                    <PrivateRoute
+                        path="/discs/new"
+                        exact
+                        component={NewDiscPage}
+                    />
+                    <PrivateRoute
+                        path="/games/new"
+                        exact
+                        component={NewGamePage}
+                    />
 
-                <Route
-                    path="/books"
-                    render={({ match: { path } }) => (
-                        <Fragment>
-                            <PrivateRoute
-                                path={`${path}/:id`}
-                                component={BookDisplayPage}
-                                exact
-                            />
-                            <PrivateRoute
-                                path={`${path}/edit/:id`}
-                                component={NewBookPage}
-                                exact
-                            />
-                        </Fragment>
-                    )}
-                />
-                <Route
-                    path="/discs"
-                    render={({ match: { path } }) => (
-                        <Fragment>
-                            <PrivateRoute
-                                path={`${path}/:id`}
-                                component={DiscDisplayPage}
-                                exact
-                            />
-                            <PrivateRoute
-                                path={`${path}/edit/:id`}
-                                component={NewDiscPage}
-                                exact
-                            />
-                        </Fragment>
-                    )}
-                />
-                <Route
-                    path="/games"
-                    render={({ match: { path } }) => (
-                        <Fragment>
-                            <PrivateRoute
-                                path={`${path}/:id`}
-                                component={GameDisplayPage}
-                                exact
-                            />
-                            <PrivateRoute
-                                path={`${path}/edit/:id`}
-                                component={NewGamePage}
-                                exact
-                            />
-                        </Fragment>
-                    )}
-                />
-                <Route
-                    path="/series"
-                    render={({ match: { path } }) => (
-                        <Fragment>
-                            <PrivateRoute
-                                path={`${path}/:id`}
-                                component={SeriesDisplayPage}
-                                exact
-                            />
-                        </Fragment>
-                    )}
-                />
-                <Route
-                    path="/creators"
-                    render={({ match: { path } }) => (
-                        <Fragment>
-                            <PrivateRoute
-                                path={`${path}/:id`}
-                                component={CreatorDisplayPage}
-                                exact
-                            />
-                        </Fragment>
-                    )}
-                />
-                <Route
-                    path="/companies"
-                    render={({ match: { path } }) => (
-                        <Fragment>
-                            <PrivateRoute
-                                path={`${path}/:id`}
-                                component={CompanyDisplayPage}
-                                exact
-                            />
-                        </Fragment>
-                    )}
-                />
-            </Switch>
-        </Router>
+                    <Route
+                        path="/books"
+                        render={({ match: { path } }) => (
+                            <Fragment>
+                                <PrivateRoute
+                                    path={`${path}/:id`}
+                                    component={BookDisplayPage}
+                                    exact
+                                />
+                                <PrivateRoute
+                                    path={`${path}/edit/:id`}
+                                    component={NewBookPage}
+                                    exact
+                                />
+                            </Fragment>
+                        )}
+                    />
+                    <Route
+                        path="/discs"
+                        render={({ match: { path } }) => (
+                            <Fragment>
+                                <PrivateRoute
+                                    path={`${path}/:id`}
+                                    component={DiscDisplayPage}
+                                    exact
+                                />
+                                <PrivateRoute
+                                    path={`${path}/edit/:id`}
+                                    component={NewDiscPage}
+                                    exact
+                                />
+                            </Fragment>
+                        )}
+                    />
+                    <Route
+                        path="/games"
+                        render={({ match: { path } }) => (
+                            <Fragment>
+                                <PrivateRoute
+                                    path={`${path}/:id`}
+                                    component={GameDisplayPage}
+                                    exact
+                                />
+                                <PrivateRoute
+                                    path={`${path}/edit/:id`}
+                                    component={NewGamePage}
+                                    exact
+                                />
+                            </Fragment>
+                        )}
+                    />
+                    <Route
+                        path="/series"
+                        render={({ match: { path } }) => (
+                            <Fragment>
+                                <PrivateRoute
+                                    path={`${path}/:id`}
+                                    component={SeriesDisplayPage}
+                                    exact
+                                />
+                            </Fragment>
+                        )}
+                    />
+                    <Route
+                        path="/creators"
+                        render={({ match: { path } }) => (
+                            <Fragment>
+                                <PrivateRoute
+                                    path={`${path}/:id`}
+                                    component={CreatorDisplayPage}
+                                    exact
+                                />
+                            </Fragment>
+                        )}
+                    />
+                    <Route
+                        path="/companies"
+                        render={({ match: { path } }) => (
+                            <Fragment>
+                                <PrivateRoute
+                                    path={`${path}/:id`}
+                                    component={CompanyDisplayPage}
+                                    exact
+                                />
+                            </Fragment>
+                        )}
+                    />
+                </Switch>
+            </Router>
+        </ThemeProvider>
     );
 };
