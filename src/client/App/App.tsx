@@ -29,6 +29,8 @@ import SeriesDisplayPage from '../Views/SeriesDisplayPage/SeriesDisplayPage';
 import CreatorDisplayPage from '../Views/CreatorDisplayPage/CreatorDisplayPage';
 import CompanyDisplayPage from '../Views/CompanyDisplayPage/CompanyDisplayPage';
 
+import './App.css';
+
 export const App: React.FC = () => {
     const { loggedIn } = useSelector(state => state.authentication);
     const dispatch = useDispatch();
