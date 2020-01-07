@@ -1,5 +1,5 @@
 import React from 'react';
-import { ItemContainer } from '../_components/ItemContainer';
+import ItemContainer from '../_components/ItemContainer/ItemContainer';
 
 export const getFilteredList = (
     items: any,

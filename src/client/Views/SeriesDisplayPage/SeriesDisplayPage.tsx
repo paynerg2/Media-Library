@@ -3,7 +3,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { useSelector } from '../../_hooks/useSelector';
 import { Series, Book, Disc, Game } from '../../../lib/interfaces';
 import { MongoId } from '../../_interfaces';
-import { ItemContainer } from '../../_components/ItemContainer';
+import ItemContainer from '../../_components/ItemContainer/ItemContainer';
 
 const SeriesDisplayPage: React.FunctionComponent<SeriesDisplayPageProps> = props => {
     const { id } = props.match.params;

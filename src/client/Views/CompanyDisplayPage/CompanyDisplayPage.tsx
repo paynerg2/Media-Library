@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { ItemContainer } from '../../_components/ItemContainer';
+import ItemContainer from '../../_components/ItemContainer/ItemContainer';
 import { useSelector } from '../../_hooks/useSelector';
 import { Company, Book, Disc, Game } from '../../../lib/interfaces';
 import { MongoId } from '../../_interfaces';

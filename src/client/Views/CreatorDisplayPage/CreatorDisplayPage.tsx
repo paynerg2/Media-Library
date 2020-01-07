@@ -3,7 +3,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { useSelector } from '../../_hooks/useSelector';
 import { Creator, Book, Disc } from '../../../lib/interfaces';
 import { getFullName } from '../../_helpers/getFullName';
-import { ItemContainer } from '../../_components/ItemContainer';
+import ItemContainer from '../../_components/ItemContainer/ItemContainer';
 import { MongoId } from '../../_interfaces';
 
 const CreatorDisplayPage: React.FunctionComponent<CreatorDisplayProps> = props => {
