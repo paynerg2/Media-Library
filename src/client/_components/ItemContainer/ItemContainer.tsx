@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
 import styled from 'styled-components';
-import { useSpring, animated } from 'react-spring';
+import { animated, useTransition } from 'react-spring';
 import Link from '../Link/Link';
 import { Item } from '../../../lib/interfaces';
 
@@ -11,19 +11,26 @@ type ItemContainerProps = {
     isCollapsed?: boolean;
 };
 
-export const ItemContainer: FunctionComponent<ItemContainerProps> = ({
+const ItemContainer: FunctionComponent<ItemContainerProps> = ({
     route,
     id,
     item,
     isCollapsed = false
 }) => {
     const [overlayVisible, setOverlayVisible] = useState(false);
-    const props = useSpring({
-        background: overlayVisible
-            ? 'rgb(0, 153, 255, 0.6)'
-            : 'rgb(0, 153, 255, 0)',
-        opacity: overlayVisible ? 1 : 0,
-        height: overlayVisible ? '10vh' : '0vh'
+
+    const transition = useTransition(overlayVisible, null, {
+        from: {
+            opacity: 0,
+            background: 'rgb(0, 153, 255, 0)',
+            height: '0vh'
+        },
+        enter: {
+            opacity: 1,
+            background: 'rgb(0, 153, 255, 0.6)',
+            height: '10vh'
+        },
+        leave: { opacity: 0, background: 'rgb(0, 153, 255, 0)', height: '0vh' }
     });
     const itemDetailPage: string = `/${route}/${id}`;
 
@@ -37,14 +44,21 @@ export const ItemContainer: FunctionComponent<ItemContainerProps> = ({
                     {!isCollapsed && item.image && (
                         <Image src={item.image} alt={`${item.title} Cover`} />
                     )}
-                    {overlayVisible && (
-                        <TextOverlay style={props}>{item.title}</TextOverlay>
+                    {transition.map(
+                        ({ item: overlay, key, props }) =>
+                            overlay && (
+                                <TextOverlay key={key} style={props}>
+                                    {item.title}
+                                </TextOverlay>
+                            )
                     )}
                 </Container>
             </Link>
         </ListItem>
     );
 };
+
+export default animated(ItemContainer);
 
 /*Styles */
 const ListItem = styled.li`
@@ -77,7 +91,7 @@ const TextOverlay = styled(animated.div)`
     width: ${props => props.theme.itemWidth};
     position: absolute;
     align-self: flex-end;
-    background: rgb(0, 153, 255, 0);
+    background: rgba(0, 153, 255, 0);
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 1em;
