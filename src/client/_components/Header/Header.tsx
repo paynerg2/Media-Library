@@ -1,8 +1,9 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from '../../_hooks';
 import { authenticationActions } from '../../_actions';
 import { useDispatch } from 'react-redux';
 import { history } from '../../_helpers/history';
+import styled from 'styled-components';
 
 const Header: React.FC = () => {
     const { loggedIn } = useSelector(state => state.authentication);
@@ -26,19 +27,47 @@ const Header: React.FC = () => {
     };
 
     return (
-        <Fragment>
-            <span>Header: {loggedIn || !!user}</span>
+        <Container>
+            <Logo>MEDIA LIBRARY</Logo>
             <div>
                 {loggedIn ||
                     (user && (
-                        <div>
+                        <LoginSection>
                             {user && <div>logged in as {user}</div>}
                             <button onClick={handleLogout}>Logout</button>
-                        </div>
+                        </LoginSection>
                     ))}
             </div>
-        </Fragment>
+        </Container>
     );
 };
 
 export default Header;
+
+const Container = styled.header`
+    width: 100%;
+    height: 8vh;
+    background-color: ${props => props.theme.colors.primary};
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+`;
+
+const LoginSection = styled.div`
+    display: flex;
+    flex-direction: row;
+    margin-right: 2vw;
+    max-width: 10vw;
+`;
+
+const Logo = styled.div`
+    color: white;
+    font-size: 2em;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+    font-stretch: extra-condensed;
+    kerning: 0em;
+    margin-left: 2vw;
+`;
