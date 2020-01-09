@@ -1,34 +1,39 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, Fragment } from 'react';
 import styled from 'styled-components';
+import { animated, useTransition } from 'react-spring';
 
 type ItemListProps = {
-    length: number;
-    offset?: number;
+    items: any[];
+    style?: any;
 };
 
 export const ItemList: FunctionComponent<ItemListProps> = ({
-    children,
-    length,
-    offset = 0
+    items,
+    style
 }) => {
-    let listSection = null;
-    if (Array.isArray(children)) {
-        if (length > children.length - 1) {
-            listSection = children;
-        } else {
-            // Ensure minimum length of the array
-            offset =
-                children.length - offset < length
-                    ? children.length - length - 1
-                    : offset;
-            listSection = children.slice(offset, offset + length);
-        }
-    }
+    const transitions = useTransition(items, item => item.key, {
+        from: { transform: 'scale(1)' },
+        enter: { transform: 'scale(2)' },
+        leave: { transform: 'scale(1)' }
+    });
 
-    return <List>{listSection}</List>;
+    return (
+        <Fragment>
+            {style.map((props: any, index: number) => {
+                return (
+                    <List
+                        key={transitions[index].key}
+                        style={{ ...props, ...transitions[index] }}
+                    >
+                        {items[index]}
+                    </List>
+                );
+            })}
+        </Fragment>
+    );
 };
 
-const List = styled.ul`
+const List = styled(animated.ul)`
     display: flex;
     flex-direction: row;
     padding: 0;
