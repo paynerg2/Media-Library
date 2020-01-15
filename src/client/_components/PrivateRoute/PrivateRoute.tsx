@@ -9,8 +9,11 @@ interface PrivateRouteProps extends RouteProps {
 export const PrivateRoute = (props: PrivateRouteProps) => {
     const { component: Component, ...rest } = props;
     const user = localStorage.getItem('user');
-    const { token } = user && JSON.parse(user);
-    const isSignedIn = token !== null;
+    let isSignedIn: boolean = false;
+    if (user) {
+        const userObject = user && JSON.parse(user);
+        isSignedIn = userObject.token && userObject.token !== null;
+    }
 
     return (
         <Route
