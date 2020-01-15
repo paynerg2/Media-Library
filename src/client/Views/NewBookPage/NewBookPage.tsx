@@ -404,10 +404,11 @@ const NewBookPage: React.FunctionComponent<RouteComponentProps<
                         <Field
                             id="digital"
                             name="digital"
+                            type="checkbox"
                             onBlur={handleBlur}
                             onChange={handleChange}
                             value={values.digital}
-                            type="checkbox"
+                            checked={values.digital}
                         />
                         <ErrorMessage name="digital" />
 
@@ -415,10 +416,11 @@ const NewBookPage: React.FunctionComponent<RouteComponentProps<
                         <Field
                             id="physical"
                             name="physical"
+                            type="checkbox"
                             onBlur={handleBlur}
                             onChange={handleChange}
                             value={values.physical}
-                            type="checkbox"
+                            checked={values.physical}
                         />
                         <ErrorMessage name="physical" />
 

@@ -283,20 +283,22 @@ const NewDiscPage: React.FunctionComponent<RouteComponentProps<
                         <Field
                             id="digital"
                             name="digital"
+                            type="checkbox"
                             onBlur={handleBlur}
                             onChange={handleChange}
                             value={values.digital}
-                            type="checkbox"
+                            checked={values.digital}
                         />
                         <ErrorMessage name="digital" />
                         <label htmlFor="physical">Own a physical copy?:</label>
                         <Field
                             id="physical"
                             name="physical"
+                            type="checkbox"
                             onBlur={handleBlur}
                             onChange={handleChange}
                             value={values.physical}
-                            type="checkbox"
+                            checked={values.physical}
                         />
                         <ErrorMessage name="physical" />
                         <label htmlFor="isCollection">
@@ -305,10 +307,11 @@ const NewDiscPage: React.FunctionComponent<RouteComponentProps<
                         <Field
                             id="isCollection"
                             name="isCollection"
+                            type="checkbox"
                             onBlur={handleBlur}
                             onChange={handleChange}
                             value={values.isCollection}
-                            type="checkbox"
+                            checked={values.isCollection}
                         />
                         <ErrorMessage name="isCollection" />
                         <label htmlFor="format">Formats:</label>

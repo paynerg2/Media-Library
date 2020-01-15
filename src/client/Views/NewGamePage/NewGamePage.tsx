@@ -254,30 +254,33 @@ const NewGamePage: React.FunctionComponent<RouteComponentProps<
                         <Field
                             id="multiplayer"
                             name="multiplayer"
+                            type="checkbox"
                             onBlur={handleBlur}
                             onChange={handleChange}
                             value={values.multiplayer}
-                            type="checkbox"
+                            checked={values.multiplayer}
                         />
                         <ErrorMessage name="multiplayer" />
                         <label htmlFor="digital">Own a digital copy?:</label>
                         <Field
                             id="digital"
                             name="digital"
+                            type="checkbox"
                             onBlur={handleBlur}
                             onChange={handleChange}
                             value={values.digital}
-                            type="checkbox"
+                            checked={values.digital}
                         />
                         <ErrorMessage name="digital" />
                         <label htmlFor="physical">Own a physical copy?:</label>
                         <Field
                             id="physical"
                             name="physical"
+                            type="checkbox"
                             onBlur={handleBlur}
                             onChange={handleChange}
                             value={values.physical}
-                            type="checkbox"
+                            checked={values.physical}
                         />
                         <ErrorMessage name="physical" />
                         <label htmlFor="image">Image:</label>
