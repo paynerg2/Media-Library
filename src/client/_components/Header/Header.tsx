@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import { useSelector } from '../../_hooks';
 import { authenticationActions } from '../../_actions';
 import { useDispatch } from 'react-redux';
 import { history } from '../../_helpers/history';
-import styled from 'styled-components';
+import { Button } from '../../_styled_components/button';
+import Link from '../../_styled_components/link';
 
 const Header: React.FC = () => {
     const { loggedIn } = useSelector(state => state.authentication);
@@ -28,13 +30,12 @@ const Header: React.FC = () => {
 
     return (
         <Container>
-            <Logo>MEDIA LIBRARY</Logo>
+            <Logo to="/">MEDIA LIBRARY</Logo>
             <div>
                 {loggedIn ||
                     (user && (
                         <LoginSection>
-                            {user && <div>logged in as {user}</div>}
-                            <button onClick={handleLogout}>Logout</button>
+                            <Button onClick={handleLogout}>Logout</Button>
                         </LoginSection>
                     ))}
             </div>
@@ -52,17 +53,17 @@ const Container = styled.header`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    color: white;
 `;
 
 const LoginSection = styled.div`
     display: flex;
     flex-direction: row;
+    max-width: 20vw;
     margin-right: 2vw;
-    max-width: 10vw;
 `;
 
-const Logo = styled.div`
-    color: white;
+const Logo = styled(Link)`
     font-size: 2em;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
         Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
