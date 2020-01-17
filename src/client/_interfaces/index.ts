@@ -16,3 +16,4 @@ export * from './gameState.interface';
 export * from './actionTypes';
 export * from './action.interface';
 export * from './mongoId.interface';
+export * from './windowSizeObject.interface';

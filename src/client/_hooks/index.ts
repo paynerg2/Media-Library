@@ -4,3 +4,4 @@ export * from './useBook';
 export * from './useDisc';
 export * from './useGame';
 export * from './useSeriesId';
+export * from './useWindowSize';
