@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 const Link = styled(RouterLink)`
     text-decoration: none;
+    color: inherit;
 
     &:focus,
     &:hover,
@@ -11,6 +12,7 @@ const Link = styled(RouterLink)`
     &:link,
     &:active {
         text-decoration: none;
+        color: inherit;
     }
 `;
 
