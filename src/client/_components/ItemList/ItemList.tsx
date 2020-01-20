@@ -1,42 +1,45 @@
-import React, { FunctionComponent, Fragment } from 'react';
+import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
-import { animated, useTransition } from 'react-spring';
+import { animated, config, useTransition } from 'react-spring';
 
 type ItemListProps = {
     items: any[];
+    ref: any;
     style?: any;
 };
 
-export const ItemList: FunctionComponent<ItemListProps> = ({
-    items,
-    style
-}) => {
+export const ItemList: FunctionComponent<ItemListProps> = ({ items, ref }) => {
     const transitions = useTransition(items, item => item.key, {
-        from: { transform: 'scale(1)' },
-        enter: { transform: 'scale(2)' },
-        leave: { transform: 'scale(1)' }
+        ref: ref,
+        trail: 40,
+        initial: { marginLeft: '-10vh', opacity: 0, maxWidth: '0%' },
+        from: { opacity: 0, maxWidth: '0%' },
+        enter: { marginLeft: '0vh', opacity: 1, maxWidth: '100%' },
+        leave: { opacity: 0, maxWidth: '0%' },
+        // @ts-ignore
+        config: config.default
     });
 
     return (
-        <Fragment>
-            {style.map((props: any, index: number) => {
+        <Container>
+            {transitions.map(({ props, key, item }) => {
                 return (
-                    <List
-                        key={transitions[index].key}
-                        style={{ ...props, ...transitions[index] }}
-                    >
-                        {items[index]}
+                    <List key={key} style={props}>
+                        {item}
                     </List>
                 );
             })}
-        </Fragment>
+        </Container>
     );
 };
 
-const List = styled(animated.ul)`
+const Container = styled.ul`
     display: flex;
     flex-direction: row;
     padding: 0;
-    list-style-type: none;
     margin: 0;
+`;
+
+const List = styled(animated.li)`
+    list-style-type: none;
 `;

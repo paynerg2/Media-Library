@@ -5,11 +5,14 @@ import { Creator, Book, Disc } from '../../../lib/interfaces';
 import { getFullName } from '../../_helpers/getFullName';
 import ItemContainer from '../../_components/ItemContainer/ItemContainer';
 import { MongoId } from '../../_interfaces';
+import { SectionHeader } from '../../_styled_components/sectionHeader';
+import { DisplayHeader } from '../../_styled_components/displayHeader';
+import { ItemList } from '../../_components/ItemList';
 
 const CreatorDisplayPage: React.FunctionComponent<CreatorDisplayProps> = props => {
     const { id } = props.match.params;
     const selectedCreator = useSelector(state => state.creators.byId[id]);
-    const fullName = getFullName(selectedCreator);
+    const fullName = selectedCreator ? getFullName(selectedCreator) : '';
     const [creator, setCreator] = useState({} as Creator);
     const books: (Book & MongoId)[] = useSelector(state =>
         state.books.allIds
@@ -35,13 +38,12 @@ const CreatorDisplayPage: React.FunctionComponent<CreatorDisplayProps> = props =
     //TODO: Extract most of the mapping to reusable component
     return (
         <Fragment>
-            <div>{getFullName(creator)}</div>
-            <div>WORKS</div>
+            {creator && <DisplayHeader>{getFullName(creator)}</DisplayHeader>}
             {books.length > 0 && (
-                <div>
-                    <div>Books</div>
-                    <ul>
-                        {books
+                <Fragment>
+                    <SectionHeader>Books</SectionHeader>
+                    <ItemList
+                        items={books
                             .sort((a, b) =>
                                 a.title
                                     .toLowerCase()
@@ -55,14 +57,15 @@ const CreatorDisplayPage: React.FunctionComponent<CreatorDisplayProps> = props =
                                     route={'books'}
                                 />
                             ))}
-                    </ul>
-                </div>
+                        ref={null}
+                    />
+                </Fragment>
             )}
             {discs.length > 0 && (
-                <div>
-                    <div>Discs</div>
-                    <ul>
-                        {discs
+                <Fragment>
+                    <SectionHeader>Discs</SectionHeader>
+                    <ItemList
+                        items={discs
                             .sort((a, b) =>
                                 a.title
                                     .toLowerCase()
@@ -76,8 +79,9 @@ const CreatorDisplayPage: React.FunctionComponent<CreatorDisplayProps> = props =
                                     route={'discs'}
                                 />
                             ))}
-                    </ul>
-                </div>
+                        ref={null}
+                    />
+                </Fragment>
             )}
         </Fragment>
     );

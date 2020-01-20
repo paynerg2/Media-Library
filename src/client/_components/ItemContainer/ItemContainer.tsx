@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import styled from 'styled-components';
 import { animated, useTransition } from 'react-spring';
-import Link from '../Link/Link';
+import Link from '../../_styled_components/link';
 import { Item } from '../../../lib/interfaces';
 
 type ItemContainerProps = {
@@ -82,7 +82,8 @@ const Container = styled.div`
     height: 100%;
     width: 100%;
     border-radius: 2%;
-    box-shadow: 1px 2px 6px 1px darkgrey;
+    border: 1px solid ${props => props.theme.colors.primary};
+    /* box-shadow: 1px 2px 6px 1px darkgrey; */
 `;
 
 const TextOverlay = styled(animated.div)`
