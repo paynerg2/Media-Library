@@ -12,6 +12,7 @@ export const theme = {
 
     fonts: {
         primary: 'Arial',
-        secondary: 'Helvetica'
+        secondary: 'Helvetica',
+        error: 'Helvetica'
     }
 };
