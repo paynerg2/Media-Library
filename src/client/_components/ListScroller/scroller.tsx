@@ -30,9 +30,10 @@ const Container = styled(animated.button)<{ right: boolean }>`
     border: none;
     outline: none;
     border: solid 1px darkgrey;
-    box-shadow: 1px 2px 2px 1px lightgrey;
+    /* box-shadow: 1px 2px 2px 1px lightgrey; */
     margin-right: ${props => (props.right ? '0vh' : '1vh')};
     margin-left: ${props => (props.right ? '1vh' : '0vh')};
+    cursor: pointer;
 
     &:hover > div {
         border-right: 10px solid black;

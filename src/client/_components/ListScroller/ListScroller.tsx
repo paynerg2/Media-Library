@@ -6,14 +6,14 @@ import { ItemList } from '../../_components/ItemList/ItemList';
 type ListScrollerProps = {
     style: any;
     list: any[];
-    listStyle: any;
+    listRef: any;
     length: number;
 };
 
 export const ListScroller: FunctionComponent<ListScrollerProps> = ({
     style,
     list,
-    listStyle,
+    listRef,
     length
 }) => {
     const [offset, setOffset] = useState(0);
@@ -37,7 +37,7 @@ export const ListScroller: FunctionComponent<ListScrollerProps> = ({
                 disabled={offset === 0}
                 onClick={decOffset}
             />
-            <ItemList style={listStyle} items={listSection} />
+            <ItemList ref={listRef} items={listSection} />
             <Scroller
                 style={style}
                 disabled={offset >= list.length - length}
@@ -49,7 +49,6 @@ export const ListScroller: FunctionComponent<ListScrollerProps> = ({
 };
 
 const Container = styled.div`
-    margin: 2vw;
     display: flex;
     flex-direction: row;
 `;

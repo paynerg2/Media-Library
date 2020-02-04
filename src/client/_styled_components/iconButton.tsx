@@ -14,10 +14,10 @@ export const IconButton = styled.button`
     margin-left: 1vh;
     border: solid 2px ${props => props.theme.colors.secondary};
     cursor: pointer;
+    color: white;
 
     & > a {
         /* Remove styles from child elemenets, i.e. Links */
-        color: white;
         font-size: 1.5em;
         font-family: ${props => props.theme.fonts.primary};
         text-transform: uppercase;
