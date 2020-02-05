@@ -51,6 +51,7 @@ const Book: React.FunctionComponent<BookProps> = props => {
 
     const handleDelete = () => {
         dispatch(bookActions.delete(id));
+        props.history.push('/');
     };
 
     return (
