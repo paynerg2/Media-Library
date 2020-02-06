@@ -1,11 +1,21 @@
 import React, { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
-import { Formik, Field, ErrorMessage } from 'formik';
+import { Formik, ErrorMessage } from 'formik';
 import { User } from '../../_interfaces';
 import { userSchema } from '../../../lib/schemas';
 import { userActions } from '../../_actions';
 import { validationErrorExists } from '../../_helpers/validationErrorExists';
 import { history } from '../../_helpers/history';
+import { Button } from '../../_styled_components/button';
+import { SectionHeader } from '../../_styled_components/sectionHeader';
+import {
+    Error,
+    FormHeader,
+    FormContainer,
+    Section,
+    Buttons,
+    StyledField as Field
+} from '../../_styled_components/formElements';
 
 const initialState: User = {
     username: '',
@@ -26,6 +36,7 @@ const RegistrationPage: React.FC = () => {
     };
     return (
         <Fragment>
+            <FormHeader>Create New Account</FormHeader>
             <Formik
                 initialValues={initialState}
                 onSubmit={handleSubmit}
@@ -40,53 +51,60 @@ const RegistrationPage: React.FC = () => {
                     touched,
                     isSubmitting
                 }) => (
-                    <form onSubmit={handleSubmit}>
-                        <label htmlFor="username">Username:</label>
-                        <Field
-                            id="username"
-                            name="username"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.username}
-                            type="text"
-                            placeholder="Username"
-                        />
-                        <ErrorMessage name="username" />
+                    <FormContainer onSubmit={handleSubmit}>
+                        <Section>
+                            <Field
+                                id="username"
+                                name="username"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.username}
+                                type="text"
+                                placeholder="Username"
+                            />
+                            <Error>
+                                <ErrorMessage name="username" />
+                            </Error>
 
-                        <label htmlFor="email">Email:</label>
-                        <Field
-                            id="email"
-                            name="email"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.email}
-                            type="email"
-                            placeholder="E-mail"
-                        />
-                        <ErrorMessage name="email" />
+                            <Field
+                                id="email"
+                                name="email"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.email}
+                                type="email"
+                                placeholder="E-mail"
+                            />
+                            <Error>
+                                <ErrorMessage name="email" />
+                            </Error>
 
-                        <label htmlFor="password">Password:</label>
-                        <Field
-                            id="password"
-                            name="password"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.password}
-                            type="password"
-                            placeholder="Password"
-                        />
-                        <ErrorMessage name="password" />
+                            <Field
+                                id="password"
+                                name="password"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.password}
+                                type="password"
+                                placeholder="Password"
+                            />
+                            <Error>
+                                <ErrorMessage name="password" />
+                            </Error>
+                        </Section>
 
-                        <button
-                            type="submit"
-                            disabled={
-                                isSubmitting ||
-                                validationErrorExists(errors, touched)
-                            }
-                        >
-                            Submit
-                        </button>
-                    </form>
+                        <Buttons>
+                            <Button
+                                type="submit"
+                                disabled={
+                                    isSubmitting ||
+                                    validationErrorExists(errors, touched)
+                                }
+                            >
+                                Submit
+                            </Button>
+                        </Buttons>
+                    </FormContainer>
                 )}
             </Formik>
         </Fragment>

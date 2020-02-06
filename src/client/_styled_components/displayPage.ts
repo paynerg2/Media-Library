@@ -21,11 +21,14 @@ export const Title = styled.div`
     font-weight: bold;
 `;
 
-export const CoverImage = styled.img`
-    grid-area: cover;
+export const Image = styled.img`
     height: auto;
     width: 100%;
     background: ${props => props.theme.colors.secondary};
+`;
+
+export const CoverImage = styled(Image)`
+    grid-area: cover;
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;
 `;
