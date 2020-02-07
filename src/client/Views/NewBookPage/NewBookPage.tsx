@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { Formik, Field, FieldArray, ErrorMessage } from 'formik';
+import { Formik, FieldArray, ErrorMessage } from 'formik';
 import { validationErrorExists } from '../../_helpers/validationErrorExists';
 import { bookSchema } from '../../../lib/schemas';
 import { bookActions } from '../../_actions';
@@ -13,6 +13,26 @@ import {
     assureCreatorExists,
     assureSeriesExists
 } from '../../_helpers/formSubmissionHelpers';
+
+import { Button } from '../../_styled_components/button';
+import { IconButton } from '../../_styled_components/iconButton';
+import {
+    Error,
+    FormHeader,
+    FormContainer,
+    Section,
+    Buttons,
+    StyledField as Field,
+    Label,
+    Select,
+    SelectOption,
+    CheckboxLabel,
+    Checkbox,
+    FieldCollectionLabel,
+    FormatFields,
+    CollectionSection
+} from '../../_styled_components/formElements';
+import { SectionHeader } from '../../_styled_components/sectionHeader';
 
 interface MatchProps {
     id: string;
@@ -28,8 +48,11 @@ const NewBookPage: React.FunctionComponent<RouteComponentProps<
     const { id } = props.match.params;
     const { history } = props;
     const selectedBook = useSelector(state => state.books.byId[id]);
-    console.log(selectedBook);
     const initialValues: Book = selectedBook ? selectedBook : defaultBook;
+
+    const handleCancel = async () => {
+        await props.history.goBack();
+    };
 
     const handleSubmit = async (props: Book) => {
         id
@@ -58,6 +81,9 @@ const NewBookPage: React.FunctionComponent<RouteComponentProps<
 
     return (
         <Fragment>
+            <FormHeader>
+                {id ? `edit ${selectedBook.title}` : `add new book`}
+            </FormHeader>
             <Formik
                 initialValues={initialValues}
                 onSubmit={handleSubmit}
@@ -72,395 +98,455 @@ const NewBookPage: React.FunctionComponent<RouteComponentProps<
                     touched,
                     isSubmitting
                 }) => (
-                    <form onSubmit={handleSubmit}>
-                        <label htmlFor="title">Title:</label>
-                        <Field
-                            id="title"
-                            name="title"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.title}
-                            type="text"
-                            placeholder="Title"
-                        />
-                        <ErrorMessage name="title" />
-                        <label htmlFor="authors">Authors:</label>
-                        <FieldArray
-                            name="authors"
-                            render={arrayHelpers => (
-                                <div>
-                                    {values.authors &&
-                                    values.authors.length > 0 ? (
-                                        values.authors.map((author, index) => (
-                                            <div key={index}>
-                                                <Field
-                                                    id={`authors.${index}`}
-                                                    name={`authors.${index}`}
-                                                    onBlur={handleBlur}
-                                                    onChange={handleChange}
-                                                    type="text"
-                                                    value={
-                                                        values.authors[index]
-                                                    }
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        arrayHelpers.remove(
-                                                            index
-                                                        )
-                                                    }
-                                                >
-                                                    -
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        arrayHelpers.insert(
-                                                            index,
-                                                            ''
-                                                        )
-                                                    }
-                                                >
-                                                    +
-                                                </button>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                arrayHelpers.push('')
-                                            }
-                                        >
-                                            Add an author
-                                        </button>
-                                    )}
-                                </div>
+                    <FormContainer onSubmit={handleSubmit}>
+                        <SectionHeader>Book Info</SectionHeader>
+                        <Section>
+                            {/* <Label htmlFor="title">Title</Label> */}
+                            <Field
+                                id="title"
+                                name="title"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.title}
+                                type="text"
+                                autocomplete="off"
+                                placeholder="Title"
+                                spellcheck="false"
+                            />
+                            <Error>
+                                <ErrorMessage name="title" />
+                            </Error>
+
+                            {/* <Label htmlFor="series">Series</Label> */}
+                            <Field
+                                id="series"
+                                name="series"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.series}
+                                placeholder="Series"
+                                type="text"
+                            />
+                            <Error>
+                                <ErrorMessage name="series" />
+                            </Error>
+
+                            <Label htmlFor="volume">Volume</Label>
+                            <Field
+                                id="volume"
+                                name="volume"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.volume}
+                                type="number"
+                                autocomplete="off"
+                            />
+                            <Error>
+                                <ErrorMessage name="volume" />
+                            </Error>
+
+                            <Label htmlFor="type">Type</Label>
+                            <Select
+                                name="type"
+                                id="type"
+                                value={values.type}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                            >
+                                {bookTypes.map((type: string) => (
+                                    <SelectOption key={type} value={type}>
+                                        {/* Capitalize acronyms, e.g. TPB */}
+                                        {type.length > 3
+                                            ? type
+                                            : type.toLocaleUpperCase()}
+                                    </SelectOption>
+                                ))}
+                            </Select>
+                            <Error>
+                                <ErrorMessage name="type" />
+                            </Error>
+
+                            {/* <Label htmlFor="publisher">Publisher</Label> */}
+                            <Field
+                                id="publisher"
+                                name="publisher"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.publisher}
+                                type="text"
+                                placeholder="Publisher"
+                            />
+                            <Error>
+                                <ErrorMessage name="publisher" />
+                            </Error>
+
+                            {/* <Label htmlFor="isbn">ISBN</Label> */}
+                            <Field
+                                id="isbn"
+                                name="isbn"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.isbn}
+                                type="text"
+                                autocomplete="off"
+                                placeholder="ISBN"
+                            />
+                            <Error>
+                                <ErrorMessage name="isbn" />
+                            </Error>
+                        </Section>
+                        <SectionHeader>Creator Info</SectionHeader>
+                        <Section>
+                            <FieldArray
+                                name="authors"
+                                render={arrayHelpers => (
+                                    <div>
+                                        <FieldCollectionLabel>
+                                            <Label htmlFor="authors">
+                                                Authors
+                                            </Label>
+                                            <IconButton
+                                                type="button"
+                                                onClick={() =>
+                                                    arrayHelpers.push('')
+                                                }
+                                            >
+                                                +
+                                            </IconButton>
+                                        </FieldCollectionLabel>
+                                        {values.authors &&
+                                            values.authors.map(
+                                                (author, index) => (
+                                                    <div key={index}>
+                                                        <Field
+                                                            id={`authors.${index}`}
+                                                            name={`authors.${index}`}
+                                                            onBlur={handleBlur}
+                                                            onChange={
+                                                                handleChange
+                                                            }
+                                                            type="text"
+                                                            value={
+                                                                values.authors[
+                                                                    index
+                                                                ]
+                                                            }
+                                                            spellcheck="false"
+                                                        />
+                                                        <IconButton
+                                                            type="button"
+                                                            onClick={() =>
+                                                                arrayHelpers.remove(
+                                                                    index
+                                                                )
+                                                            }
+                                                        >
+                                                            -
+                                                        </IconButton>
+                                                    </div>
+                                                )
+                                            )}
+                                    </div>
+                                )}
+                            />
+                            <Error>
+                                <ErrorMessage name="authors" />
+                            </Error>
+
+                            <FieldArray
+                                name="artists"
+                                render={arrayHelpers => (
+                                    <div>
+                                        <FieldCollectionLabel>
+                                            <Label htmlFor="artists">
+                                                Artists
+                                            </Label>
+                                            <IconButton
+                                                type="button"
+                                                onClick={() =>
+                                                    arrayHelpers.push('')
+                                                }
+                                            >
+                                                +
+                                            </IconButton>
+                                        </FieldCollectionLabel>
+                                        {values.artists &&
+                                            values.artists.map(
+                                                (artist, index) => (
+                                                    <div key={index}>
+                                                        <Field
+                                                            id={`artists.${index}`}
+                                                            name={`artists.${index}`}
+                                                            onBlur={handleBlur}
+                                                            onChange={
+                                                                handleChange
+                                                            }
+                                                            type="text"
+                                                            value={
+                                                                values.artists![
+                                                                    index
+                                                                ]
+                                                            }
+                                                            spellcheck="false"
+                                                        />
+                                                        <IconButton
+                                                            type="button"
+                                                            onClick={() =>
+                                                                arrayHelpers.remove(
+                                                                    index
+                                                                )
+                                                            }
+                                                        >
+                                                            -
+                                                        </IconButton>
+                                                    </div>
+                                                )
+                                            )}
+                                    </div>
+                                )}
+                            />
+                            <Error>
+                                <ErrorMessage name="artists" />
+                            </Error>
+
+                            <FieldArray
+                                name="colorer"
+                                render={arrayHelpers => (
+                                    <div>
+                                        <FieldCollectionLabel>
+                                            <Label htmlFor="colorer">
+                                                Colorer
+                                            </Label>
+                                            <IconButton
+                                                type="button"
+                                                onClick={() =>
+                                                    arrayHelpers.push('')
+                                                }
+                                            >
+                                                +
+                                            </IconButton>
+                                        </FieldCollectionLabel>
+                                        {values.colorer &&
+                                            values.colorer.map(
+                                                (colorer, index) => (
+                                                    <div key={index}>
+                                                        <Field
+                                                            id={`colorer.${index}`}
+                                                            name={`colorer.${index}`}
+                                                            onBlur={handleBlur}
+                                                            onChange={
+                                                                handleChange
+                                                            }
+                                                            type="text"
+                                                            value={
+                                                                values.colorer![
+                                                                    index
+                                                                ]
+                                                            }
+                                                            spellcheck="false"
+                                                        />
+                                                        <IconButton
+                                                            type="button"
+                                                            onClick={() =>
+                                                                arrayHelpers.remove(
+                                                                    index
+                                                                )
+                                                            }
+                                                        >
+                                                            -
+                                                        </IconButton>
+                                                    </div>
+                                                )
+                                            )}
+                                    </div>
+                                )}
+                            />
+                            <Error>
+                                <ErrorMessage name="colorer" />
+                            </Error>
+
+                            <FieldArray
+                                name="letterer"
+                                render={arrayHelpers => (
+                                    <div>
+                                        <FieldCollectionLabel>
+                                            <Label htmlFor="letterer">
+                                                Letterer
+                                            </Label>
+                                            <IconButton
+                                                type="button"
+                                                onClick={() =>
+                                                    arrayHelpers.push('')
+                                                }
+                                            >
+                                                +
+                                            </IconButton>
+                                        </FieldCollectionLabel>
+                                        {values.letterer &&
+                                            values.letterer.map(
+                                                (letterer, index) => (
+                                                    <div key={index}>
+                                                        <Field
+                                                            id={`letterer.${index}`}
+                                                            name={`letterer.${index}`}
+                                                            onBlur={handleBlur}
+                                                            onChange={
+                                                                handleChange
+                                                            }
+                                                            type="text"
+                                                            value={
+                                                                values.letterer![
+                                                                    index
+                                                                ]
+                                                            }
+                                                            spellcheck="false"
+                                                        />
+                                                        <IconButton
+                                                            type="button"
+                                                            onClick={() =>
+                                                                arrayHelpers.remove(
+                                                                    index
+                                                                )
+                                                            }
+                                                        >
+                                                            -
+                                                        </IconButton>
+                                                    </div>
+                                                )
+                                            )}
+                                    </div>
+                                )}
+                            />
+                            <Error>
+                                <ErrorMessage name="letterer" />
+                            </Error>
+                        </Section>
+
+                        <SectionHeader>Collection Info</SectionHeader>
+                        <CollectionSection>
+                            <Section>
+                                {/* <Label htmlFor="listPrice">List Price</Label> */}
+                                <Field
+                                    id="listPrice"
+                                    name="listPrice"
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    value={values.listPrice}
+                                    type="text"
+                                    autocomplete="off"
+                                    placeholder="List Price"
+                                />
+                                <Error>
+                                    <ErrorMessage name="listPrice" />
+                                </Error>
+
+                                {/* <Label htmlFor="language">Language</Label> */}
+                                <Field
+                                    id="language"
+                                    name="language"
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    value={values.language}
+                                    type="text"
+                                    autocomplete="off"
+                                    placeholder="Language"
+                                />
+                                <Error>
+                                    <ErrorMessage name="language" />
+                                </Error>
+                                {/* <Label htmlFor="location">Location</Label> */}
+                                <Field
+                                    id="location"
+                                    name="location"
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    value={values.location}
+                                    type="text"
+                                    placeholder="Location"
+                                />
+                                <Error>
+                                    <ErrorMessage name="location" />
+                                </Error>
+                                {/* <Label htmlFor="image">Image</Label> */}
+                                <Field
+                                    name="image"
+                                    id="image"
+                                    value={values.image}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    type="text"
+                                    placeholder="Image"
+                                    autocomplete="off"
+                                    spellcheck="false"
+                                />
+                                <Error>
+                                    <ErrorMessage name="image" />
+                                </Error>
+
+                                <Label>Formats</Label>
+                                <FormatFields>
+                                    <div>
+                                        <CheckboxLabel htmlFor="digital">
+                                            digital
+                                        </CheckboxLabel>
+                                        <Checkbox
+                                            id="digital"
+                                            name="digital"
+                                            type="checkbox"
+                                            onBlur={handleBlur}
+                                            onChange={handleChange}
+                                            value={values.digital}
+                                            checked={values.digital}
+                                        />
+                                    </div>
+                                    <div>
+                                        <CheckboxLabel htmlFor="physical">
+                                            physical
+                                        </CheckboxLabel>
+                                        <Checkbox
+                                            id="physical"
+                                            name="physical"
+                                            type="checkbox"
+                                            onBlur={handleBlur}
+                                            onChange={handleChange}
+                                            value={values.physical}
+                                            checked={values.physical}
+                                        />
+                                    </div>
+                                    <Error>
+                                        <ErrorMessage name="digital" />
+                                        <ErrorMessage name="physical" />
+                                    </Error>
+                                </FormatFields>
+                            </Section>
+                            {values.image && (
+                                <img src={values.image} alt="Cover" />
                             )}
-                        />
-                        <ErrorMessage name="authors" />
+                        </CollectionSection>
 
-                        <label htmlFor="series">Series:</label>
-                        <Field
-                            id="series"
-                            name="series"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.series}
-                            type="text"
-                            placeholder="Series"
-                        />
-                        <ErrorMessage name="series" />
+                        <Buttons>
+                            <Button
+                                type="button"
+                                style={{
+                                    backgroundColor: 'lightgrey',
+                                    borderColor: 'lightgrey'
+                                }}
+                                onClick={handleCancel}
+                            >
+                                Cancel
+                            </Button>
 
-                        <label htmlFor="publisher">Publisher:</label>
-                        <Field
-                            id="publisher"
-                            name="publisher"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.publisher}
-                            type="text"
-                            placeholder="Publisher"
-                        />
-                        <ErrorMessage name="publisher" />
-
-                        <label htmlFor="language">Language:</label>
-                        <Field
-                            id="language"
-                            name="language"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.language}
-                            type="text"
-                            placeholder="Language"
-                        />
-                        <ErrorMessage name="language" />
-
-                        <label htmlFor="listPrice">List Price:</label>
-                        <Field
-                            id="listPrice"
-                            name="listPrice"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.listPrice}
-                            type="text"
-                            placeholder="List Price"
-                        />
-                        <ErrorMessage name="listPrice" />
-
-                        <label htmlFor="location">Location:</label>
-                        <Field
-                            id="location"
-                            name="location"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.location}
-                            type="text"
-                            placeholder="Location"
-                        />
-                        <ErrorMessage name="location" />
-
-                        <label htmlFor="artists">Artists:</label>
-                        <FieldArray
-                            name="artists"
-                            render={arrayHelpers => (
-                                <div>
-                                    {values.artists &&
-                                    values.artists.length > 0 ? (
-                                        values.artists.map((artist, index) => (
-                                            <div key={index}>
-                                                <Field
-                                                    id={`artists.${index}`}
-                                                    name={`artists.${index}`}
-                                                    onBlur={handleBlur}
-                                                    onChange={handleChange}
-                                                    type="text"
-                                                    value={
-                                                        values.artists![index]
-                                                    }
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        arrayHelpers.remove(
-                                                            index
-                                                        )
-                                                    }
-                                                >
-                                                    -
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        arrayHelpers.insert(
-                                                            index,
-                                                            ''
-                                                        )
-                                                    }
-                                                >
-                                                    +
-                                                </button>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                arrayHelpers.push('')
-                                            }
-                                        >
-                                            Add an artist
-                                        </button>
-                                    )}
-                                </div>
-                            )}
-                        />
-                        <ErrorMessage name="artists" />
-
-                        <label htmlFor="colorer">Colorer:</label>
-                        <FieldArray
-                            name="colorer"
-                            render={arrayHelpers => (
-                                <div>
-                                    {values.colorer &&
-                                    values.colorer.length > 0 ? (
-                                        values.colorer.map((colorer, index) => (
-                                            <div key={index}>
-                                                <Field
-                                                    id={`colorer.${index}`}
-                                                    name={`colorer.${index}`}
-                                                    onBlur={handleBlur}
-                                                    onChange={handleChange}
-                                                    type="text"
-                                                    value={
-                                                        values.colorer![index]
-                                                    }
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        arrayHelpers.remove(
-                                                            index
-                                                        )
-                                                    }
-                                                >
-                                                    -
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        arrayHelpers.insert(
-                                                            index,
-                                                            ''
-                                                        )
-                                                    }
-                                                >
-                                                    +
-                                                </button>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                arrayHelpers.push('')
-                                            }
-                                        >
-                                            Add an author
-                                        </button>
-                                    )}
-                                </div>
-                            )}
-                        />
-                        <ErrorMessage name="colorer" />
-
-                        <label htmlFor="letterer">Letterer:</label>
-                        <FieldArray
-                            name="letterer"
-                            render={arrayHelpers => (
-                                <div>
-                                    {values.letterer &&
-                                    values.letterer.length > 0 ? (
-                                        values.letterer.map(
-                                            (letterer, index) => (
-                                                <div key={index}>
-                                                    <Field
-                                                        id={`letterer.${index}`}
-                                                        name={`letterer.${index}`}
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        type="text"
-                                                        value={
-                                                            values.letterer![
-                                                                index
-                                                            ]
-                                                        }
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            arrayHelpers.remove(
-                                                                index
-                                                            )
-                                                        }
-                                                    >
-                                                        -
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            arrayHelpers.insert(
-                                                                index,
-                                                                ''
-                                                            )
-                                                        }
-                                                    >
-                                                        +
-                                                    </button>
-                                                </div>
-                                            )
-                                        )
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                arrayHelpers.push('')
-                                            }
-                                        >
-                                            Add an author
-                                        </button>
-                                    )}
-                                </div>
-                            )}
-                        />
-                        <ErrorMessage name="letterer" />
-
-                        <label htmlFor="isbn">ISBN:</label>
-                        <Field
-                            id="isbn"
-                            name="isbn"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.isbn}
-                            type="text"
-                            placeholder="ISBN"
-                        />
-                        <ErrorMessage name="isbn" />
-
-                        <label htmlFor="volume">Volume:</label>
-                        <Field
-                            id="volume"
-                            name="volume"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.volume}
-                            type="number"
-                            placeholder="Volume"
-                        />
-                        <ErrorMessage name="volume" />
-
-                        <label htmlFor="digital">Own a digital copy?:</label>
-                        <Field
-                            id="digital"
-                            name="digital"
-                            type="checkbox"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.digital}
-                            checked={values.digital}
-                        />
-                        <ErrorMessage name="digital" />
-
-                        <label htmlFor="physical">Own a physical copy?:</label>
-                        <Field
-                            id="physical"
-                            name="physical"
-                            type="checkbox"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.physical}
-                            checked={values.physical}
-                        />
-                        <ErrorMessage name="physical" />
-
-                        <label htmlFor="type">Type:</label>
-                        <select
-                            name="type"
-                            id="type"
-                            value={values.type}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                        >
-                            {bookTypes.map(type => (
-                                <option key={type} value={type}>
-                                    {type}
-                                </option>
-                            ))}
-                        </select>
-                        <ErrorMessage name="type" />
-
-                        <label htmlFor="image">Image:</label>
-                        <Field
-                            name="image"
-                            id="image"
-                            value={values.image}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            type="text"
-                        />
-                        <ErrorMessage name="image" />
-
-                        <button
-                            type="submit"
-                            disabled={
-                                isSubmitting ||
-                                validationErrorExists(errors, touched)
-                            }
-                        >
-                            {id ? 'Edit Book' : 'Add Book'}
-                        </button>
-                    </form>
+                            <Button
+                                type="submit"
+                                disabled={
+                                    isSubmitting ||
+                                    validationErrorExists(errors, touched)
+                                }
+                            >
+                                {id ? 'Edit Book' : 'Add Book'}
+                            </Button>
+                        </Buttons>
+                    </FormContainer>
                 )}
             </Formik>
         </Fragment>
