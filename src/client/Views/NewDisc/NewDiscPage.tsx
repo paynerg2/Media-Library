@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
-import { Formik, Field, FieldArray, ErrorMessage } from 'formik';
+import { Formik, FieldArray, ErrorMessage } from 'formik';
 import { validationErrorExists } from '../../_helpers/validationErrorExists';
 import { discSchema } from '../../../lib/schemas';
 import { discActions } from '../../_actions';
@@ -13,6 +13,24 @@ import {
     assureSeriesExists
 } from '../../_helpers/formSubmissionHelpers';
 import { RouteComponentProps, withRouter } from 'react-router';
+import {
+    FormHeader,
+    FormContainer,
+    Section,
+    Label,
+    StyledField as Field,
+    Buttons,
+    Checkbox,
+    CheckboxLabel,
+    FormatFields,
+    Error,
+    FieldCollectionLabel,
+    CollectionSection
+} from '../../_styled_components/formElements';
+import { SectionHeader } from '../../_styled_components/sectionHeader';
+import { Button } from '../../_styled_components/button';
+import { IconButton } from '../../_styled_components/iconButton';
+import styled from 'styled-components';
 
 interface MatchProps {
     id: string;
@@ -30,6 +48,10 @@ const NewDiscPage: React.FunctionComponent<RouteComponentProps<
 
     const selectedDisc = useSelector(state => state.discs.byId[id]);
     const initialValues = selectedDisc ? selectedDisc : defaultDisc;
+
+    const handleCancel = async () => {
+        await props.history.goBack();
+    };
 
     const handleSubmit = async (props: Disc) => {
         // Create new disc
@@ -55,6 +77,9 @@ const NewDiscPage: React.FunctionComponent<RouteComponentProps<
 
     return (
         <Fragment>
+            <FormHeader>
+                {id ? `edit ${selectedDisc.title}` : `add new disc`}
+            </FormHeader>
             <Formik
                 initialValues={initialValues}
                 onSubmit={handleSubmit}
@@ -70,294 +95,359 @@ const NewDiscPage: React.FunctionComponent<RouteComponentProps<
                     isSubmitting,
                     setFieldValue
                 }) => (
-                    <form onSubmit={handleSubmit}>
-                        <label htmlFor="title">Title:</label>
-                        <Field
-                            id="title"
-                            name="title"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.title}
-                            type="text"
-                            placeholder="Title"
-                        />
-                        <ErrorMessage name="title" />
-                        <label htmlFor="series">Series:</label>
-                        <Field
-                            id="series"
-                            name="series"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.series}
-                            type="text"
-                            placeholder="Series"
-                        />
-                        <ErrorMessage name="series" />
-                        <label htmlFor="director">Director:</label>
-                        <Field
-                            id="director"
-                            name="director"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.director}
-                            type="text"
-                            placeholder="Director"
-                        />
-                        <ErrorMessage name="director" />
-                        <label htmlFor="studio">Studio:</label>
-                        <Field
-                            id="studio"
-                            name="studio"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.studio}
-                            type="text"
-                            placeholder="Studio"
-                        />
-                        <ErrorMessage name="studio" />
-                        <label htmlFor="publisher">Publisher:</label>
-                        <Field
-                            id="publisher"
-                            name="publisher"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.publisher}
-                            type="text"
-                            placeholder="Publisher"
-                        />
-                        <ErrorMessage name="publisher" />
-                        <label htmlFor="languages">Languages:</label>
-                        <FieldArray
-                            name="languages"
-                            render={arrayHelpers => (
+                    <FormContainer onSubmit={handleSubmit}>
+                        <SectionHeader>Disc Info</SectionHeader>
+                        <Section>
+                            <Field
+                                id="title"
+                                name="title"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.title}
+                                type="text"
+                                placeholder="Title"
+                            />
+                            <Error>
+                                <ErrorMessage name="title" />
+                            </Error>
+                            <Field
+                                id="series"
+                                name="series"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.series}
+                                type="text"
+                                placeholder="Series"
+                                spellcheck="false"
+                            />
+                            <Error>
+                                <ErrorMessage name="series" />
+                            </Error>
+
+                            <Field
+                                id="publisher"
+                                name="publisher"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.publisher}
+                                type="text"
+                                placeholder="Publisher"
+                            />
+                            <Error>
+                                <ErrorMessage name="publisher" />
+                            </Error>
+                            <Label htmlFor="volume">Volume</Label>
+                            <Field
+                                id="volume"
+                                name="volume"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.volume}
+                                type="number"
+                                placeholder="Volume"
+                            />
+                            <Error>
+                                <ErrorMessage name="volume" />
+                            </Error>
+
+                            <FieldArray
+                                name="languages"
+                                render={arrayHelpers => (
+                                    <div>
+                                        <FieldCollectionLabel>
+                                            <Label htmlFor="languages">
+                                                Languages
+                                            </Label>
+                                            <IconButton
+                                                type="button"
+                                                onClick={() =>
+                                                    arrayHelpers.push('')
+                                                }
+                                            >
+                                                +
+                                            </IconButton>
+                                        </FieldCollectionLabel>
+                                        {values.languages &&
+                                            values.languages.map(
+                                                (language, index) => (
+                                                    <div key={index}>
+                                                        <Field
+                                                            id={`languages.${index}`}
+                                                            name={`languages.${index}`}
+                                                            onBlur={handleBlur}
+                                                            onChange={
+                                                                handleChange
+                                                            }
+                                                            type="text"
+                                                            value={
+                                                                values
+                                                                    .languages[
+                                                                    index
+                                                                ]
+                                                            }
+                                                        />
+                                                        <IconButton
+                                                            type="button"
+                                                            onClick={() =>
+                                                                arrayHelpers.remove(
+                                                                    index
+                                                                )
+                                                            }
+                                                        >
+                                                            -
+                                                        </IconButton>
+                                                    </div>
+                                                )
+                                            )}
+                                    </div>
+                                )}
+                            />
+                            <Error>
+                                <ErrorMessage name="languages" />
+                            </Error>
+                            <FieldArray
+                                name="subtitles"
+                                render={arrayHelpers => (
+                                    <div>
+                                        <FieldCollectionLabel>
+                                            <Label htmlFor="subtitles">
+                                                Subtitles
+                                            </Label>
+                                            <IconButton
+                                                type="button"
+                                                onClick={() =>
+                                                    arrayHelpers.push('')
+                                                }
+                                            >
+                                                +
+                                            </IconButton>
+                                        </FieldCollectionLabel>
+                                        {values.subtitles &&
+                                            values.subtitles.map(
+                                                (language, index) => (
+                                                    <div key={index}>
+                                                        <Field
+                                                            id={`subtitles.${index}`}
+                                                            name={`subtitles.${index}`}
+                                                            onBlur={handleBlur}
+                                                            onChange={
+                                                                handleChange
+                                                            }
+                                                            type="text"
+                                                            value={
+                                                                values.subtitles![
+                                                                    index
+                                                                ]
+                                                            }
+                                                        />
+                                                        <IconButton
+                                                            type="button"
+                                                            onClick={() =>
+                                                                arrayHelpers.remove(
+                                                                    index
+                                                                )
+                                                            }
+                                                        >
+                                                            -
+                                                        </IconButton>
+                                                    </div>
+                                                )
+                                            )}
+                                    </div>
+                                )}
+                            />
+                            <Error>
+                                <ErrorMessage name="subtitles" />
+                            </Error>
+                        </Section>
+
+                        <SectionHeader>Creator Info</SectionHeader>
+                        <Section>
+                            <Field
+                                id="director"
+                                name="director"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.director}
+                                type="text"
+                                placeholder="Director"
+                                spellcheck="false"
+                            />
+                            <Error>
+                                <ErrorMessage name="director" />
+                            </Error>
+                            <Field
+                                id="studio"
+                                name="studio"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.studio}
+                                type="text"
+                                placeholder="Studio"
+                            />
+                            <Error>
+                                <ErrorMessage name="studio" />
+                            </Error>
+                        </Section>
+
+                        <SectionHeader>Collection Info</SectionHeader>
+                        <CollectionSection>
+                            <Section>
+                                <Field
+                                    id="listPrice"
+                                    name="listPrice"
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    value={values.listPrice}
+                                    type="text"
+                                    placeholder="List Price"
+                                />
+                                <Error>
+                                    <ErrorMessage name="listPrice" />
+                                </Error>
+                                <Field
+                                    id="location"
+                                    name="location"
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    value={values.location}
+                                    type="text"
+                                    placeholder="Location"
+                                />
+                                <Error>
+                                    <ErrorMessage name="location" />
+                                </Error>
                                 <div>
-                                    {values.languages &&
-                                    values.languages.length > 0 ? (
-                                        values.languages.map(
-                                            (language, index) => (
-                                                <div key={index}>
-                                                    <Field
-                                                        id={`languages.${index}`}
-                                                        name={`languages.${index}`}
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        type="text"
-                                                        value={
-                                                            values.languages[
-                                                                index
-                                                            ]
-                                                        }
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            arrayHelpers.remove(
-                                                                index
-                                                            )
-                                                        }
-                                                    >
-                                                        -
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            arrayHelpers.insert(
-                                                                index,
-                                                                ''
-                                                            )
-                                                        }
-                                                    >
-                                                        +
-                                                    </button>
-                                                </div>
-                                            )
-                                        )
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                arrayHelpers.push('')
-                                            }
-                                        >
-                                            Add language
-                                        </button>
-                                    )}
+                                    <Label htmlFor="isCollection">
+                                        Is this a collection?
+                                    </Label>
+                                    <CollectionCheckbox
+                                        htmlFor="isCollection"
+                                        checked={values.isCollection}
+                                    >
+                                        {values.isCollection ? 'YES' : 'NO'}
+                                    </CollectionCheckbox>
+                                    <Field
+                                        id="isCollection"
+                                        name="isCollection"
+                                        type="checkbox"
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        value={values.isCollection}
+                                        checked={values.isCollection}
+                                        style={{
+                                            appearance: 'none',
+                                            height: '0'
+                                        }}
+                                    />
+                                    <Error>
+                                        <ErrorMessage name="isCollection" />
+                                    </Error>
                                 </div>
-                            )}
-                        />
-                        <ErrorMessage name="languages" />
-                        <label htmlFor="subtitles">Subtitles:</label>
-                        <FieldArray
-                            name="subtitles"
-                            render={arrayHelpers => (
-                                <div>
-                                    {values.subtitles &&
-                                    values.subtitles.length > 0 ? (
-                                        values.subtitles.map(
-                                            (language, index) => (
-                                                <div key={index}>
-                                                    <Field
-                                                        id={`subtitles.${index}`}
-                                                        name={`subtitles.${index}`}
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        type="text"
-                                                        value={
-                                                            values.subtitles![
-                                                                index
-                                                            ]
-                                                        }
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            arrayHelpers.remove(
-                                                                index
-                                                            )
-                                                        }
-                                                    >
-                                                        -
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            arrayHelpers.insert(
-                                                                index,
-                                                                ''
-                                                            )
-                                                        }
-                                                    >
-                                                        +
-                                                    </button>
-                                                </div>
+
+                                <Label htmlFor="format">Formats</Label>
+                                <FormatFields style={{ marginTop: '0' }}>
+                                    <div>
+                                        <CheckboxLabel htmlFor="digital">
+                                            digital
+                                        </CheckboxLabel>
+                                        <Checkbox
+                                            id="digital"
+                                            name="digital"
+                                            type="checkbox"
+                                            onBlur={handleBlur}
+                                            onChange={handleChange}
+                                            value={values.digital}
+                                            checked={values.digital}
+                                        />
+                                    </div>
+                                    <div>
+                                        <CheckboxLabel htmlFor="physical">
+                                            physical
+                                        </CheckboxLabel>
+                                        <Checkbox
+                                            id="physical"
+                                            name="physical"
+                                            type="checkbox"
+                                            onBlur={handleBlur}
+                                            onChange={handleChange}
+                                            value={values.physical}
+                                            checked={values.physical}
+                                        />
+                                    </div>
+                                    <Error>
+                                        <ErrorMessage name="digital" />
+                                        <ErrorMessage name="physical" />
+                                    </Error>
+                                </FormatFields>
+                                {values.physical && (
+                                    <FormatSelect
+                                        component="select"
+                                        multiple={true}
+                                        name="format"
+                                        id="format"
+                                        value={values.format}
+                                        onBlur={handleBlur}
+                                        onChange={(evt: any) =>
+                                            setFieldValue(
+                                                'format',
+                                                [...evt.target.options]
+                                                    .filter(o => o.selected)
+                                                    .map(o => o.value)
                                             )
-                                        )
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                arrayHelpers.push('')
-                                            }
-                                        >
-                                            Add subtitle language
-                                        </button>
-                                    )}
-                                </div>
+                                        }
+                                    >
+                                        {discFormats.map(format => (
+                                            <Format key={format} value={format}>
+                                                {format}
+                                            </Format>
+                                        ))}
+                                    </FormatSelect>
+                                )}
+                                <Error>
+                                    <ErrorMessage name="format" />
+                                </Error>
+                                <Label htmlFor="image">Image</Label>
+                                <Field
+                                    name="image"
+                                    id="image"
+                                    value={values.image}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    type="text"
+                                    placeholder="Image URL"
+                                    spellcheck="false"
+                                />
+                                <Error>
+                                    <ErrorMessage name="image" />
+                                </Error>
+                            </Section>
+                            {values.image && (
+                                <img src={values.image} alt="Cover" />
                             )}
-                        />
-                        <ErrorMessage name="subtitles" />
-                        <label htmlFor="listPrice">List Price:</label>
-                        <Field
-                            id="listPrice"
-                            name="listPrice"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.listPrice}
-                            type="text"
-                            placeholder="List Price"
-                        />
-                        <ErrorMessage name="listPrice" />
-                        <label htmlFor="location">Location:</label>
-                        <Field
-                            id="location"
-                            name="location"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.location}
-                            type="text"
-                            placeholder="Location"
-                        />
-                        <ErrorMessage name="location" />
-                        <label htmlFor="volume">Volume:</label>
-                        <Field
-                            id="volume"
-                            name="volume"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.volume}
-                            type="number"
-                            placeholder="Volume"
-                        />
-                        <ErrorMessage name="volume" />
-                        <label htmlFor="digital">Own a digital copy?:</label>
-                        <Field
-                            id="digital"
-                            name="digital"
-                            type="checkbox"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.digital}
-                            checked={values.digital}
-                        />
-                        <ErrorMessage name="digital" />
-                        <label htmlFor="physical">Own a physical copy?:</label>
-                        <Field
-                            id="physical"
-                            name="physical"
-                            type="checkbox"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.physical}
-                            checked={values.physical}
-                        />
-                        <ErrorMessage name="physical" />
-                        <label htmlFor="isCollection">
-                            Is this a collection?
-                        </label>
-                        <Field
-                            id="isCollection"
-                            name="isCollection"
-                            type="checkbox"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.isCollection}
-                            checked={values.isCollection}
-                        />
-                        <ErrorMessage name="isCollection" />
-                        <label htmlFor="format">Formats:</label>
-                        <Field
-                            component="select"
-                            multiple={true}
-                            name="format"
-                            id="format"
-                            value={values.format}
-                            onBlur={handleBlur}
-                            onChange={(evt: any) =>
-                                setFieldValue(
-                                    'format',
-                                    [...evt.target.options]
-                                        .filter(o => o.selected)
-                                        .map(o => o.value)
-                                )
-                            }
-                        >
-                            {discFormats.map(format => (
-                                <option key={format} value={format}>
-                                    {format}
-                                </option>
-                            ))}
-                        </Field>
-                        <ErrorMessage name="format" />
-                        <label htmlFor="image">Image:</label>
-                        <Field
-                            name="image"
-                            id="image"
-                            value={values.image}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            type="text"
-                        />
-                        <ErrorMessage name="image" />
-                        <button
-                            type="submit"
-                            disabled={
-                                isSubmitting ||
-                                validationErrorExists(errors, touched)
-                            }
-                        >
-                            {id ? 'Edit Disc' : 'Add Disc'}
-                        </button>
-                    </form>
+                        </CollectionSection>
+                        <Buttons>
+                            <Button
+                                type="button"
+                                style={{
+                                    backgroundColor: 'lightgrey',
+                                    borderColor: 'lightgrey'
+                                }}
+                                onClick={handleCancel}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={
+                                    isSubmitting ||
+                                    validationErrorExists(errors, touched)
+                                }
+                            >
+                                {id ? 'Edit Disc' : 'Add Disc'}
+                            </Button>
+                        </Buttons>
+                    </FormContainer>
                 )}
             </Formik>
         </Fragment>
@@ -365,3 +455,49 @@ const NewDiscPage: React.FunctionComponent<RouteComponentProps<
 };
 
 export default withRouter(NewDiscPage);
+
+const Format = styled.option`
+    font-family: ${props => props.theme.fonts.secondary};
+    font-weight: bold;
+    font-size: 1.1em;
+    border: 1px solid black;
+    border-radius: 1em;
+    width: 20%;
+    min-width: 80px;
+    height: auto;
+    text-align: center;
+    text-transform: uppercase;
+    padding: 4px;
+    margin-top: 1vh;
+`;
+
+const FormatSelect = styled(Field)`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 30vh;
+    border: none;
+    overflow: hidden;
+`;
+
+const CollectionCheckbox = styled.label<{ checked: boolean }>`
+    height: 4vh;
+    line-height: 4vh;
+    width: 6vw;
+    font-size: 1.1em;
+    font-family: ${props => props.theme.fonts.secondary};
+    font-weight: bold;
+    text-align: center;
+    color: ${props =>
+        props.checked ? props.theme.colors.primary : 'lightgrey'};
+    border: 3px solid
+        ${props => (props.checked ? props.theme.colors.primary : 'lightgrey')};
+    opacity: 0.8;
+    border-radius: 3em;
+    display: inline-block;
+    margin-left: 2vw;
+
+    &:hover {
+        cursor: pointer;
+    }
+`;
