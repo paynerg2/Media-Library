@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
-import { Formik, Field, FieldArray, ErrorMessage } from 'formik';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { Formik, FieldArray, ErrorMessage } from 'formik';
 import { validationErrorExists } from '../../_helpers/validationErrorExists';
 import { useSelector } from '../../_hooks';
 import {
@@ -11,7 +12,26 @@ import {
 import { gameSchema } from '../../../lib/schemas';
 import { gameActions } from '../../_actions';
 import { Game, defaultGame } from '../../../lib/interfaces';
-import { RouteComponentProps, withRouter } from 'react-router';
+
+import {
+    FormHeader,
+    FormContainer,
+    Section,
+    Label,
+    StyledField as Field,
+    Buttons,
+    Checkbox,
+    CheckboxLabel,
+    FormatFields,
+    Error,
+    FieldCollectionLabel
+} from '../../_styled_components/formElements';
+import { IconButton } from '../../_styled_components/iconButton';
+import { Button } from '../../_styled_components/button';
+import { SectionHeader } from '../../_styled_components/sectionHeader';
+import { GameSystemIcons } from '../../_assets/icons';
+import { Icon } from '../../_styled_components/displayPage';
+import styled from 'styled-components';
 
 interface MatchProps {
     id: string;
@@ -28,6 +48,10 @@ const NewGamePage: React.FunctionComponent<RouteComponentProps<
 
     const selectedGame = useSelector(state => state.games.byId[id]);
     const initialValues: Game = selectedGame ? selectedGame : defaultGame;
+
+    const handleCancel = async () => {
+        await props.history.goBack();
+    };
 
     const handleSubmit = async (props: Game) => {
         id
@@ -47,6 +71,9 @@ const NewGamePage: React.FunctionComponent<RouteComponentProps<
 
     return (
         <Fragment>
+            <FormHeader>
+                {id ? `edit ${selectedGame.title}` : `add new game`}
+            </FormHeader>
             <Formik
                 initialValues={initialValues}
                 onSubmit={handleSubmit}
@@ -61,248 +88,285 @@ const NewGamePage: React.FunctionComponent<RouteComponentProps<
                     touched,
                     isSubmitting
                 }) => (
-                    <form onSubmit={handleSubmit}>
-                        <label htmlFor="title">Title:</label>
-                        <Field
-                            id="title"
-                            name="title"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.title}
-                            type="text"
-                            placeholder="Title"
-                        />
-                        <ErrorMessage name="title" />
-                        <label htmlFor="series">Series:</label>
-                        <Field
-                            id="series"
-                            name="series"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.series}
-                            type="text"
-                            placeholder="Series"
-                        />
-                        <ErrorMessage name="series" />
-                        <label htmlFor="publisher">Publisher:</label>
-                        <Field
-                            id="publisher"
-                            name="publisher"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.publisher}
-                            type="text"
-                            placeholder="Publisher"
-                        />
-                        <ErrorMessage name="publisher" />
-                        <label htmlFor="listPrice">List Price:</label>
-                        <Field
-                            id="listPrice"
-                            name="listPrice"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.listPrice}
-                            type="text"
-                            placeholder="List Price"
-                        />
-                        <ErrorMessage name="listPrice" />
-                        <label htmlFor="location">Location:</label>
-                        <Field
-                            id="location"
-                            name="location"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.location}
-                            type="text"
-                            placeholder="Location"
-                        />
-                        <ErrorMessage name="location" />
-                        <label htmlFor="platforms">Platforms:</label>
-                        <FieldArray
-                            name="platforms"
-                            render={arrayHelpers => (
-                                <div>
-                                    {values.platforms &&
-                                    values.platforms.length > 0 ? (
-                                        values.platforms.map(
-                                            (platform, index) => (
-                                                <div key={index}>
-                                                    <Field
-                                                        id={`platforms.${index}`}
-                                                        name={`platforms.${index}`}
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        type="text"
-                                                        value={
-                                                            values.platforms![
-                                                                index
-                                                            ]
-                                                        }
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            arrayHelpers.remove(
-                                                                index
-                                                            )
-                                                        }
-                                                    >
-                                                        -
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            arrayHelpers.insert(
-                                                                index,
-                                                                ''
-                                                            )
-                                                        }
-                                                    >
-                                                        +
-                                                    </button>
-                                                </div>
-                                            )
-                                        )
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                arrayHelpers.push('')
-                                            }
-                                        >
-                                            Add a platform
-                                        </button>
-                                    )}
-                                </div>
-                            )}
-                        />
-                        <ErrorMessage name="platforms" />
-                        <label htmlFor="languages">Languages:</label>
-                        <FieldArray
-                            name="languages"
-                            render={arrayHelpers => (
-                                <div>
-                                    {values.languages &&
-                                    values.languages.length > 0 ? (
-                                        values.languages.map(
-                                            (language, index) => (
-                                                <div key={index}>
-                                                    <Field
-                                                        id={`languages.${index}`}
-                                                        name={`languages.${index}`}
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        type="text"
-                                                        value={
-                                                            values.languages![
-                                                                index
-                                                            ]
-                                                        }
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            arrayHelpers.remove(
-                                                                index
-                                                            )
-                                                        }
-                                                    >
-                                                        -
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            arrayHelpers.insert(
-                                                                index,
-                                                                ''
-                                                            )
-                                                        }
-                                                    >
-                                                        +
-                                                    </button>
-                                                </div>
-                                            )
-                                        )
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                arrayHelpers.push('')
-                                            }
-                                        >
-                                            Add a language
-                                        </button>
-                                    )}
-                                </div>
-                            )}
-                        />
-                        <ErrorMessage name="languages" />
-                        <label htmlFor="genre">Genre:</label>
-                        <Field
-                            id="genre"
-                            name="genre"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.genre}
-                            type="text"
-                            placeholder="Genre"
-                        />
-                        <ErrorMessage name="genre" />
-                        <label htmlFor="multiplayer">
-                            Is there multiplayer?
-                        </label>
-                        <Field
-                            id="multiplayer"
-                            name="multiplayer"
-                            type="checkbox"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.multiplayer}
-                            checked={values.multiplayer}
-                        />
-                        <ErrorMessage name="multiplayer" />
-                        <label htmlFor="digital">Own a digital copy?:</label>
-                        <Field
-                            id="digital"
-                            name="digital"
-                            type="checkbox"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.digital}
-                            checked={values.digital}
-                        />
-                        <ErrorMessage name="digital" />
-                        <label htmlFor="physical">Own a physical copy?:</label>
-                        <Field
-                            id="physical"
-                            name="physical"
-                            type="checkbox"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.physical}
-                            checked={values.physical}
-                        />
-                        <ErrorMessage name="physical" />
-                        <label htmlFor="image">Image:</label>
-                        <Field
-                            name="image"
-                            id="image"
-                            value={values.image}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            type="text"
-                        />
-                        <ErrorMessage name="image" />
-                        <button
-                            type="submit"
-                            disabled={
-                                isSubmitting ||
-                                validationErrorExists(errors, touched)
-                            }
-                        >
-                            {id ? 'Edit Game' : 'Add Game'}
-                        </button>
-                    </form>
+                    <FormContainer onSubmit={handleSubmit}>
+                        <SectionHeader>Game Info</SectionHeader>
+                        <Section>
+                            <Field
+                                id="title"
+                                name="title"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.title}
+                                type="text"
+                                placeholder="Title"
+                            />
+                            <Error>
+                                <ErrorMessage name="title" />
+                            </Error>
+                            <Field
+                                id="series"
+                                name="series"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.series}
+                                type="text"
+                                placeholder="Series"
+                            />
+                            <Error>
+                                <ErrorMessage name="series" />
+                            </Error>
+                            <Field
+                                id="publisher"
+                                name="publisher"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.publisher}
+                                type="text"
+                                placeholder="Publisher"
+                            />
+                            <Error>
+                                <ErrorMessage name="publisher" />
+                            </Error>
+                            <Field
+                                id="genre"
+                                name="genre"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.genre}
+                                type="text"
+                                placeholder="Genre"
+                            />
+                            <Error>
+                                <ErrorMessage name="genre" />
+                            </Error>
+                            <CheckboxLabel htmlFor="multiplayer">
+                                <MultiplayerIcon
+                                    checked={values.multiplayer}
+                                    src={GameSystemIcons.multiplayer}
+                                    alt="multiplayer"
+                                />
+                            </CheckboxLabel>
+                            <Field
+                                id="multiplayer"
+                                name="multiplayer"
+                                type="checkbox"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.multiplayer}
+                                checked={values.multiplayer}
+                                style={{ appearance: 'none', height: '0' }}
+                            />
+                            <ErrorMessage name="multiplayer" />
+                        </Section>
+
+                        <SectionHeader>Collection Info</SectionHeader>
+                        <Section>
+                            <Field
+                                id="listPrice"
+                                name="listPrice"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.listPrice}
+                                type="text"
+                                placeholder="List Price"
+                            />
+                            <Error>
+                                <ErrorMessage name="listPrice" />
+                            </Error>
+                            <Field
+                                id="location"
+                                name="location"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.location}
+                                type="text"
+                                placeholder="Location"
+                            />
+                            <Error>
+                                <ErrorMessage name="location" />
+                            </Error>
+                            <FieldArray
+                                name="platforms"
+                                render={arrayHelpers => (
+                                    <div>
+                                        <FieldCollectionLabel>
+                                            <Label htmlFor="platforms">
+                                                Platforms
+                                            </Label>
+                                            <IconButton
+                                                type="button"
+                                                onClick={() =>
+                                                    arrayHelpers.push('')
+                                                }
+                                            >
+                                                +
+                                            </IconButton>
+                                        </FieldCollectionLabel>
+                                        {values.platforms &&
+                                            values.platforms.map(
+                                                (platform, index) => (
+                                                    <div key={index}>
+                                                        <Field
+                                                            id={`platforms.${index}`}
+                                                            name={`platforms.${index}`}
+                                                            onBlur={handleBlur}
+                                                            onChange={
+                                                                handleChange
+                                                            }
+                                                            type="text"
+                                                            value={
+                                                                values.platforms![
+                                                                    index
+                                                                ]
+                                                            }
+                                                        />
+                                                        <IconButton
+                                                            type="button"
+                                                            onClick={() =>
+                                                                arrayHelpers.remove(
+                                                                    index
+                                                                )
+                                                            }
+                                                        >
+                                                            -
+                                                        </IconButton>
+                                                    </div>
+                                                )
+                                            )}
+                                    </div>
+                                )}
+                            />
+                            <Error>
+                                <ErrorMessage name="platforms" />
+                            </Error>
+                            <FieldArray
+                                name="languages"
+                                render={arrayHelpers => (
+                                    <div>
+                                        <FieldCollectionLabel>
+                                            <Label htmlFor="languages">
+                                                Languages
+                                            </Label>
+                                            <IconButton
+                                                type="button"
+                                                onClick={() =>
+                                                    arrayHelpers.push('')
+                                                }
+                                            >
+                                                +
+                                            </IconButton>
+                                        </FieldCollectionLabel>
+                                        {values.languages &&
+                                            values.languages.map(
+                                                (language, index) => (
+                                                    <div key={index}>
+                                                        <Field
+                                                            id={`languages.${index}`}
+                                                            name={`languages.${index}`}
+                                                            onBlur={handleBlur}
+                                                            onChange={
+                                                                handleChange
+                                                            }
+                                                            type="text"
+                                                            value={
+                                                                values.languages![
+                                                                    index
+                                                                ]
+                                                            }
+                                                        />
+                                                        <IconButton
+                                                            type="button"
+                                                            onClick={() =>
+                                                                arrayHelpers.remove(
+                                                                    index
+                                                                )
+                                                            }
+                                                        >
+                                                            -
+                                                        </IconButton>
+                                                    </div>
+                                                )
+                                            )}
+                                    </div>
+                                )}
+                            />
+                            <Error>
+                                <ErrorMessage name="languages" />
+                            </Error>
+                            <div>
+                                <Label>Formats</Label>
+                                <FormatFields>
+                                    <div>
+                                        <CheckboxLabel htmlFor="digital">
+                                            digital
+                                        </CheckboxLabel>
+                                        <Checkbox
+                                            id="digital"
+                                            name="digital"
+                                            type="checkbox"
+                                            onBlur={handleBlur}
+                                            onChange={handleChange}
+                                            value={values.digital}
+                                            checked={values.digital}
+                                        />
+                                    </div>
+                                    <div>
+                                        <CheckboxLabel htmlFor="physical">
+                                            physical
+                                        </CheckboxLabel>
+                                        <Checkbox
+                                            id="physical"
+                                            name="physical"
+                                            type="checkbox"
+                                            onBlur={handleBlur}
+                                            onChange={handleChange}
+                                            value={values.physical}
+                                            checked={values.physical}
+                                        />
+                                    </div>
+                                </FormatFields>
+                            </div>
+                            <Error>
+                                <ErrorMessage name="digital" />
+                                <ErrorMessage name="physical" />
+                            </Error>
+                            <Label htmlFor="image">Image</Label>
+                            <Field
+                                name="image"
+                                id="image"
+                                value={values.image}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                type="text"
+                                placeholder="Image URL"
+                            />
+                            <Error>
+                                <ErrorMessage name="image" />
+                            </Error>
+                        </Section>
+
+                        <Buttons>
+                            <Button
+                                type="button"
+                                style={{
+                                    backgroundColor: 'lightgrey',
+                                    borderColor: 'lightgrey'
+                                }}
+                                onClick={handleCancel}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={
+                                    isSubmitting ||
+                                    validationErrorExists(errors, touched)
+                                }
+                            >
+                                {id ? 'Edit Game' : 'Add Game'}
+                            </Button>
+                        </Buttons>
+                    </FormContainer>
                 )}
             </Formik>
         </Fragment>
@@ -310,3 +374,14 @@ const NewGamePage: React.FunctionComponent<RouteComponentProps<
 };
 
 export default withRouter(NewGamePage);
+
+const MultiplayerIcon = styled(Icon)<{ checked: boolean }>`
+    height: 10vh;
+    border-radius: 50%;
+    border: 3px solid ${props => (props.checked ? 'green' : 'transparent')};
+
+    &:hover {
+        cursor: pointer;
+        opacity: 1;
+    }
+`;
