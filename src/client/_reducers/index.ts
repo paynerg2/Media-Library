@@ -7,6 +7,7 @@ import { creators } from './creator.reducer';
 import { books } from './book.reducer';
 import { discs } from './disc.reducer';
 import { games } from './game.reducer';
+import { search } from './search.reducer';
 import { appActions } from '../_actions';
 
 const appReducer = combineReducers({
@@ -17,7 +18,8 @@ const appReducer = combineReducers({
     creators,
     books,
     discs,
-    games
+    games,
+    search
 });
 
 export type RootState = ReturnType<typeof appReducer>;

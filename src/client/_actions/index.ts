@@ -7,3 +7,4 @@ export * from './creator.actions';
 export * from './book.actions';
 export * from './disc.actions';
 export * from './game.actions';
+export * from './search.actions';
