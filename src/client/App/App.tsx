@@ -198,6 +198,7 @@ const LayoutHeader = styled.div`
 
 const Content = styled.div`
     grid-area: content;
+    overflow: hidden;
 
     @media (max-width: 768px) {
         margin-left: 2vw;

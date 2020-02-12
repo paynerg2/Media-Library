@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import { animated, config, useTransition } from 'react-spring';
@@ -9,15 +11,26 @@ type ItemListProps = {
 };
 
 export const ItemList: FunctionComponent<ItemListProps> = ({ items, ref }) => {
+    /**
+     * Config arrow function is a stop-gap to prevent this issue:
+     * https://github.com/react-spring/react-spring/issues/522
+     * ts-nocheck at the top of the file prevents a Typecheck error
+     * which occurs when this arrow function is used, but not otherwise.
+     * TODO: Find a way to implement this without disabling type checking for the whole component.
+     */
     const transitions = useTransition(items, item => item.key, {
         ref: ref,
-        trail: 40,
+        trail: 20,
         initial: { marginLeft: '-10vh', opacity: 0, maxWidth: '0%' },
-        from: { opacity: 0, maxWidth: '0%' },
+        from: { marginLeft: '0vh', opacity: 0, maxWidth: '0%' },
         enter: { marginLeft: '0vh', opacity: 1, maxWidth: '100%' },
-        leave: { opacity: 0, maxWidth: '0%' },
-        // @ts-ignore
-        config: config.default
+        leave: {
+            marginLeft: '0vh',
+            opacity: 0,
+            maxWidth: '0vh'
+        },
+        config: (item, state) =>
+            state === 'leave' ? { duration: 0 } : config.default
     });
 
     return (
