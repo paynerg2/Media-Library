@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useSelector } from '../../_hooks';
-import { authenticationActions } from '../../_actions';
+import { authenticationActions, userActions } from '../../_actions';
 import { useDispatch } from 'react-redux';
 import { history } from '../../_helpers/history';
 import { Button } from '../../_styled_components/button';
 import Link from '../../_styled_components/link';
+import { SearchBar } from '../../_components/SearchBar';
 
 const Header: React.FC = () => {
     const { loggedIn } = useSelector(state => state.authentication);
@@ -31,14 +32,12 @@ const Header: React.FC = () => {
     return (
         <Container>
             <Logo to="/">MEDIA LIBRARY</Logo>
-            <div>
+
+            <LoginSection>
+                <SearchBar />
                 {loggedIn ||
-                    (user && (
-                        <LoginSection>
-                            <Button onClick={handleLogout}>Logout</Button>
-                        </LoginSection>
-                    ))}
-            </div>
+                    (user && <Button onClick={handleLogout}>Logout</Button>)}
+            </LoginSection>
         </Container>
     );
 };
@@ -59,7 +58,7 @@ const Container = styled.header`
 const LoginSection = styled.div`
     display: flex;
     flex-direction: row;
-    max-width: 20vw;
+    max-width: 40%;
     margin-right: 2vw;
 `;
 
