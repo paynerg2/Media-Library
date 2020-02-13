@@ -1,22 +1,32 @@
 import React, { Fragment, useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { ListScroller } from '../../_components/ListScroller';
-import { useSelector } from '../../_hooks';
-import { SearchBar } from '../../_components/SearchBar/';
+import { useSelector, useWindowSize } from '../../_hooks';
 import { getFilteredList } from '../../_helpers/getFilteredList';
 import { SectionHeader } from '../../_styled_components/sectionHeader';
 import { Button } from '../../_styled_components/button';
-import {
-    useChain,
-    useSpring,
-    useTrail,
-    ReactSpringHook,
-    config
-} from 'react-spring';
+import { IconButton } from '../../_styled_components/iconButton';
+import Link from '../../_styled_components/link';
+import { SearchResultCount } from '../../_styled_components/searchResultCount';
+import { useChain, useSpring, ReactSpringHook, config } from 'react-spring';
+import { WindowSizeObject } from '../../_interfaces';
+
+//! Redirect from login does not load data
 
 const HomePage: React.FC = () => {
-    const length: number = 3;
-    const [searchTerm, setSearchTerm] = useState('');
+    const size: WindowSizeObject = useWindowSize();
+    const calculateLength = (): number => {
+        const ratio =
+            size.width && size.height ? size.height / size.width : undefined;
+        let length = 1;
+        while (!!ratio && 12 + (length + 1) * 21 * ratio < 100) {
+            length++;
+        }
+        return length;
+    };
+    const length: number = calculateLength();
+
+    //const [searchTerm, setSearchTerm] = useState('');
+    const searchTerm = useSelector(state => state.search.term);
     const { books, discs, games } = useSelector(state => state);
 
     const bookList: JSX.Element[] = getFilteredList(books, searchTerm, 'books');
@@ -37,6 +47,7 @@ const HomePage: React.FC = () => {
         return singleView ? 'Back' : 'View All';
     };
 
+    // todo: clean this section up, rename variables
     // Note: Casting to avoid TypeCheck issue.
     const transitionRef = useRef() as React.RefObject<ReactSpringHook>;
     const transition = useSpring({
@@ -49,23 +60,10 @@ const HomePage: React.FC = () => {
         }
     });
 
-    const maxLength = Math.max(
-        bookList.length,
-        discList.length,
-        gameList.length
-    );
-    const trailRef = useRef() as React.RefObject<ReactSpringHook>;
-    const trail = useTrail(maxLength, {
-        ref: trailRef,
-        from: {
-            marginLeft: -20,
-            opacity: 1,
-            transform: 'translate3d(0,-40px,0)'
-        },
-        to: { marginLeft: 0, opacity: 1, transform: 'translate3d(0,0px,0)' }
-    });
+    const transRef = useRef() as React.RefObject<ReactSpringHook>;
 
-    useEffect(() => {}, [transitionRef, trailRef]);
+    // This fixes an issue with tracking ref.current
+    useEffect(() => {}, [transitionRef, transRef]);
 
     // This pattern, as opposed to simply useChain([trailRef, transitionRef], ...)
     // forces the ref to update on each render, avoiding an issue which would
@@ -77,7 +75,7 @@ const HomePage: React.FC = () => {
     // may work as well if any bugs arise from this.
     useChain(
         [
-            trailRef.current ? { current: trailRef.current } : trailRef,
+            transRef.current ? { current: transRef.current } : transRef,
             transitionRef.current
                 ? { current: transitionRef.current }
                 : transitionRef
@@ -89,81 +87,151 @@ const HomePage: React.FC = () => {
 
     return (
         <Fragment>
-            <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-
-            <SectionHeader>Books</SectionHeader>
-            {searchTerm && <div>{`${bookList.length} results`}</div>}
             {visibility[0] && (
-                <div>
-                    <ListScroller
-                        style={transition}
-                        list={bookList}
-                        listStyle={trail}
-                        length={singleView ? bookList.length : length}
-                    />
-                    <Button
-                        onClick={() =>
-                            handleVisibilityToggle([true, false, false])
-                        }
-                    >
-                        {getButtonText()}
-                    </Button>
-                    {singleView && (
-                        <button>
-                            <Link to="/books/new">+</Link>
-                        </button>
-                    )}
-                </div>
+                <Fragment>
+                    <SectionHeader>
+                        <div>
+                            <div>
+                                <span>Books</span>
+                                <IconButton>
+                                    <Link to="/books/new">+</Link>
+                                </IconButton>
+                                {searchTerm && (
+                                    <SearchResultCount>
+                                        {`${bookList.length} ${
+                                            bookList.length !== 1
+                                                ? 'results'
+                                                : 'result'
+                                        }`}
+                                    </SearchResultCount>
+                                )}
+                            </div>
+                            <div>
+                                <Button
+                                    onClick={() =>
+                                        handleVisibilityToggle([
+                                            true,
+                                            false,
+                                            false
+                                        ])
+                                    }
+                                >
+                                    {getButtonText()}
+                                </Button>
+                            </div>
+                        </div>
+                    </SectionHeader>
+                    <div>
+                        {books.loading ? (
+                            <div>Loading...</div>
+                        ) : (
+                            <ListScroller
+                                style={transition}
+                                list={bookList}
+                                listRef={transRef}
+                                length={singleView ? bookList.length : length}
+                            />
+                        )}
+                    </div>
+                </Fragment>
             )}
 
-            <SectionHeader>Discs</SectionHeader>
-            {searchTerm && <div>{`${discList.length} results`}</div>}
             {visibility[1] && (
-                <div>
-                    <ListScroller
-                        style={transition}
-                        list={discList}
-                        listStyle={trail}
-                        length={singleView ? discList.length : length}
-                    />
-                    <Button
-                        onClick={() =>
-                            handleVisibilityToggle([false, true, false])
-                        }
-                    >
-                        {getButtonText()}
-                    </Button>
-                    {singleView && (
-                        <button>
-                            <Link to="/discs/new">+</Link>
-                        </button>
-                    )}
-                </div>
+                <Fragment>
+                    <SectionHeader>
+                        <div>
+                            <div>
+                                <span>Discs</span>
+                                <IconButton>
+                                    <Link to="/discs/new">+</Link>
+                                </IconButton>
+                                {searchTerm && (
+                                    <SearchResultCount>
+                                        {`${discList.length} ${
+                                            discList.length !== 1
+                                                ? 'results'
+                                                : 'result'
+                                        }`}
+                                    </SearchResultCount>
+                                )}
+                            </div>
+                            <div>
+                                <Button
+                                    onClick={() =>
+                                        handleVisibilityToggle([
+                                            false,
+                                            true,
+                                            false
+                                        ])
+                                    }
+                                >
+                                    {getButtonText()}
+                                </Button>
+                            </div>
+                        </div>
+                    </SectionHeader>
+                    <div>
+                        {discs.loading ? (
+                            <div>Loading...</div>
+                        ) : (
+                            <ListScroller
+                                style={transition}
+                                list={discList}
+                                listRef={transRef}
+                                length={singleView ? discList.length : length}
+                            />
+                        )}
+                    </div>
+                </Fragment>
             )}
 
-            <SectionHeader>Games</SectionHeader>
-            {searchTerm && <div>{`${gameList.length} results`}</div>}
             {visibility[2] && (
-                <div>
-                    <ListScroller
-                        style={transition}
-                        list={gameList}
-                        listStyle={trail}
-                        length={singleView ? gameList.length : length}
-                    />
-                    <Button
-                        onClick={() =>
-                            handleVisibilityToggle([false, false, true])
-                        }
-                    >
-                        {getButtonText()}
-                    </Button>
-                    {singleView && visibility[2] && (
-                        <button>
-                            <Link to="/games/new">+</Link>
-                        </button>
-                    )}
-                </div>
+                <Fragment>
+                    <SectionHeader>
+                        <div>
+                            <div>
+                                <span>Games</span>
+                                <IconButton>
+                                    <Link to="/games/new">+</Link>
+                                </IconButton>
+                                {searchTerm && (
+                                    <SearchResultCount>
+                                        {`${gameList.length} ${
+                                            gameList.length !== 1
+                                                ? 'results'
+                                                : 'result'
+                                        }`}
+                                    </SearchResultCount>
+                                )}
+                            </div>
+                            <div>
+                                <Button
+                                    onClick={() =>
+                                        handleVisibilityToggle([
+                                            false,
+                                            false,
+                                            true
+                                        ])
+                                    }
+                                >
+                                    {getButtonText()}
+                                </Button>
+                            </div>
+                        </div>
+                    </SectionHeader>
+                    <div>
+                        {games.loading ? (
+                            <div>Loading...</div>
+                        ) : (
+                            <ListScroller
+                                style={transition}
+                                list={gameList}
+                                listRef={transRef}
+                                length={singleView ? gameList.length : length}
+                            />
+                        )}
+                    </div>
+                </Fragment>
             )}
 
             <br />

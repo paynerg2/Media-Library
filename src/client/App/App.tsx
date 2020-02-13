@@ -187,7 +187,7 @@ const Layout = styled.div`
 
     @media (max-width: 768px) {
         grid-template-areas: 'header' 'content';
-        grid-template-columns: 1fr;
+        grid-template-columns: 100vw;
         grid-template-rows: auto 1fr;
     }
 `;
@@ -198,7 +198,6 @@ const LayoutHeader = styled.div`
 
 const Content = styled.div`
     grid-area: content;
-    overflow: hidden;
 
     @media (max-width: 768px) {
         margin-left: 2vw;
