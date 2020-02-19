@@ -11,9 +11,12 @@ export const useBook = (id: string) => {
     );
     const authors = useSelector(state => {
         const authorNames = state.books.byId[id].authors;
-        return state.creators.allIds
-            .map(id => state.creators.byId[id])
-            .filter(author => authorNames.includes(getFullName(author)));
+        return (
+            authorNames &&
+            state.creators.allIds
+                .map(id => state.creators.byId[id])
+                .filter(author => authorNames.includes(getFullName(author)))
+        );
     });
     const artists = useSelector(state => {
         const artistNames = state.books.byId[id].artists;
