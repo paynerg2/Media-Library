@@ -38,7 +38,7 @@ export const Label = styled.div`
     font-weight: bold;
     font-size: 0.8em;
     letter-spacing: 0.1em;
-    height: 3vh;
+    height: auto;
     width: auto;
     padding-left: 2vh;
     display: flex;
@@ -56,12 +56,12 @@ export const Staff = styled.div`
 `;
 
 export const Entry = styled.div`
-    height: 7vh;
+    height: 5vh;
     width: auto;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: center;
+    justify-content: flex-end;
     padding-left: 2vh;
     color: #222;
     opacity: 0.8;
