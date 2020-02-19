@@ -24,12 +24,30 @@ export const assureCreatorExists = (
         });
 
     if (creators.includes(creator)) return;
-    const [firstName, lastName] = creator.split(' ');
-    const newCreator: Creator = {
-        firstName,
-        lastName,
-        works: [work]
-    };
+
+    // Determine which name fields are filled and create a new Creator object
+    const splitNames = creator.split(' ');
+    let newCreator: Creator;
+    if (splitNames.length === 3) {
+        newCreator = {
+            firstName: splitNames[0],
+            middleInitials: splitNames[1],
+            lastName: splitNames[2],
+            works: [work]
+        };
+    } else if (splitNames.length === 2) {
+        newCreator = {
+            firstName: splitNames[0],
+            lastName: splitNames[1],
+            works: [work]
+        };
+    } else {
+        newCreator = {
+            firstName: creator,
+            works: [work]
+        };
+    }
+
     dispatch(creatorActions.create(newCreator));
 };
 
