@@ -9,6 +9,7 @@ import Link from '../../_styled_components/link';
 import { SearchResultCount } from '../../_styled_components/searchResultCount';
 import { useChain, useSpring, ReactSpringHook, config } from 'react-spring';
 import { WindowSizeObject } from '../../_interfaces';
+import styled from 'styled-components';
 
 //! Redirect from login does not load data
 
@@ -123,7 +124,7 @@ const HomePage: React.FC = () => {
                     </SectionHeader>
                     <div>
                         {books.loading ? (
-                            <div>Loading...</div>
+                            <Placeholder />
                         ) : (
                             <ListScroller
                                 style={transition}
@@ -172,7 +173,7 @@ const HomePage: React.FC = () => {
                     </SectionHeader>
                     <div>
                         {discs.loading ? (
-                            <div>Loading...</div>
+                            <Placeholder />
                         ) : (
                             <ListScroller
                                 style={transition}
@@ -221,7 +222,7 @@ const HomePage: React.FC = () => {
                     </SectionHeader>
                     <div>
                         {games.loading ? (
-                            <div>Loading...</div>
+                            <Placeholder />
                         ) : (
                             <ListScroller
                                 style={transition}
@@ -233,10 +234,16 @@ const HomePage: React.FC = () => {
                     </div>
                 </Fragment>
             )}
-
-            <br />
         </Fragment>
     );
 };
 
 export default HomePage;
+
+const Placeholder = styled.div`
+    height: ${props => props.theme.itemHeight};
+    background-image: white ${props => props.theme.itemHeight}, transparent 0;
+    margin-left: 1vh;
+    margin-right: 1vh;
+    background-position: 0 0;
+`;
