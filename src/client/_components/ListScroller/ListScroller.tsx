@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useEffect } from 'react';
+import React, { FunctionComponent, useState, useEffect, Fragment } from 'react';
 import styled from 'styled-components';
 import Scroller from './scroller';
 import { ItemList } from '../../_components/ItemList/ItemList';
@@ -32,18 +32,25 @@ export const ListScroller: FunctionComponent<ListScrollerProps> = ({
 
     return (
         <Container>
-            <Scroller
-                style={style}
-                disabled={offset === 0}
-                onClick={decOffset}
-            />
-            <ItemList ref={listRef} items={listSection} />
-            <Scroller
-                style={style}
-                disabled={offset >= list.length - length}
-                onClick={incOffset}
-                right
-            />
+            {/* Only displays scrollers if necessary */}
+            {list.length === listSection.length ? (
+                <ItemList ref={listRef} items={listSection} />
+            ) : (
+                <Fragment>
+                    <Scroller
+                        style={style}
+                        disabled={offset === 0}
+                        onClick={decOffset}
+                    />
+                    <ItemList ref={listRef} items={listSection} />
+                    <Scroller
+                        style={style}
+                        disabled={offset >= list.length - length}
+                        onClick={incOffset}
+                        right
+                    />
+                </Fragment>
+            )}
         </Container>
     );
 };

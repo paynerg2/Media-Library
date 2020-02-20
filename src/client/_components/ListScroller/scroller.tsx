@@ -21,7 +21,7 @@ export default animated(Scroller);
 
 const Container = styled(animated.button)<{ right: boolean }>`
     height: ${props => props.theme.itemHeight};
-    width: 4vh;
+    width: 3vw;
     background-color: rgba(40, 40, 40, 0.3);
     display: flex;
     align-items: center;
