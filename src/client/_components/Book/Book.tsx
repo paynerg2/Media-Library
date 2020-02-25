@@ -5,11 +5,9 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { useBook } from '../../_hooks';
 import { Book as IBook } from '../../../lib/interfaces';
 import Link from '../../_styled_components/link';
+import { MultipleCreatorEntry } from '../MultipleCreatorEntry/MultipleCreatorEntry';
 import { Button } from '../../_styled_components/button';
-import { getFullName } from '../../_helpers/getFullName';
-import PhysicalIcon from '../../_assets/icons/book-icon-139.png';
 import { BookIcons } from '../../_assets/icons';
-
 import { bookActions } from '../../_actions';
 import {
     Title,
@@ -53,7 +51,6 @@ const Book: React.FunctionComponent<BookProps> = props => {
         dispatch(bookActions.delete(id));
         props.history.push('/');
     };
-
     return (
         <Container>
             <Title>
@@ -63,48 +60,23 @@ const Book: React.FunctionComponent<BookProps> = props => {
                 {book.volume && <div>{book.volume}</div>}
             </Title>
             <Staff>
-                <Entry>
-                    {authors.map(author => (
-                        <Link key={author._id} to={`../creators/${author._id}`}>
-                            {getFullName(author)}
-                        </Link>
-                    ))}
-                </Entry>
+                {book.authors && <MultipleCreatorEntry creators={authors} />}
                 <Label>
                     {book.authors && book.authors.length > 1
                         ? 'Authors'
                         : 'Author'}
                 </Label>
 
-                <Entry>
-                    {artists &&
-                        artists.map(artist => (
-                            <Link
-                                key={artist._id}
-                                to={`../creators/${artist._id}`}
-                            >
-                                {getFullName(artist)}
-                            </Link>
-                        ))}
-                </Entry>
+                {book.artists && <MultipleCreatorEntry creators={artists} />}
                 <Label>
                     {artists && artists.length ? (
                         <div>{artists.length > 1 ? 'Artists' : 'Artist'}</div>
                     ) : null}
                 </Label>
+
                 {colorers && !!colorers.length && (
                     <Fragment>
-                        <Entry>
-                            {colorers &&
-                                colorers.map(colorer => (
-                                    <Link
-                                        key={colorer._id}
-                                        to={`../creators/${colorer._id}`}
-                                    >
-                                        {getFullName(colorer)}
-                                    </Link>
-                                ))}
-                        </Entry>
+                        <MultipleCreatorEntry creators={colorers} />
                         <Label>
                             {colorers && colorers.length ? (
                                 <div>
@@ -116,19 +88,10 @@ const Book: React.FunctionComponent<BookProps> = props => {
                         </Label>
                     </Fragment>
                 )}
+
                 {letterers && !!letterers.length && (
                     <Fragment>
-                        <Entry>
-                            {letterers &&
-                                letterers.map(letterer => (
-                                    <Link
-                                        key={letterer._id}
-                                        to={`../creators/${letterer._id}`}
-                                    >
-                                        {getFullName(letterer)}
-                                    </Link>
-                                ))}
-                        </Entry>
+                        <MultipleCreatorEntry creators={letterers} />
                         <Label>
                             {letterers && letterers.length ? (
                                 <div>
@@ -141,13 +104,8 @@ const Book: React.FunctionComponent<BookProps> = props => {
                     </Fragment>
                 )}
             </Staff>
+
             <Details>
-                {/* {book.listPrice ? (
-                    <Price>
-                        <div>{book.listPrice}</div>
-                    </Price>
-                ) : null} */}
-                {/* <div>{`${book.language} ${book.type}`}</div> */}
                 {publisher && (
                     <Fragment>
                         <Entry>
@@ -165,6 +123,7 @@ const Book: React.FunctionComponent<BookProps> = props => {
                     </Fragment>
                 ) : null}
             </Details>
+
             <Icons>
                 {book.physical && (
                     <Icon
@@ -179,6 +138,7 @@ const Book: React.FunctionComponent<BookProps> = props => {
                     />
                 )}
             </Icons>
+
             {book.image ? (
                 <CoverImage src={book.image} alt={`${book.title} Cover`} />
             ) : null}
@@ -195,8 +155,8 @@ export default withRouter(Book);
 
 const Container = styled.div`
     display: grid;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #efefef;
+    font-family: ${props => props.theme.fonts.primary};
+    background: ${props => props.theme.colors.card};
     margin: 5vh auto;
 
     grid-template-areas:

@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 export const EntryModal = styled.div`
@@ -10,7 +9,7 @@ export const EntryModal = styled.div`
     align-items: center;
     justify-content: space-between;
     padding: 1vh;
-    color: white;
+    color: ${props => props.theme.colors.contrastText};
     opacity: 0.95;
     font-size: 1.4em;
     background-color: ${props => props.theme.colors.secondary};

@@ -11,7 +11,7 @@ export const DisplayHeader = styled.h1`
     justify-content: center;
 
     font-family: ${props => props.theme.fonts.primary};
-    color: white;
+    color: ${props => props.theme.colors.contrastText};
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 0.2em;

@@ -6,18 +6,18 @@ import styled from 'styled-components';
 export const IconButton = styled.button`
     background-color: ${props => props.theme.colors.secondary};
     border: none;
-    height: 3.5vh;
-    width: 3.5vh;
-    border-radius: 0.9em;
+    height: 2.2vh;
+    width: 2.2vh;
+    border-radius: 0.5rem;
     margin-left: 1vh;
     border: solid 2px ${props => props.theme.colors.secondary};
     cursor: pointer;
-    color: white;
+    color: ${props => props.theme.colors.contrastText};
     padding: 0;
 
     & > a {
         /* Remove styles from child elemenets, i.e. Links */
-        font-size: 1.5em;
+        font-size: 1rem;
         font-family: ${props => props.theme.fonts.primary};
         text-transform: uppercase;
         font-weight: bold;

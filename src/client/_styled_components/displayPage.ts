@@ -14,7 +14,7 @@ export const Title = styled.div`
     width: auto;
     background: ${props => props.theme.colors.secondary};
     border-top-right-radius: 8px;
-    color: white;
+    color: ${props => props.theme.colors.contrastText};
     text-transform: uppercase;
     letter-spacing: 2px;
     font-size: 1.5em;
@@ -44,7 +44,7 @@ export const Label = styled.div`
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    color: rgba(0, 0, 0, 0.5);
+    color: ${props => props.theme.colors.label};
 `;
 
 export const Staff = styled.div`
@@ -63,10 +63,10 @@ export const Entry = styled.div`
     align-items: flex-start;
     justify-content: flex-end;
     padding-left: 2vh;
-    color: #222;
+    color: ${props => props.theme.colors.text};
     opacity: 0.8;
     font-size: 1.4em;
-    background-color: #efefef;
+    background-color: ${props => props.theme.colors.card};
     font-family: ${props => props.theme.fonts.primary};
 
     &::after {

@@ -1,32 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useSpring } from 'react-spring';
+
 import { useSelector } from '../../_hooks';
-import { authenticationActions, userActions } from '../../_actions';
-import { useDispatch } from 'react-redux';
-import { history } from '../../_helpers/history';
-import { Button } from '../../_styled_components/button';
 import Link from '../../_styled_components/link';
 import { SearchBar } from '../../_components/SearchBar';
+import { SubMenu } from '../SubMenu';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+    toggleTheme: () => void;
+}
+
+const Header: React.FunctionComponent<HeaderProps> = ({ toggleTheme }) => {
     const { loggedIn } = useSelector(state => state.authentication);
-    const [user, setUser] = useState('');
-    const dispatch = useDispatch();
 
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const currentUser = window.localStorage.getItem('user');
-            let username = '';
-            if (currentUser) {
-                username = JSON.parse(currentUser).username;
-            }
-            currentUser && setUser(username);
-        }
-    }, [user]);
+    const [showMenu, setShowMenu] = useState(false);
 
-    const handleLogout = () => {
-        dispatch(authenticationActions.logout());
-        history.push('/');
+    const handleLeave = () => {
+        setShowMenu(false);
+    };
+
+    const handleHover = () => {
+        setShowMenu(true);
     };
 
     return (
@@ -35,8 +30,18 @@ const Header: React.FC = () => {
 
             <LoginSection>
                 <SearchBar />
-                {loggedIn ||
-                    (user && <Button onClick={handleLogout}>Logout</Button>)}
+                {/* {loggedIn ||
+                    (user && <Button onClick={handleLogout}>Logout</Button>)} */}
+                <div
+                    onMouseLeave={handleLeave}
+                    style={{
+                        width: '10vw'
+                    }}
+                    onMouseEnter={handleHover}
+                >
+                    <Menu>Menu</Menu>
+                    {showMenu && <SubMenu toggleTheme={toggleTheme} />}
+                </div>
             </LoginSection>
         </Container>
     );
@@ -58,6 +63,7 @@ const Container = styled.header`
 const LoginSection = styled.div`
     display: flex;
     flex-direction: row;
+    align-items: center;
     max-width: 40%;
     margin-right: 2vw;
 `;
@@ -70,4 +76,13 @@ const Logo = styled(Link)`
     font-stretch: extra-condensed;
     kerning: 0em;
     margin-left: 2vw;
+`;
+
+const Menu = styled.div`
+    height: 8vh;
+    font-size: 1.2em;
+    font-family: ${props => props.theme.fonts.primary};
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;

@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const SectionHeader = styled.h2`
     font-family: ${props => props.theme.fonts.primary};
+    color: ${props => props.theme.colors.text};
     font-weight: bold;
     text-transform: uppercase;
     font-stretch: semi-expanded;

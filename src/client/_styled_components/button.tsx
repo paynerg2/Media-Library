@@ -6,7 +6,7 @@ export const Button = styled.button`
     height: 5vh;
     width: 20vh;
     border-radius: 2em;
-    color: white;
+    color: ${props => props.theme.colors.contrastText};
     font-size: 0.8em;
     font-family: ${props => props.theme.fonts.primary};
     text-transform: uppercase;

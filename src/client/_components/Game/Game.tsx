@@ -125,8 +125,8 @@ export default withRouter(Game);
 
 const Container = styled.div`
     display: grid;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #efefef;
+    font-family: ${props => props.theme.fonts.primary};
+    background: ${props => props.theme.colors.card};
     margin: 5vh auto;
 
     grid-template-areas:

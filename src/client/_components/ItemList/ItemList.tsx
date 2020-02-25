@@ -49,6 +49,7 @@ export const ItemList: FunctionComponent<ItemListProps> = ({ items, ref }) => {
 const Container = styled.ul`
     display: flex;
     flex-direction: row;
+    width: 100%;
     padding: 0;
     margin: 0;
 `;

@@ -57,18 +57,10 @@ const Disc: React.FunctionComponent<DiscProps> = props => {
                 ) : (
                     <div>{disc.title}</div>
                 )}
-                {/* {disc.isCollection ? <div>Collection</div> : null} */}
                 {disc.volume &&
                 !disc.title.toLocaleLowerCase().includes('complete') ? (
                     <div>{disc.volume}</div>
                 ) : null}
-                {/* <div>
-                    {series && (
-                        <Link to={`../series/${series._id}`}>
-                            {disc.series}
-                        </Link>
-                    )}
-                </div> */}
             </Title>
 
             <Staff>
@@ -94,26 +86,7 @@ const Disc: React.FunctionComponent<DiscProps> = props => {
                 )}
             </Staff>
 
-            {/* {disc.listPrice ? (
-                <Fragment>
-                    <div>List Price:</div>
-                    <div>{disc.listPrice}</div>
-                </Fragment>
-            ) : null} */}
-
             <Details>
-                {/* <div>
-                    <Entry>{disc.languages && disc.languages.join(', ')}</Entry>
-                    <Label>Languages</Label>
-                </div>
-                {disc.subtitles && disc.subtitles.length ? (
-                    <Fragment>
-                        <Entry>
-                            {disc.subtitles && disc.subtitles.join(', ')}
-                        </Entry>
-                        <Label>Subtitles</Label>
-                    </Fragment>
-                ) : null} */}
                 {publisher && (
                     <Fragment>
                         <Entry>
@@ -161,8 +134,8 @@ export default withRouter(Disc);
 
 const Container = styled.div`
     display: grid;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #efefef;
+    font-family: ${props => props.theme.fonts.primary};
+    background: ${props => props.theme.colors.card};
     margin: 5vh auto;
 
     grid-template-areas:

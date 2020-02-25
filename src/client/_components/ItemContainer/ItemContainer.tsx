@@ -82,18 +82,17 @@ const Container = styled.div`
     height: 100%;
     width: 100%;
     border-radius: 2%;
-    border: 1px solid ${props => props.theme.colors.primary};
     /* box-shadow: 1px 2px 6px 1px darkgrey; */
 `;
 
 const TextOverlay = styled(animated.div)`
-    color: white;
+    color: ${props => props.theme.colors.contrastText};
     height: ${props => props.theme.overlayHeight};
     width: ${props => props.theme.itemWidth};
     position: absolute;
     align-self: flex-end;
-    background: rgba(0, 153, 255, 0);
+    background: #0099ff;
     text-align: center;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: ${props => props.theme.fonts.primary};
     font-size: 1em;
 `;

@@ -48,7 +48,7 @@ export const Buttons = styled.div`
 export const StyledField = styled(Field)`
     padding: 12px;
     border-radius: 2px;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: ${props => props.theme.fonts.primary};
     border: 1px solid rgba(88, 88, 88, 0.2);
     font-size: 1.1em;
     font-weight: bold;
@@ -73,7 +73,7 @@ export const StyledField = styled(Field)`
 
 export const Label = styled.label`
     font-family: ${props => props.theme.fonts.primary};
-    color: #333;
+    color: ${props => props.theme.colors.label};
     opacity: 0.8;
     font-size: 1.3em;
     letter-spacing: 0.1em;
@@ -83,11 +83,11 @@ export const Label = styled.label`
 `;
 
 export const Error = styled.div`
-    color: white;
+    color: ${props => props.theme.colors.text};
     opacity: 0.7;
     font-size: 0.8em;
     font-family: ${props => props.theme.fonts.error};
-    background-color: red;
+    background-color: ${props => props.theme.colors.error};
     padding-left: 12px;
 `;
 
@@ -95,7 +95,7 @@ export const Select = styled.select`
     padding: 12px;
     border-radius: 2px;
     font-size: 1.1em;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: ${props => props.theme.fonts.primary};
     font-weight: bold;
     border: 1px solid rgba(88, 88, 88, 0.2);
     text-transform: capitalize;
