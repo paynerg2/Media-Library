@@ -3,7 +3,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import styled from 'styled-components';
 
-import { theme } from './theme';
+import { theme as lightTheme, darkTheme } from './theme';
 import { history } from '../_helpers/history';
 import { PrivateRoute } from '../_components/PrivateRoute';
 import RegistrationPage from '../Views/RegistrationPage/RegistrationPage';
@@ -20,7 +20,7 @@ import {
     discActions,
     gameActions
 } from '../_actions';
-import { useSelector } from '../_hooks';
+import { useSelector, useDarkMode } from '../_hooks';
 import NewDiscPage from '../Views/NewDisc/NewDiscPage';
 import NewGamePage from '../Views/NewGamePage/NewGamePage';
 import BookDisplayPage from '../Views/BookDisplayPage/BookDisplayPage';
@@ -35,6 +35,9 @@ import './App.css';
 export const App: React.FC = () => {
     const { loggedIn } = useSelector(state => state.authentication);
     const dispatch = useDispatch();
+    const { theme, toggleTheme } = useDarkMode();
+    const themeMode = theme === 'light' ? lightTheme : darkTheme;
+
     useEffect(() => {
         dispatch(companyActions.getAll());
         dispatch(creatorActions.getAll());
@@ -45,11 +48,16 @@ export const App: React.FC = () => {
     }, [loggedIn, dispatch]);
 
     return (
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={themeMode}>
             <Layout>
                 <Router history={history}>
                     <LayoutHeader>
-                        <Route path="/" component={Header} />
+                        <Route
+                            path="/"
+                            render={props => (
+                                <Header {...props} toggleTheme={toggleTheme} />
+                            )}
+                        />
                     </LayoutHeader>
                     {/* Add things like footer, sidebar, breadcrumbs, etc. here */}
                     <Content>
@@ -183,7 +191,8 @@ const Layout = styled.div`
     grid-template-rows: auto 1fr;
     grid-gap: 10px;
 
-    height: 100vh;
+    min-height: 100vh;
+    background: ${props => props.theme.colors.background};
 
     @media (max-width: 768px) {
         grid-template-areas: 'header' 'content';
