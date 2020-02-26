@@ -18,7 +18,6 @@ import { Button } from '../../_styled_components/button';
 import { IconButton } from '../../_styled_components/iconButton';
 import {
     Error,
-    FormHeader,
     FormContainer,
     Section,
     Buttons,
@@ -32,6 +31,7 @@ import {
     FormatFields,
     CollectionSection
 } from '../../_styled_components/formElements';
+import { DisplayHeader } from '../../_styled_components/displayHeader';
 import { SectionHeader } from '../../_styled_components/sectionHeader';
 
 interface MatchProps {
@@ -81,9 +81,9 @@ const NewBookPage: React.FunctionComponent<RouteComponentProps<
 
     return (
         <Fragment>
-            <FormHeader>
+            <DisplayHeader>
                 {id ? `edit ${selectedBook.title}` : `add new book`}
-            </FormHeader>
+            </DisplayHeader>
             <Formik
                 initialValues={initialValues}
                 onSubmit={handleSubmit}

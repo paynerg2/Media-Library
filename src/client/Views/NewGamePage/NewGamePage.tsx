@@ -14,7 +14,6 @@ import { gameActions } from '../../_actions';
 import { Game, defaultGame } from '../../../lib/interfaces';
 
 import {
-    FormHeader,
     FormContainer,
     Section,
     Label,
@@ -28,6 +27,7 @@ import {
 } from '../../_styled_components/formElements';
 import { IconButton } from '../../_styled_components/iconButton';
 import { Button } from '../../_styled_components/button';
+import { DisplayHeader } from '../../_styled_components/displayHeader';
 import { SectionHeader } from '../../_styled_components/sectionHeader';
 import { GameSystemIcons } from '../../_assets/icons';
 import { Icon } from '../../_styled_components/displayPage';
@@ -71,9 +71,9 @@ const NewGamePage: React.FunctionComponent<RouteComponentProps<
 
     return (
         <Fragment>
-            <FormHeader>
+            <DisplayHeader>
                 {id ? `edit ${selectedGame.title}` : `add new game`}
-            </FormHeader>
+            </DisplayHeader>
             <Formik
                 initialValues={initialValues}
                 onSubmit={handleSubmit}
