@@ -66,7 +66,7 @@ const Item = styled.div`
     justify-content: center;
 
     color: white;
-    height: 5vh;
+    height: 6vh;
 `;
 
 const SelectableItem = styled(Item)`
