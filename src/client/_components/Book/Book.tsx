@@ -48,8 +48,10 @@ const Book: React.FunctionComponent<BookProps> = props => {
     };
 
     const handleDelete = () => {
-        dispatch(bookActions.delete(id));
-        props.history.push('/');
+        if (window.confirm(`Are you sure you want to delete ${book.title}?`)) {
+            dispatch(bookActions.delete(id));
+            props.history.push('/');
+        }
     };
     return (
         <Container>

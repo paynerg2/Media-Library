@@ -38,8 +38,10 @@ const Game: React.FunctionComponent<GameProps> = props => {
     };
 
     const handleDelete = () => {
-        dispatch(gameActions.delete(id));
-        props.history.push('/');
+        if (window.confirm(`Are you sure you want to delete ${game.title}?`)) {
+            dispatch(gameActions.delete(id));
+            props.history.push('/');
+        }
     };
 
     return (

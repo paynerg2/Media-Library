@@ -41,8 +41,10 @@ const Disc: React.FunctionComponent<DiscProps> = props => {
     };
 
     const handleDelete = () => {
-        dispatch(discActions.delete(id));
-        props.history.push('/');
+        if (window.confirm(`Are you sure you want to delete ${disc.title}?`)) {
+            dispatch(discActions.delete(id));
+            props.history.push('/');
+        }
     };
 
     return (
