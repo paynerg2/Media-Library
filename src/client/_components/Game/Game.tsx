@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useGame } from '../../_hooks';
 import { Game as IGame } from '../../../lib/interfaces';
 import Link from '../../_styled_components/link';
-import { Button } from '../../_styled_components/button';
+import { Button, colors } from '../../_styled_components/button';
 import {
     Title,
     CoverImage,
@@ -117,7 +117,9 @@ const Game: React.FunctionComponent<GameProps> = props => {
 
             <Buttons>
                 <Button onClick={handleEdit}>EDIT</Button>
-                <Button onClick={handleDelete}>DELETE</Button>
+                <Button onClick={handleDelete} color={colors.danger}>
+                    DELETE
+                </Button>
             </Buttons>
         </Container>
     );

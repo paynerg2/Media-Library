@@ -6,7 +6,7 @@ import { useBook } from '../../_hooks';
 import { Book as IBook } from '../../../lib/interfaces';
 import Link from '../../_styled_components/link';
 import { MultipleCreatorEntry } from '../MultipleCreatorEntry/MultipleCreatorEntry';
-import { Button } from '../../_styled_components/button';
+import { Button, colors } from '../../_styled_components/button';
 import { BookIcons } from '../../_assets/icons';
 import { bookActions } from '../../_actions';
 import {
@@ -147,7 +147,9 @@ const Book: React.FunctionComponent<BookProps> = props => {
 
             <Buttons>
                 <Button onClick={handleEdit}>EDIT</Button>
-                <Button onClick={handleDelete}>DELETE</Button>
+                <Button onClick={handleDelete} color={colors.danger}>
+                    DELETE
+                </Button>
             </Buttons>
         </Container>
     );

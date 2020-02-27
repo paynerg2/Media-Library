@@ -10,6 +10,7 @@ import { SearchResultCount } from '../../_styled_components/searchResultCount';
 import { useChain, useSpring, ReactSpringHook, config } from 'react-spring';
 import { WindowSizeObject } from '../../_interfaces';
 import styled from 'styled-components';
+import { Spinner } from '../../_components/Spinner';
 
 //! Redirect from login does not load data
 
@@ -124,7 +125,9 @@ const HomePage: React.FC = () => {
                     </SectionHeader>
                     <div>
                         {books.loading ? (
-                            <Placeholder />
+                            <Placeholder>
+                                <Spinner />
+                            </Placeholder>
                         ) : (
                             <ListScroller
                                 style={transition}
@@ -173,7 +176,9 @@ const HomePage: React.FC = () => {
                     </SectionHeader>
                     <div>
                         {discs.loading ? (
-                            <Placeholder />
+                            <Placeholder>
+                                <Spinner />
+                            </Placeholder>
                         ) : (
                             <ListScroller
                                 style={transition}
@@ -222,7 +227,9 @@ const HomePage: React.FC = () => {
                     </SectionHeader>
                     <div>
                         {games.loading ? (
-                            <Placeholder />
+                            <Placeholder>
+                                <Spinner />
+                            </Placeholder>
                         ) : (
                             <ListScroller
                                 style={transition}

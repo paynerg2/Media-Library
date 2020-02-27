@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { useDisc } from '../../_hooks';
 import { Disc as IDisc } from '../../../lib/interfaces';
 import Link from '../../_styled_components/link';
-import { Button } from '../../_styled_components/button';
+import { Button, colors } from '../../_styled_components/button';
 import {
     Title,
     CoverImage,
@@ -126,7 +126,9 @@ const Disc: React.FunctionComponent<DiscProps> = props => {
 
             <Buttons>
                 <Button onClick={handleEdit}>EDIT</Button>
-                <Button onClick={handleDelete}>DELETE</Button>
+                <Button onClick={handleDelete} color={colors.danger}>
+                    DELETE
+                </Button>
             </Buttons>
         </Container>
     );
