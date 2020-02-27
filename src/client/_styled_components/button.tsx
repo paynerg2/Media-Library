@@ -1,7 +1,22 @@
 import styled from 'styled-components';
 
-export const Button = styled.button`
-    background-color: ${props => props.theme.colors.secondary};
+export const colors = {
+    neutral: 'neutral',
+    danger: 'danger',
+    default: 'default'
+};
+
+export const Button = styled('button')<{ color?: string }>`
+    background-color: ${props => {
+        switch (props.color) {
+            case colors.neutral:
+                return 'lightGrey';
+            case colors.danger:
+                return props.theme.colors.error;
+            default:
+                return props.theme.colors.secondary;
+        }
+    }};
     border: none;
     height: 5vh;
     width: 20vh;
@@ -14,7 +29,17 @@ export const Button = styled.button`
     margin-bottom: 0.6vh;
     padding-left: 0.3vh;
     padding-right: 0.3vh;
-    border: solid 2px ${props => props.theme.colors.secondary};
+    border: solid 2px
+        ${props => {
+            switch (props.color) {
+                case colors.neutral:
+                    return 'lightGrey';
+                case colors.danger:
+                    return props.theme.colors.error;
+                default:
+                    return props.theme.colors.secondary;
+            }
+        }};
     cursor: pointer;
 
     & > {
