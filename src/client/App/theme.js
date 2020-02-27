@@ -9,7 +9,7 @@ export const theme = {
         shadow: 'darkgrey',
         text: '#222',
         contrastText: 'white',
-        error: '#b00020',
+        error: '#830f00',
         background: 'white',
         card: '#efefef',
         label: 'rgba(0,0,0,0.5)'
@@ -33,7 +33,7 @@ export const darkTheme = {
         shadow: 'darkgrey',
         text: 'white',
         contrastText: 'rgba(255,255,255,0.9)',
-        error: '#cf6679',
+        error: '#f77966',
         background: '#121212',
         card: '#373737',
         label: 'rgba(255,255,255,0.5)'
