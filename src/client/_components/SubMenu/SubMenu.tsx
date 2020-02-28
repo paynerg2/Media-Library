@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { authenticationActions } from '../../_actions';
 import { useDispatch } from 'react-redux';
 import { history } from '../../_helpers/history';
+import { Slider } from '../../_styled_components/slider';
 
 interface SubMenuProps {
     toggleTheme: () => void;
@@ -13,6 +14,7 @@ export const SubMenu: React.FunctionComponent<SubMenuProps> = ({
 }) => {
     const dispatch = useDispatch();
     const [user, setUser] = useState('');
+    const isDarkMode = window.localStorage.getItem('theme') === 'dark';
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -37,9 +39,10 @@ export const SubMenu: React.FunctionComponent<SubMenuProps> = ({
     return (
         <Menu>
             <Item>Logged in as: {user}</Item>
-            <SelectableItem onClick={handleDarkModeToggle}>
-                Dark Mode Toggle
-            </SelectableItem>
+            <Item>
+                <label>Dark Mode</label>
+                <Slider onChange={handleDarkModeToggle} value={isDarkMode} />
+            </Item>
 
             <Seperator />
             <SelectableItem onClick={handleLogout}>Logout</SelectableItem>
@@ -59,14 +62,14 @@ const Menu = styled.div`
 
 const Item = styled.div`
     display: flex;
-    flex-direction: column;
-    position: relative;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     font-family: ${props => props.theme.fonts.primary};
     font-size: 1.2em;
-    justify-content: center;
 
     color: white;
-    height: 6vh;
+    margin: 2vh 0;
 `;
 
 const SelectableItem = styled(Item)`
