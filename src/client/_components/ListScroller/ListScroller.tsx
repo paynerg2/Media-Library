@@ -20,6 +20,9 @@ export const ListScroller: FunctionComponent<ListScrollerProps> = ({
     const [listSection, setListSection] = useState([] as any[]);
 
     useEffect(() => {
+        if (list.length === length) {
+            setOffset(0);
+        }
         setListSection(list.slice(offset, offset + length));
     }, [list, offset, length]);
 
