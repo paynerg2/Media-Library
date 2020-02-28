@@ -27,10 +27,16 @@ import DvdIcon from './icons8-dvd-logo-96.png';
 import DiscIcon from './icons8-music-record-100.png';
 import VideoFileIcon from './Movies-icon.png';
 
+import SettingsIcon from './cogwheel.png';
+
 // Interface
 interface Icons {
     [key: string]: string;
 }
+
+export const icons: Icons = {
+    settings: SettingsIcon
+};
 
 // Game System Icons
 export const GameSystemIcons: Icons = {
