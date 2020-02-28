@@ -6,6 +6,8 @@ import { useSelector } from '../../_hooks';
 import Link from '../../_styled_components/link';
 import { SearchBar } from '../../_components/SearchBar';
 import { SubMenu } from '../SubMenu';
+import { icons } from '../../_assets/icons';
+import { Icon } from '../../_styled_components/displayPage';
 
 interface HeaderProps {
     toggleTheme: () => void;
@@ -20,7 +22,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({ toggleTheme }) => {
         setShowMenu(false);
     };
 
-    const handleHover = () => {
+    const handleClick = () => {
         setShowMenu(true);
     };
 
@@ -32,14 +34,10 @@ const Header: React.FunctionComponent<HeaderProps> = ({ toggleTheme }) => {
                 <SearchBar />
                 {/* {loggedIn ||
                     (user && <Button onClick={handleLogout}>Logout</Button>)} */}
-                <div
-                    onMouseLeave={handleLeave}
-                    style={{
-                        width: '10vw'
-                    }}
-                    onMouseEnter={handleHover}
-                >
-                    <Menu>Menu</Menu>
+                <div onMouseLeave={handleLeave} onClick={handleClick}>
+                    <Menu>
+                        <Icon src={icons.settings} alt="Settings" />
+                    </Menu>
                     {showMenu && <SubMenu toggleTheme={toggleTheme} />}
                 </div>
             </LoginSection>
@@ -80,9 +78,14 @@ const Logo = styled(Link)`
 
 const Menu = styled.div`
     height: 8vh;
-    font-size: 1.2em;
+    width: 10vw;
     font-family: ${props => props.theme.fonts.primary};
     display: flex;
     justify-content: center;
     align-items: center;
+
+    &:hover {
+        opacity: 0.8;
+        transition: 0.4s linear;
+    }
 `;
