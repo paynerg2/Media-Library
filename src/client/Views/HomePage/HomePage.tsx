@@ -95,9 +95,9 @@ const HomePage: React.FC = () => {
                         <div>
                             <div>
                                 <span>Books</span>
-                                <IconButton>
-                                    <Link to="/books/new">+</Link>
-                                </IconButton>
+                                <Link to="/books/new">
+                                    <IconButton>+</IconButton>
+                                </Link>
                                 {searchTerm && (
                                     <SearchResultCount>
                                         {`${bookList.length} ${
@@ -146,9 +146,9 @@ const HomePage: React.FC = () => {
                         <div>
                             <div>
                                 <span>Discs</span>
-                                <IconButton>
-                                    <Link to="/discs/new">+</Link>
-                                </IconButton>
+                                <Link to="/discs/new">
+                                    <IconButton>+</IconButton>
+                                </Link>
                                 {searchTerm && (
                                     <SearchResultCount>
                                         {`${discList.length} ${
@@ -197,9 +197,9 @@ const HomePage: React.FC = () => {
                         <div>
                             <div>
                                 <span>Games</span>
-                                <IconButton>
-                                    <Link to="/games/new">+</Link>
-                                </IconButton>
+                                <Link to="/games/new">
+                                    <IconButton>+</IconButton>
+                                </Link>
                                 {searchTerm && (
                                     <SearchResultCount>
                                         {`${gameList.length} ${
