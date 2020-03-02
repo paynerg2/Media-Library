@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useSpring } from 'react-spring';
-
-import { useSelector } from '../../_hooks';
+import { useLocation } from 'react-router-dom';
 import Link from '../../_styled_components/link';
 import { SearchBar } from '../../_components/SearchBar';
 import { SubMenu } from '../SubMenu';
@@ -14,9 +12,17 @@ interface HeaderProps {
 }
 
 const Header: React.FunctionComponent<HeaderProps> = ({ toggleTheme }) => {
-    const { loggedIn } = useSelector(state => state.authentication);
-
     const [showMenu, setShowMenu] = useState(false);
+    const [isSearchable, setIsSearchable] = useState(true);
+    const location = useLocation();
+
+    useEffect(() => {
+        let isEntityPage =
+            location.pathname.includes('books') ||
+            location.pathname.includes('discs') ||
+            location.pathname.includes('games');
+        setIsSearchable(!isEntityPage);
+    }, [location, isSearchable]);
 
     const handleLeave = () => {
         setShowMenu(false);
@@ -31,7 +37,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({ toggleTheme }) => {
             <Logo to="/">MEDIA LIBRARY</Logo>
 
             <LoginSection>
-                <SearchBar />
+                {isSearchable && <SearchBar />}
                 {/* {loggedIn ||
                     (user && <Button onClick={handleLogout}>Logout</Button>)} */}
                 <div onMouseLeave={handleLeave} onClick={handleClick}>
