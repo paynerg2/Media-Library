@@ -31,6 +31,7 @@ import CreatorDisplayPage from '../Views/CreatorDisplayPage/CreatorDisplayPage';
 import CompanyDisplayPage from '../Views/CompanyDisplayPage/CompanyDisplayPage';
 
 import './App.css';
+import Footer from '../_components/Footer/Footer';
 
 export const App: React.FC = () => {
     const { loggedIn } = useSelector(state => state.authentication);
@@ -59,6 +60,9 @@ export const App: React.FC = () => {
                             )}
                         />
                     </LayoutHeader>
+                    <LayoutFooter>
+                        <Footer />
+                    </LayoutFooter>
                     {/* Add things like footer, sidebar, breadcrumbs, etc. here */}
                     <Content>
                         <Switch>
@@ -185,10 +189,11 @@ const Layout = styled.div`
 
     grid-template-areas:
         'header header header'
-        '. content .';
+        '. content .'
+        'footer footer footer';
 
     grid-template-columns: 15vw 1fr 15vw;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto 1fr auto;
     grid-gap: 10px;
 
     min-height: 100vh;
@@ -203,6 +208,10 @@ const Layout = styled.div`
 
 const LayoutHeader = styled.div`
     grid-area: header;
+`;
+
+const LayoutFooter = styled.div`
+    grid-area: footer;
 `;
 
 const Content = styled.div`
