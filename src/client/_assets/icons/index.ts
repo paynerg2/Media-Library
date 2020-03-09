@@ -28,6 +28,7 @@ import DiscIcon from './icons8-music-record-100.png';
 import VideoFileIcon from './Movies-icon.png';
 
 import SettingsIcon from './cogwheel.png';
+import GithubIcon from './github-logo.png';
 
 // Interface
 interface Icons {
@@ -35,7 +36,8 @@ interface Icons {
 }
 
 export const icons: Icons = {
-    settings: SettingsIcon
+    settings: SettingsIcon,
+    github: GithubIcon
 };
 
 // Game System Icons
