@@ -268,6 +268,7 @@ const NewGamePage: React.FunctionComponent<RouteComponentProps<
                                                                 handleChange
                                                             }
                                                             type="text"
+                                                            autocomplete="language"
                                                             value={
                                                                 values.languages![
                                                                     index

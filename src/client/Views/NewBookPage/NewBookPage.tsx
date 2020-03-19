@@ -448,7 +448,7 @@ const NewBookPage: React.FunctionComponent<RouteComponentProps<
                                     onChange={handleChange}
                                     value={values.language}
                                     type="text"
-                                    autocomplete="off"
+                                    autocomplete="language"
                                     placeholder="Language"
                                 />
                                 <Error>

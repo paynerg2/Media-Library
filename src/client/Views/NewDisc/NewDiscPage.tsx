@@ -193,6 +193,7 @@ const NewDiscPage: React.FunctionComponent<RouteComponentProps<
                                                                     handleChange
                                                                 }
                                                                 type="text"
+                                                                autocomplete="language"
                                                                 value={
                                                                     values
                                                                         .languages[
