@@ -8,6 +8,7 @@ import { initialState as creatorDefaultState } from '../_reducers/creator.reduce
 import { initialState as discDefaultState } from '../_reducers/disc.reducer';
 import { initialState as bookDefaultState } from '../_reducers/book.reducer';
 import { initialState as gameDefaultState } from '../_reducers/game.reducer';
+import { initialState as searchDefaultState } from '../_reducers/search.reducer';
 import {
     userActions,
     authenticationActions,
@@ -50,11 +51,14 @@ import {
     Game
 } from '../../lib/interfaces';
 import { bookTypes, discFormats } from '../../lib/formats';
-import { getFullName } from '../_helpers/getFullName';
 
 describe('Client-side integration tests', () => {
     it('Initializes store with expected default values', () => {
         const expectedState = {
+            _persist: {
+                rehydrated: true,
+                version: -1
+            },
             users: userDefaultState,
             authentication: authDefaultState,
             series: seriesDefaultState,
@@ -62,7 +66,8 @@ describe('Client-side integration tests', () => {
             creators: creatorDefaultState,
             books: bookDefaultState,
             discs: discDefaultState,
-            games: gameDefaultState
+            games: gameDefaultState,
+            search: searchDefaultState
         };
         const state = store.getState();
         expect(state).toEqual(expectedState);
@@ -308,9 +313,8 @@ describe('Client-side integration tests', () => {
                         ...seriesDefaultState,
                         allIds: [testItem._id],
                         byId: {
-                            [testItem._id]: testSeries
-                        },
-                        byTitle: { [testItem.name]: testItem._id }
+                            [testItem._id]: testItem
+                        }
                     };
                     expect(series).toEqual(expectedState);
                 });
@@ -370,10 +374,7 @@ describe('Client-side integration tests', () => {
                         ...seriesDefaultState,
                         allIds: [testItem._id],
                         byId: {
-                            [testItem._id]: testSeries
-                        },
-                        byTitle: {
-                            [testItem.name]: testItem._id
+                            [testItem._id]: testItem
                         }
                     };
                     expect(series).toEqual(expectedState);
@@ -473,8 +474,8 @@ describe('Client-side integration tests', () => {
                 items: ['test', 'test', 'update']
             };
             describe('On successful request', () => {
-                const expectedUpdate: Series = {
-                    ...testSeries,
+                const expectedUpdate: Series & MongoId = {
+                    ...testItem,
                     items: testUpdate.items
                 };
                 beforeAll(() => {
@@ -508,9 +509,6 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: expectedUpdate
-                        },
-                        byTitle: {
-                            [testItem.name]: testItem._id
                         }
                     };
                     expect(series).toEqual(expectedState);
@@ -652,10 +650,7 @@ describe('Client-side integration tests', () => {
                         ...companyDefaultState,
                         allIds: [testItem._id],
                         byId: {
-                            [testItem._id]: testCompany
-                        },
-                        byName: {
-                            [testItem.name]: testItem._id
+                            [testItem._id]: testItem
                         }
                     };
                     expect(companies).toEqual(expectedState);
@@ -774,10 +769,7 @@ describe('Client-side integration tests', () => {
                         ...companyDefaultState,
                         allIds: [testItem._id],
                         byId: {
-                            [testItem._id]: testCompany
-                        },
-                        byName: {
-                            [testItem.name]: testItem._id
+                            [testItem._id]: testItem
                         }
                     };
                     expect(companies).toEqual(expectedState);
@@ -823,8 +815,8 @@ describe('Client-side integration tests', () => {
             };
 
             describe('On successful request', () => {
-                const expectedUpdate: Company = {
-                    ...testCompany,
+                const expectedUpdate: Company & MongoId = {
+                    ...testItem,
                     titles: testUpdate.titles
                 };
                 beforeAll(() => {
@@ -858,9 +850,6 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: expectedUpdate
-                        },
-                        byName: {
-                            [testItem.name]: testItem._id
                         }
                     };
                     expect(companies).toEqual(expectedState);
@@ -1006,10 +995,7 @@ describe('Client-side integration tests', () => {
                         ...creatorDefaultState,
                         allIds: [testItem._id],
                         byId: {
-                            [testItem._id]: testCreator
-                        },
-                        byName: {
-                            [getFullName(testCreator)]: testItem._id
+                            [testItem._id]: testItem
                         }
                     };
                     expect(creators).toEqual(expectedState);
@@ -1140,10 +1126,7 @@ describe('Client-side integration tests', () => {
                         ...creatorDefaultState,
                         allIds: [testItem._id],
                         byId: {
-                            [testItem._id]: testCreator
-                        },
-                        byName: {
-                            [getFullName(testCreator)]: testItem._id
+                            [testItem._id]: testItem
                         }
                     };
                     expect(creators).toEqual(expectedState);
@@ -1195,8 +1178,8 @@ describe('Client-side integration tests', () => {
             };
 
             describe('On successful request', () => {
-                const expectedUpdate: Creator = {
-                    ...testCreator,
+                const expectedUpdate: Creator & MongoId = {
+                    ...testItem,
                     works: testUpdate.works
                 };
 
@@ -1231,9 +1214,6 @@ describe('Client-side integration tests', () => {
                         allIds: [testItem._id],
                         byId: {
                             [testItem._id]: expectedUpdate
-                        },
-                        byName: {
-                            [getFullName(testCreator)]: testItem._id
                         }
                     };
                     expect(creators).toEqual(expectedState);
@@ -1404,11 +1384,9 @@ describe('Client-side integration tests', () => {
                         ...bookDefaultState,
                         allIds: [testItem._id],
                         byId: {
-                            [testItem._id]: testBook
+                            [testItem._id]: testItem
                         },
-                        bySeriesName: {
-                            [testItem.series]: [testItem._id]
-                        }
+                        loading: false
                     };
                     expect(books).toEqual(expectedState);
                 });
@@ -1474,7 +1452,8 @@ describe('Client-side integration tests', () => {
                     const { books } = store.getState();
                     const expectedState: BookState = {
                         ...bookDefaultState,
-                        selectedBook: testItem._id
+                        selectedBook: testItem._id,
+                        loading: false
                     };
                     expect(books).toEqual(expectedState);
                 });
@@ -1542,11 +1521,9 @@ describe('Client-side integration tests', () => {
                         ...bookDefaultState,
                         allIds: [testItem._id],
                         byId: {
-                            [testItem._id]: testBook
+                            [testItem._id]: testItem
                         },
-                        bySeriesName: {
-                            [testItem.series]: [testItem._id]
-                        }
+                        loading: false
                     };
                     expect(books).toEqual(expectedState);
                 });
@@ -1598,8 +1575,8 @@ describe('Client-side integration tests', () => {
             };
 
             describe('On successful request', () => {
-                const expectedUpdate: Book = {
-                    ...testBook,
+                const expectedUpdate: Book & MongoId = {
+                    ...testItem,
                     checkedOut: !testBook.checkedOut
                 };
 
@@ -1633,9 +1610,7 @@ describe('Client-side integration tests', () => {
                         byId: {
                             [testItem._id]: expectedUpdate
                         },
-                        bySeriesName: {
-                            [testItem.series]: [testItem._id]
-                        }
+                        loading: false
                     };
                     expect(books).toEqual(expectedState);
                 });
@@ -1705,9 +1680,7 @@ describe('Client-side integration tests', () => {
                     const { books } = store.getState();
                     const expectedState: BookState = {
                         ...bookDefaultState,
-                        bySeriesName: {
-                            [testItem.series]: []
-                        }
+                        loading: false
                     };
                     expect(books).toEqual(expectedState);
                 });
@@ -1807,11 +1780,9 @@ describe('Client-side integration tests', () => {
                         ...discDefaultState,
                         allIds: [testItem._id],
                         byId: {
-                            [testItem._id]: testDisc
+                            [testItem._id]: testItem
                         },
-                        bySeriesName: {
-                            [testItem.series]: [testItem._id]
-                        }
+                        loading: false
                     };
                     expect(discs).toEqual(expectedState);
                 });
@@ -1879,7 +1850,8 @@ describe('Client-side integration tests', () => {
                     const { discs } = store.getState();
                     const expectedState: DiscState = {
                         ...discDefaultState,
-                        selectedDisc: testItem._id
+                        selectedDisc: testItem._id,
+                        loading: false
                     };
                     expect(discs).toEqual(expectedState);
                 });
@@ -1949,11 +1921,9 @@ describe('Client-side integration tests', () => {
                         ...discDefaultState,
                         allIds: [testItem._id],
                         byId: {
-                            [testItem._id]: testDisc
+                            [testItem._id]: testItem
                         },
-                        bySeriesName: {
-                            [testItem.series]: [testItem._id]
-                        }
+                        loading: false
                     };
                     expect(discs).toEqual(expectedState);
                 });
@@ -2007,8 +1977,8 @@ describe('Client-side integration tests', () => {
             };
 
             describe('On successful request', () => {
-                const expectedUpdate: Disc = {
-                    ...testDisc,
+                const expectedUpdate: Disc & MongoId = {
+                    ...testItem,
                     checkedOut: !testDisc.checkedOut
                 };
 
@@ -2042,9 +2012,7 @@ describe('Client-side integration tests', () => {
                         byId: {
                             [testItem._id]: expectedUpdate
                         },
-                        bySeriesName: {
-                            [testItem.series]: [testItem._id]
-                        }
+                        loading: false
                     };
                     expect(discs).toEqual(expectedState);
                 });
@@ -2116,9 +2084,7 @@ describe('Client-side integration tests', () => {
                     const { discs } = store.getState();
                     const expectedState: DiscState = {
                         ...discDefaultState,
-                        bySeriesName: {
-                            [testItem.series]: []
-                        }
+                        loading: false
                     };
                     expect(discs).toEqual(expectedState);
                 });
@@ -2218,11 +2184,9 @@ describe('Client-side integration tests', () => {
                         ...gameDefaultState,
                         allIds: [testItem._id],
                         byId: {
-                            [testItem._id]: testGame
+                            [testItem._id]: testItem
                         },
-                        bySeriesName: {
-                            [testItem.series]: [testItem._id]
-                        }
+                        loading: false
                     };
                     expect(games).toEqual(expectedState);
                 });
@@ -2292,7 +2256,8 @@ describe('Client-side integration tests', () => {
                     const { games } = store.getState();
                     const expectedState: GameState = {
                         ...gameDefaultState,
-                        selectedGame: testItem._id
+                        selectedGame: testItem._id,
+                        loading: false
                     };
                     expect(games).toEqual(expectedState);
                 });
@@ -2364,11 +2329,9 @@ describe('Client-side integration tests', () => {
                         ...gameDefaultState,
                         allIds: [testItem._id],
                         byId: {
-                            [testItem._id]: testGame
+                            [testItem._id]: testItem
                         },
-                        bySeriesName: {
-                            [testItem.series]: [testItem._id]
-                        }
+                        loading: false
                     };
                     expect(games).toEqual(expectedState);
                 });
@@ -2418,14 +2381,14 @@ describe('Client-side integration tests', () => {
         });
 
         describe('Action | Update', () => {
-            const testUpdate: Game = {
+            const testUpdate: Game & MongoId = {
                 ...testItem,
                 checkedOut: !testItem.checkedOut
             };
 
             describe('On successful request', () => {
-                const expectedUpdate: Game = {
-                    ...testGame,
+                const expectedUpdate: Game & MongoId = {
+                    ...testItem,
                     checkedOut: !testGame.checkedOut
                 };
 
@@ -2459,9 +2422,7 @@ describe('Client-side integration tests', () => {
                         byId: {
                             [testItem._id]: expectedUpdate
                         },
-                        bySeriesName: {
-                            [testItem.series]: [testItem._id]
-                        }
+                        loading: false
                     };
                     expect(games).toEqual(expectedState);
                 });
@@ -2535,9 +2496,7 @@ describe('Client-side integration tests', () => {
                     const { games } = store.getState();
                     const expectedState: GameState = {
                         ...gameDefaultState,
-                        bySeriesName: {
-                            [testItem.series]: []
-                        }
+                        loading: false
                     };
                     expect(games).toEqual(expectedState);
                 });
