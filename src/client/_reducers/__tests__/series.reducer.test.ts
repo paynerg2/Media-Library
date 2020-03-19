@@ -21,7 +21,6 @@ describe('Series Reducer', () => {
     const initialState: SeriesState = {
         allIds: [],
         byId: {},
-        byTitle: {},
         selectedSeries: null,
         loading: false,
         error: undefined

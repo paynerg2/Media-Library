@@ -193,12 +193,12 @@ describe('Games Reducer', () => {
                         [testItem._id]: testItem,
                         [testItem2._id]: testItem2
                     },
-                    allIds: [testItem._id, id]
+                    allIds: [testItem._id, testItem2._id]
                 };
                 const expectedState: GameState = {
                     ...preDeleteState,
-                    byId: { [id]: testItem },
-                    allIds: [id],
+                    byId: { [testItem._id]: testItem },
+                    allIds: [testItem._id],
                     loading: false
                 };
                 expect(games(preDeleteState, action)).toEqual(expectedState);
