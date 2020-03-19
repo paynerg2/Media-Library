@@ -152,7 +152,7 @@ export const FieldCollectionLabel = styled.div`
     flex-direction: row;
     margin-top: 1vh;
     justify-content: space-between;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 2px solid ${props => props.theme.colors.seperator};
 `;
 
 export const FormatFields = styled.div`
@@ -162,7 +162,7 @@ export const FormatFields = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    border: 2px solid rgba(0, 0, 0, 0.05);
+    border: 2px solid ${props => props.theme.colors.seperator};
     padding: 12px;
 `;
 

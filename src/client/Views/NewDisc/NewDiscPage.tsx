@@ -481,7 +481,7 @@ const Format = styled.option`
     font-family: ${props => props.theme.fonts.secondary};
     font-weight: bold;
     font-size: 1.1em;
-    border: 1px solid black;
+    border: 1px solid ${props => props.theme.colors.label};
     border-radius: 1em;
     width: 20%;
     min-width: 80px;
@@ -490,6 +490,8 @@ const Format = styled.option`
     text-transform: uppercase;
     padding: 4px;
     margin-top: 1vh;
+    /* Browser limitations appear to prevent customization of 
+       :checked selector background-color and color properties */
 `;
 
 const FormatSelect = styled(Field)`
@@ -497,6 +499,7 @@ const FormatSelect = styled(Field)`
     flex-direction: row;
     justify-content: space-between;
     height: 30vh;
+    background: ${props => props.theme.colors.background};
     border: none;
     overflow: hidden;
 `;

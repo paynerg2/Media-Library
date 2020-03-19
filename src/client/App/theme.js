@@ -12,7 +12,8 @@ export const theme = {
         error: '#830f00',
         background: 'white',
         card: '#efefef',
-        label: 'rgba(0,0,0,0.5)'
+        label: 'rgba(0,0,0,0.5)',
+        seperator: 'rgba(0,0,0,0.05)'
     },
 
     fonts: {
@@ -36,7 +37,8 @@ export const darkTheme = {
         error: '#f77966',
         background: '#121212',
         card: '#373737',
-        label: 'rgba(255,255,255,0.5)'
+        label: 'rgba(255,255,255,0.5)',
+        seperator: 'rgba(255,255,255, 0.05)'
     },
 
     fonts: {
