@@ -5,7 +5,7 @@ export const initialState: SearchState = {
     term: ''
 };
 
-type SearchActionType = {
+export type SearchActionType = {
     type: typeof searchConstants.SEARCH;
     term: string;
 };
