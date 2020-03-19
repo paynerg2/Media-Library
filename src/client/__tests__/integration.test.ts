@@ -8,7 +8,11 @@ import { initialState as creatorDefaultState } from '../_reducers/creator.reduce
 import { initialState as discDefaultState } from '../_reducers/disc.reducer';
 import { initialState as bookDefaultState } from '../_reducers/book.reducer';
 import { initialState as gameDefaultState } from '../_reducers/game.reducer';
-import { initialState as searchDefaultState } from '../_reducers/search.reducer';
+import {
+    initialState as searchDefaultState,
+    SearchActionType,
+    search
+} from '../_reducers/search.reducer';
 import {
     userActions,
     authenticationActions,
@@ -39,7 +43,8 @@ import {
     CreatorState,
     BookState,
     DiscState,
-    GameState
+    GameState,
+    SearchState
 } from '../_interfaces';
 import { MongoId } from '../_interfaces/mongoId.interface';
 import {
@@ -51,6 +56,7 @@ import {
     Game
 } from '../../lib/interfaces';
 import { bookTypes, discFormats } from '../../lib/formats';
+import { searchConstants } from '../_constants';
 
 describe('Client-side integration tests', () => {
     it('Initializes store with expected default values', () => {
@@ -2541,6 +2547,30 @@ describe('Client-side integration tests', () => {
                         error: Error(testErrorMessage)
                     };
                     expect(games).toEqual(expectedState);
+                });
+            });
+        });
+    });
+
+    describe('Search Redux routes [(Dispatch) -> Reducer -> Store Update', () => {
+        describe('Action | Search', () => {
+            describe('On successful request', () => {
+                const testSearchTerm = 'test';
+                const action: SearchActionType = {
+                    type: searchConstants.SEARCH,
+                    term: testSearchTerm
+                };
+                beforeAll(() => {
+                    store.dispatch<any>(action);
+                });
+
+                it('Adds the search term to state correctly', () => {
+                    const { search } = store.getState();
+                    const expectedState: SearchState = {
+                        ...searchDefaultState,
+                        term: testSearchTerm
+                    };
+                    expect(search).toEqual(expectedState);
                 });
             });
         });
