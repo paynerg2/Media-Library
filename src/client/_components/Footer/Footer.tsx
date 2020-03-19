@@ -11,7 +11,7 @@ const Footer: React.FC = () => {
                 <GithubLink>
                     <Icon src={icons.github}></Icon>{' '}
                     <Link
-                        href="github.com/paynerg2"
+                        href="https://github.com/paynerg2"
                         style={{ fontSize: '1.2em', color: 'white' }}
                     >
                         paynerg2
