@@ -10,6 +10,7 @@ const login = async (
         data: { username, password }
     };
     try {
+        logout();
         const response = await axios.post('/users/authenticate', options);
         const user: AuthenticatedUser = response.data;
         localStorage.setItem('user', JSON.stringify(user));
