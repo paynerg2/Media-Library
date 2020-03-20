@@ -68,8 +68,9 @@
         "ts-node": "^8.3.0"
     },
     "scripts": {
-        "start": "concurrently \"npm run server:prod \" \" npm run client \" ",
+        "start": "concurrently \"npm run server:prod \" \" npm run client:prod \" ",
         "client": "react-scripts start",
+        "client:prod": "env NODE_ENV=production react-scripts start",
         "server": "ts-node -P tsconfig.server.json src/server/server.ts",
         "server:prod": "env NODE_ENV=production ts-node -P tsconfig.server.json src/server/server.ts",
         "build": "react-scripts build",
