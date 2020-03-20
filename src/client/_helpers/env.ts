@@ -13,5 +13,6 @@
 //? YAGNI: This is a personal project anyways, and will need to deal with production-type stuff at some point, but for dev it's not
 //? honestly that important.
 export const env = {
+    productionApiUrl: 'https://cave-media-library.herokuapp.com',
     apiUrl: 'http://localhost:4000'
 };

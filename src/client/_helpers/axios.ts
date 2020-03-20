@@ -3,7 +3,10 @@ import { env } from './env';
 import { authHeader } from './auth-header';
 
 const config = {
-    baseURL: env.apiUrl,
+    baseURL:
+        process.env.NODE_ENV === 'production'
+            ? env.productionApiUrl
+            : env.apiUrl,
     headers: { ...authHeader(), 'Content-Type': 'application/json' }
 };
 
