@@ -31,6 +31,7 @@ import { SectionHeader } from '../../_styled_components/sectionHeader';
 import { Button } from '../../_styled_components/button';
 import { IconButton } from '../../_styled_components/iconButton';
 import styled from 'styled-components';
+import { removeDuplicates } from '../../_helpers/removeDuplicates';
 
 interface MatchProps {
     id: string;
@@ -75,7 +76,7 @@ const NewDiscPage: React.FunctionComponent<RouteComponentProps<
         let expectedCompanies = [];
         publisher && expectedCompanies.push(publisher);
         studio && expectedCompanies.push(studio);
-        expectedCompanies.forEach(company =>
+        removeDuplicates(expectedCompanies).forEach(company =>
             assureCompanyExists(companiesById, dispatch, company, props.title)
         );
         assureSeriesExists(seriesById, dispatch, props.series, props.title);

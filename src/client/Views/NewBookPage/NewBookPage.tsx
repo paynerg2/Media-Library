@@ -13,6 +13,7 @@ import {
     assureCreatorExists,
     assureSeriesExists
 } from '../../_helpers/formSubmissionHelpers';
+import { removeDuplicates } from '../../_helpers/removeDuplicates';
 
 import { Button } from '../../_styled_components/button';
 import { IconButton } from '../../_styled_components/iconButton';
@@ -64,7 +65,7 @@ const NewBookPage: React.FunctionComponent<RouteComponentProps<
         colorer && expectedCreators.push(...colorer);
         letterer && expectedCreators.push(...letterer);
         artists && expectedCreators.push(...artists);
-        expectedCreators.forEach(creator =>
+        removeDuplicates(expectedCreators).forEach(creator =>
             assureCreatorExists(creatorsById, dispatch, creator, props.title)
         );
 

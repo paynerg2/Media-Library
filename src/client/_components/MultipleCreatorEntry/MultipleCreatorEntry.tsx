@@ -15,14 +15,14 @@ export const MultipleCreatorEntry: React.FunctionComponent<MCEProps> = ({
     creators
 }) => {
     const options = {
-        folowCursor: false,
+        followCursor: false,
         shiftX: 20,
         shiftY: 0
     };
     console.log(creators && creators.length > 0 && creators.length <= 1);
 
     return creators && creators.length > 0 ? (
-        creators && creators.length <= 1 ? (
+        creators && creators.length < 2 ? (
             <Entry>
                 <Link
                     key={creators[0]._id}

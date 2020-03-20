@@ -53,6 +53,9 @@ const Book: React.FunctionComponent<BookProps> = props => {
             props.history.push('/');
         }
     };
+
+    console.log(artists);
+    console.log(authors);
     return (
         <Container>
             <Title>
