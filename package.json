@@ -61,18 +61,22 @@
         "@types/supertest": "^2.0.8",
         "@types/winston": "^2.4.4",
         "@types/yup": "^0.26.23",
+        "concurrently": "^5.1.0",
         "jest-localstorage-mock": "^2.4.0",
         "supertest": "^4.0.2",
         "ts-jest": "^24.0.2",
         "ts-node": "^8.3.0"
     },
     "scripts": {
-        "start": "react-scripts start",
+        "start": "concurrently \"npm run server:prod \" \" npm run client \" ",
+        "client": "react-scripts start",
         "server": "ts-node -P tsconfig.server.json src/server/server.ts",
+        "server:prod": "NODE_ENV=production ts-node -P tsconfig.server.json src/server/server.ts",
         "build": "react-scripts build",
         "test": "jest --clearCache && jest --watchAll --verbose --runInBand",
         "clearTestCache": "jest --clearCache",
-        "eject": "react-scripts eject"
+        "eject": "react-scripts eject",
+        "dev": "concurrently \"npm run server \" \" npm run client \" "
     },
     "eslintConfig": {
         "extends": "react-app"
