@@ -38,6 +38,7 @@ app.use('/games', require('./games/game.controller'));
 app.use(errorHandler);
 
 // Fix known deploy routing issue.
+app.use(express.static('../../public'));
 app.get('/*', function(req, res) {
     res.sendFile('../../public/index.html');
 });
