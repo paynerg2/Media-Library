@@ -36,3 +36,8 @@ app.use('/games', require('./games/game.controller'));
 
 // Global Error Handler
 app.use(errorHandler);
+
+// Fix known deploy routing issue.
+app.get('/*', function(req, res) {
+    res.sendFile('../../public/index.html');
+});
