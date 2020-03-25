@@ -1,9 +1,12 @@
+/* ts-lint disable */
+
 import { NextFunction, Request, Response } from 'express';
 import * as yup from 'yup';
 import { getService } from '../_helpers/getService';
 import { getSchema } from '../_helpers/getSchema';
 import { logger } from './logger';
 import { IService } from '../_interfaces/service.interface';
+import { Ref } from 'yup';
 
 const create = <T extends any, R extends any>(
     service: IService<T, R>,
@@ -95,7 +98,9 @@ const _delete = <T extends any, R extends any>(
 export const getRequestHandler = <T extends any, R extends any>(
     type: string
 ) => {
-    const schema: yup.ObjectSchema<object> = getSchema(type);
+    const schema: yup.ObjectSchema<object> = getSchema(
+        type
+    ) as yup.ObjectSchema<object>;
     const service: IService<any, any> = getService(type);
     return {
         create: create<T, R>(service, schema),
