@@ -23,11 +23,11 @@ app.use(
 );
 app.use(logger('dev'));
 
-// Use JWT Auth
-app.use(jwt());
-
 // Serve static assets
 app.use(express.static(path.join(__dirname, '../client/build')));
+
+// Use JWT Auth
+app.use(jwt());
 
 // API Routes
 app.use('/users', require('./users/user.controller'));
