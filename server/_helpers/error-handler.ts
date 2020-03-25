@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { invalidToken } from '../../lib/messages/error-handler.errorMessages';
+import { invalidToken } from '../../client/src/lib/messages/error-handler.errorMessages';
 import { logger } from './logger';
 
 export const errorHandler = (

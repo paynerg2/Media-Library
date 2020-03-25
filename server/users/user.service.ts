@@ -7,7 +7,7 @@ import {
     duplicateEmail,
     duplicateUsername,
     userNotFound
-} from '../../lib/messages/user.errorMessages';
+} from '../../client/src/lib/messages/user.errorMessages';
 import { logger } from '../_helpers/logger';
 
 const authenticate = async ({ username, password }: UserParams) => {

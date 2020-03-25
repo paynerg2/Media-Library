@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import { ItemSchema } from '../item/item.schema';
-import { discFormats } from '../../lib/formats';
+import { discFormats } from '../../client/src/lib/formats';
 import { IDisc } from './disc.interface';
 
 const DiscSchema: Schema = new Schema({

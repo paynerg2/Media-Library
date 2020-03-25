@@ -9,7 +9,7 @@ import Series from '../series.model';
 import { seriesService } from '../series.service';
 import { mockDocumentQuery } from '../../_helpers/testHelpers';
 import { logger } from '../../_helpers/logger';
-import { seriesNotFound } from '../../../lib/messages/series.errorMessages';
+import { seriesNotFound } from '../../../client/src/lib/messages/series.errorMessages';
 
 describe('Series Service', () => {
     beforeAll(() => {

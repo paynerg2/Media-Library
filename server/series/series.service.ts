@@ -1,10 +1,10 @@
 import Series from './series.model';
 import { ISeries } from './series.interface';
-import { Series as SeriesParams } from '../../lib/interfaces';
+import { Series as SeriesParams } from '../../client/src/lib/interfaces';
 import {
     seriesNotFound,
     duplicateSeries
-} from '../../lib/messages/series.errorMessages';
+} from '../../client/src/lib/messages/series.errorMessages';
 import { IService } from '../_interfaces/service.interface';
 import { getSimpleService } from '../_helpers/getSimpleService';
 import { logger } from '../_helpers/logger';

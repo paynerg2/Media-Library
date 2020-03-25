@@ -6,7 +6,13 @@ import { disconnect } from '../_helpers/disconnect';
 import { app } from '../app';
 import { getCleanedResponse } from '../_helpers/testHelpers';
 import { connectOptions } from '../_helpers/connectOptions';
-import { Company, Creator, Book, Disc, Game } from '../../lib/interfaces';
+import {
+    Company,
+    Creator,
+    Book,
+    Disc,
+    Game
+} from '../../client/src/lib/interfaces';
 
 import { userService } from '../users/user.service';
 import { seriesService } from '../series/series.service';
@@ -15,24 +21,24 @@ import { bookService } from '../books/book.service';
 import { discService } from '../discs/disc.service';
 import { creatorService } from '../creators/creator.service';
 import { gameService } from '../games/game.service';
-import { bookTypes, discFormats } from '../../lib/formats';
+import { bookTypes, discFormats } from '../../client/src/lib/formats';
 
 import {
     seriesNameIsRequired,
     duplicateSeries,
     seriesNotFound
-} from '../../lib/messages/series.errorMessages';
+} from '../../client/src/lib/messages/series.errorMessages';
 import {
     duplicateCompany,
     companyNotFound,
     companyNameIsRequired
-} from '../../lib/messages/company.errorMessages';
+} from '../../client/src/lib/messages/company.errorMessages';
 import {
     firstNameIsRequired,
     creatorNotFound
-} from '../../lib/messages/creator.errorMessages';
+} from '../../client/src/lib/messages/creator.errorMessages';
 
-import { invalidToken } from '../../lib/messages/error-handler.errorMessages';
+import { invalidToken } from '../../client/src/lib/messages/error-handler.errorMessages';
 import {
     invalidUsernameOrPassword,
     duplicateUsername,
@@ -44,32 +50,32 @@ import {
     passwordIsRequired,
     emailIsRequired,
     userNotFound
-} from '../../lib/messages/user.errorMessages';
+} from '../../client/src/lib/messages/user.errorMessages';
 import {
     bookNotFound,
     authorIsRequired,
     languageIsRequired,
     invalidType,
     typeIsRequired
-} from '../../lib/messages/book.errorMessages';
+} from '../../client/src/lib/messages/book.errorMessages';
 import {
     titleIsRequired,
     physicalRequired,
     digitalRequired,
     publisherRequired
-} from '../../lib/messages/item.errorMessages';
+} from '../../client/src/lib/messages/item.errorMessages';
 import {
     discNotFound,
     formatIsRequired,
     invalidFormat,
     mustBePostive,
     discLanguageIsRequired
-} from '../../lib/messages/disc.errorMessages';
+} from '../../client/src/lib/messages/disc.errorMessages';
 import {
     gameNotFound,
     platformIsRequired,
     multiplayerMustBeIndicated
-} from '../../lib/messages/game.errorMessages';
+} from '../../client/src/lib/messages/game.errorMessages';
 
 const testUser = {
     username: 'test',

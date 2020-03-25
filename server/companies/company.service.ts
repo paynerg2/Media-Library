@@ -1,11 +1,11 @@
 import Company from './company.model';
 import { ICompany } from './company.interface';
-import { Company as CompanyParams } from '../../lib/interfaces';
+import { Company as CompanyParams } from '../../client/src/lib/interfaces';
 import {
     duplicateCompany,
     companyNotFound,
     modelValidationFailed
-} from '../../lib/messages/company.errorMessages';
+} from '../../client/src/lib/messages/company.errorMessages';
 import { IService } from '../_interfaces/service.interface';
 import { getSimpleService } from '../_helpers/getSimpleService';
 import { logger } from '../_helpers/logger';

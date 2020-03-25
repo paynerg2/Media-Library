@@ -4,8 +4,8 @@ import {
     bookSchema,
     discSchema,
     gameSchema
-} from '../../lib/schemas';
-import { creatorSchema } from '../../lib/schemas/creator.schema';
+} from '../../client/src/lib/schemas';
+import { creatorSchema } from '../../client/src/lib/schemas/creator.schema';
 
 export const invalidSchemaType = 'Invalid schema type';
 

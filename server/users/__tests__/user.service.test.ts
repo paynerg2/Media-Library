@@ -3,7 +3,7 @@ import { userService } from '../user.service';
 import {
     duplicateEmail,
     duplicateUsername
-} from '../../../lib/messages/user.errorMessages';
+} from '../../../client/src/lib/messages/user.errorMessages';
 import { mockDocumentQuery } from '../../_helpers/testHelpers';
 
 describe('User Service', () => {

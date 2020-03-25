@@ -10,7 +10,7 @@ import { NextFunction } from 'connect';
 
 import { seriesRequestHandler } from '../series.requestHandler';
 import { seriesService } from '../series.service';
-import { seriesSchema } from '../../../lib/schemas';
+import { seriesSchema } from '../../../client/src/lib/schemas';
 import { ISeries } from '../series.interface';
 import { logger } from '../../_helpers/logger';
 const {

@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import { userService } from './user.service';
 import { IUser } from './user.interface';
-import { userSchema } from '../../lib/schemas';
-import { invalidUsernameOrPassword } from '../../lib/messages/user.errorMessages';
+import { userSchema } from '../../client/src/lib/schemas';
+import { invalidUsernameOrPassword } from '../../client/src/lib/messages/user.errorMessages';
 import { logger } from '../_helpers/logger';
 
 export const authenticate = (

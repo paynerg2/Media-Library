@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import { ItemSchema } from '../item/item.schema';
-import { bookTypes } from '../../lib/formats';
+import { bookTypes } from '../../client/src/lib/formats';
 import { IBook } from './book.interface';
 
 const BookSchema: Schema = new Schema({

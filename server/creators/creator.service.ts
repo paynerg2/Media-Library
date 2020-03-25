@@ -1,7 +1,7 @@
 import Creator from './creator.model';
 import { ICreator } from './creator.interface';
-import { Creator as CreatorParams } from '../../lib/interfaces';
-import { creatorNotFound } from '../../lib/messages/creator.errorMessages';
+import { Creator as CreatorParams } from '../../client/src/lib/interfaces';
+import { creatorNotFound } from '../../client/src/lib/messages/creator.errorMessages';
 import { IService } from '../_interfaces/service.interface';
 import { getSimpleService } from '../_helpers/getSimpleService';
 

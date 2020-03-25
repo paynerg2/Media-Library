@@ -1,4 +1,4 @@
 import { Document } from 'mongoose';
-import { Company } from '../../lib/interfaces';
+import { Company } from '../../client/src/lib/interfaces';
 
 export interface ICompany extends Company, Document {}

@@ -1,4 +1,4 @@
 import { Document } from 'mongoose';
-import { Disc } from '../../lib/interfaces';
+import { Disc } from '../../client/src/lib/interfaces';
 
 export interface IDisc extends Disc, Document {}

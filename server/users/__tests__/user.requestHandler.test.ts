@@ -7,7 +7,7 @@ import {
     update
 } from '../user.requestHandlers';
 import { userService } from '../user.service';
-import { userSchema } from '../../../lib/schemas/user.schema';
+import { userSchema } from '../../../client/src/lib/schemas/user.schema';
 import { NextFunction } from 'connect';
 import { IUser } from '../user.interface';
 
