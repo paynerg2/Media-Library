@@ -1,6 +1,6 @@
 import express from 'express';
 import * as bodyParser from 'body-parser';
-import path, { dirname } from 'path';
+import path from 'path';
 import cors from 'cors';
 import logger from 'morgan';
 import fs from 'fs';
