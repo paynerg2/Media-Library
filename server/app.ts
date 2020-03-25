@@ -1,5 +1,6 @@
 import express from 'express';
 import * as bodyParser from 'body-parser';
+import path, { dirname } from 'path';
 import cors from 'cors';
 import logger from 'morgan';
 import fs from 'fs';
@@ -25,6 +26,9 @@ app.use(logger('dev'));
 // Use JWT Auth
 app.use(jwt());
 
+// Serve static assets
+app.use(express.static(path.join(__dirname, '../client/build')));
+
 // API Routes
 app.use('/users', require('./users/user.controller'));
 app.use('/series', require('./series/series.controller'));
@@ -38,7 +42,6 @@ app.use('/games', require('./games/game.controller'));
 app.use(errorHandler);
 
 // Fix known deploy routing issue.
-app.use(express.static('../../public'));
 app.get('/*', function(req, res) {
-    res.sendFile('../../public/index.html');
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
