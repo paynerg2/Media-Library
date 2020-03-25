@@ -27,7 +27,7 @@ app.use(logger('dev'));
 app.use(express.static(path.join(__dirname, '../client/build')));
 
 // Use JWT Auth
-//app.use(jwt());
+app.use(jwt());
 
 // API Routes
 app.use('/users', require('./users/user.controller'));
