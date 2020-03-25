@@ -4,7 +4,7 @@ import { env } from '../_helpers/env';
 import { logger } from './logger';
 
 export const jwt = () => {
-    let secret = '';
+    let secret = process.env.PROD_SECRET || '';
     if (env.secret) {
         secret = env.secret;
     }
