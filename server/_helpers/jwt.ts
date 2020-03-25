@@ -4,10 +4,11 @@ import { env } from '../_helpers/env';
 import { logger } from './logger';
 
 export const jwt = () => {
-    let secret = process.env.PROD_SECRET || '';
-    if (env.secret) {
-        secret = env.secret;
-    }
+    let secret = process.env.PROD_SECRET || env.secret || '';
+    console.log(secret);
+    console.log(`config var: ${process.env.PROD_SECRET}`);
+    console.log(`env: ${env.secret}`);
+
     return expressJwt({ secret, isRevoked }).unless({
         path: [
             // public routes don't require auth
