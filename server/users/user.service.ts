@@ -14,7 +14,8 @@ const authenticate = async ({ username, password }: UserParams) => {
     let user = await User.findOne({ username });
     if (user && bcrypt.compareSync(password, user.hash)) {
         const { hash, ...userWithoutHash } = user.toObject();
-        const secret: jwt.Secret = process.env.SECRET as jwt.Secret;
+        const secret: jwt.Secret =
+            process.env.PROD_SECRET || (process.env.SECRET as jwt.Secret);
         const token = jwt.sign({ sub: user.id }, secret);
         return { ...userWithoutHash, token };
     }
