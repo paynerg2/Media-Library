@@ -179,13 +179,22 @@ const Container = styled.div`
     grid-template-columns: 2fr 1fr 1fr;
     grid-template-rows: min-content 1fr 1fr 1fr 1fr 1fr 1fr min-content;
 
-    /* //todo: height auto is what's causing the image shrink */
     height: auto;
     max-width: calc(min(100%, 768px));
     grid-row-gap: 0px;
     grid-column-gap: 0px;
     border-radius: 8px;
+
     @media (max-width: 768px) {
-        /* Responsive layouthere */
+        grid-template-areas:
+            'title title'
+            'cover cover'
+            'staff staff'
+            'details details'
+            'icons buttons';
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: min-content min-content 1fr 1fr min-content;
+        margin: 0;
+        border-radius: 0;
     }
 `;

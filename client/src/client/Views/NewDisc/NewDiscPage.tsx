@@ -449,6 +449,16 @@ const NewDiscPage: React.FunctionComponent<RouteComponentProps<
                             </CollectionSection>
                             <Buttons>
                                 <Button
+                                    type="submit"
+                                    disabled={
+                                        isSubmitting ||
+                                        validationErrorExists(errors, touched)
+                                    }
+                                >
+                                    {id ? 'Edit Disc' : 'Add Disc'}
+                                </Button>
+
+                                <Button
                                     type="button"
                                     style={{
                                         backgroundColor: 'lightgrey',
@@ -457,15 +467,6 @@ const NewDiscPage: React.FunctionComponent<RouteComponentProps<
                                     onClick={handleCancel}
                                 >
                                     Cancel
-                                </Button>
-                                <Button
-                                    type="submit"
-                                    disabled={
-                                        isSubmitting ||
-                                        validationErrorExists(errors, touched)
-                                    }
-                                >
-                                    {id ? 'Edit Disc' : 'Add Disc'}
                                 </Button>
                             </Buttons>
                         </FormContainer>
@@ -499,7 +500,7 @@ const FormatSelect = styled(Field)`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    height: 30vh;
+    height: 35vh;
     background: ${props => props.theme.colors.background};
     border: none;
     overflow: hidden;
@@ -524,5 +525,9 @@ const CollectionCheckbox = styled.label<{ checked: boolean }>`
 
     &:hover {
         cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+        width: 15vw;
     }
 `;

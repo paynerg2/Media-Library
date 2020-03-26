@@ -159,6 +159,15 @@ const Container = styled.div`
     grid-column-gap: 0px;
     border-radius: 8px;
     @media (max-width: 768px) {
-        /* Responsive layouthere */
+        grid-template-areas:
+            'title title'
+            'cover cover'
+            'staff staff'
+            'details details'
+            'icons buttons';
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: min-content min-content 1fr 1fr min-content;
+        border-radius: 0;
+        margin: 0;
     }
 `;

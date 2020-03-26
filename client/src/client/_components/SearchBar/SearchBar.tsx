@@ -31,7 +31,7 @@ const ExpanandableSearchBar = styled.input`
     outline: none;
     font-family: ${props => props.theme.fonts.primary};
     font-size: 100%;
-    background: #ededed;
+    background: white;
     background-image: url('https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png');
     background-repeat: no-repeat;
     background-position: 9px center;
@@ -52,8 +52,11 @@ const ExpanandableSearchBar = styled.input`
     &:focus {
         width: 25vw;
         padding-left: 32px;
-        color: black;
-        background-color: #fff;
         cursor: auto;
+        color: #222;
+
+        @media (max-width: 768px) {
+            width: 80vw;
+        }
     }
 `;

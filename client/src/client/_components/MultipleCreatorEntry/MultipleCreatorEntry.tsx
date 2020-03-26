@@ -4,8 +4,9 @@ import { Entry } from '../../_styled_components/displayPage';
 import Link from '../../_styled_components/link';
 import { getFullName } from '../../_helpers/getFullName';
 import { Creator } from '../../../lib/interfaces';
-import { MongoId } from '../../_interfaces';
+import { MongoId, WindowSizeObject } from '../../_interfaces';
 import { EntryModal } from '../../_styled_components/entryModal';
+import { useWindowSize } from '../../_hooks';
 
 interface MCEProps {
     creators: (Creator & MongoId)[] | undefined;
@@ -19,7 +20,9 @@ export const MultipleCreatorEntry: React.FunctionComponent<MCEProps> = ({
         shiftX: 20,
         shiftY: 0
     };
-    console.log(creators && creators.length > 0 && creators.length <= 1);
+    const size: WindowSizeObject = useWindowSize();
+    const minDesktopWidth = 768;
+    const isMobileLayout = size.width && size.width < minDesktopWidth;
 
     return creators && creators.length > 0 ? (
         creators && creators.length < 2 ? (
@@ -30,6 +33,14 @@ export const MultipleCreatorEntry: React.FunctionComponent<MCEProps> = ({
                 >
                     {getFullName(creators[0])}
                 </Link>
+            </Entry>
+        ) : isMobileLayout ? (
+            <Entry>
+                {creators.map(creator => (
+                    <Link key={creator._id} to={`../creators/${creator._id}`}>
+                        {getFullName(creator)}
+                    </Link>
+                ))}
             </Entry>
         ) : (
             <ReactHover options={options}>

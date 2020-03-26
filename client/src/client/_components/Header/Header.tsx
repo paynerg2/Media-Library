@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import Link from '../../_styled_components/link';
@@ -6,6 +6,8 @@ import { SearchBar } from '../../_components/SearchBar';
 import { SubMenu } from '../SubMenu';
 import { icons } from '../../_assets/icons';
 import { Icon } from '../../_styled_components/displayPage';
+import { WindowSizeObject } from '../../_interfaces';
+import { useWindowSize } from '../../_hooks';
 
 interface HeaderProps {
     toggleTheme: () => void;
@@ -16,8 +18,14 @@ const Header: React.FunctionComponent<HeaderProps> = ({ toggleTheme }) => {
     const [isSearchable, setIsSearchable] = useState(true);
     const location = useLocation();
 
+    const size: WindowSizeObject = useWindowSize();
+    const minDesktopScreenSize = 768;
+    const isMobileSize = size.width && size.width < minDesktopScreenSize;
+
     useEffect(() => {
         let isEntityPage =
+            location.pathname.includes('login') ||
+            location.pathname.includes('register') ||
             location.pathname.includes('books') ||
             location.pathname.includes('discs') ||
             location.pathname.includes('games');
@@ -32,10 +40,30 @@ const Header: React.FunctionComponent<HeaderProps> = ({ toggleTheme }) => {
         setShowMenu(true);
     };
 
-    return (
+    const handleToggle = () => {
+        setShowMenu(prev => !prev);
+    };
+
+    return isMobileSize ? (
+        <Fragment>
+            <Container>
+                <Logo to="/">MEDIA LIBRARY</Logo>
+                <MobileMenu onClick={handleToggle}>Menu</MobileMenu>
+            </Container>
+
+            {isSearchable && (
+                <Fragment>
+                    <Seperator />
+                    <SearchMenu>
+                        <SearchBar />
+                    </SearchMenu>
+                </Fragment>
+            )}
+            {showMenu && <SubMenu toggleTheme={toggleTheme} />}
+        </Fragment>
+    ) : (
         <Container>
             <Logo to="/">MEDIA LIBRARY</Logo>
-
             <LoginSection>
                 {isSearchable && <SearchBar />}
                 {/* {loggedIn ||
@@ -62,6 +90,10 @@ const Container = styled.header`
     justify-content: space-between;
     align-items: center;
     color: white;
+
+    @media (max-width: 768px) {
+        height: 15vh;
+    }
 `;
 
 const LoginSection = styled.div`
@@ -94,4 +126,30 @@ const Menu = styled.div`
         opacity: 0.8;
         transition: 0.4s linear;
     }
+`;
+
+const MobileMenu = styled.div`
+    height: 6vh;
+    width: 15vw;
+    border: solid 1px ${props => props.theme.colors.contrastText};
+    border-radius: 12%;
+    margin-right: 2vw;
+    line-height: 6vh;
+    text-align: center;
+`;
+
+const SearchMenu = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 6vh;
+    padding: 0.3vh 2vw;
+    background-color: ${props => props.theme.colors.primary};
+`;
+
+const Seperator = styled.div`
+    height: 3px;
+    width: 100%;
+    background: white;
+    opacity: 0.6;
 `;

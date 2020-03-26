@@ -61,4 +61,5 @@ export const ListScroller: FunctionComponent<ListScrollerProps> = ({
 const Container = styled.div`
     display: flex;
     flex-direction: row;
+    margin-bottom: 3vh;
 `;

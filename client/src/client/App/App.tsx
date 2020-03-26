@@ -60,9 +60,6 @@ export const App: React.FC = () => {
                             )}
                         />
                     </LayoutHeader>
-                    <LayoutFooter>
-                        <Footer />
-                    </LayoutFooter>
                     {/* Add things like footer, sidebar, breadcrumbs, etc. here */}
                     <Content>
                         <Switch>
@@ -178,6 +175,10 @@ export const App: React.FC = () => {
                             />
                         </Switch>
                     </Content>
+
+                    <LayoutFooter>
+                        <Footer />
+                    </LayoutFooter>
                 </Router>
             </Layout>
         </ThemeProvider>
@@ -200,9 +201,11 @@ const Layout = styled.div`
     background: ${props => props.theme.colors.background};
 
     @media (max-width: 768px) {
-        grid-template-areas: 'header' 'content';
-        grid-template-columns: 100vw;
-        grid-template-rows: auto 1fr;
+        grid-template-areas: 'header' 'content' 'footer';
+        grid-template-columns: 100%;
+        grid-template-rows: auto 1fr auto;
+        width: 100%;
+        grid-gap: 0;
     }
 `;
 
@@ -216,9 +219,4 @@ const LayoutFooter = styled.div`
 
 const Content = styled.div`
     grid-area: content;
-
-    @media (max-width: 768px) {
-        margin-left: 2vw;
-        margin-right: 2vw;
-    }
 `;

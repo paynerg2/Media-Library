@@ -67,16 +67,21 @@ export default Footer;
 const Container = styled.footer`
     max-width: 100vw;
     height: 24vh;
-    background-color: ${props => props.theme.colors.secondary};
+    background-color: ${props => props.theme.colors.primary};
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     color: ${props => props.theme.colors.contrastText};
-    opacity: 0.6;
     padding: 5vh 10vw;
 
     & > {
         font-family: ${props => props.theme.fonts.primary};
+    }
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 `;
 
@@ -89,7 +94,7 @@ const Link = styled.a`
     text-decoration: none;
 
     font-size: 1em;
-    color: ${props => props.theme.colors.primary};
+    color: ${props => props.theme.colors.secondary};
 `;
 
 const GithubLink = styled.span`

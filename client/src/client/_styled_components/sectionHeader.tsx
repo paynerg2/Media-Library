@@ -33,5 +33,13 @@ export const SectionHeader = styled.h2`
         box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
         -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
         -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+
+        @media (max-width: 768px) {
+            border-radius: 0;
+        }
+    }
+
+    @media (max-width: 768px) {
+        padding: 0 2vw;
     }
 `;

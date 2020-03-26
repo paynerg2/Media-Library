@@ -3,18 +3,16 @@ import styled from 'styled-components';
 export const IconButton = styled.button`
     background-color: ${props => props.theme.colors.secondary};
     border: none;
-    height: 2.2vh;
-    width: 2.2vh;
-    line-height: 2.2vh;
-    text-align: center;
-    font-size: 1.2rem;
+    height: 4vh;
+    width: 4vh;
+    font-size: 1.5rem;
     font-family: ${props => props.theme.fonts.primary};
     text-transform: uppercase;
     font-weight: bold;
     text-decoration: none;
     color: ${props => props.theme.colors.contrastText};
     border: solid 2px ${props => props.theme.colors.secondary};
-    border-radius: 0.5rem;
+    border-radius: 3px;
     margin-left: 1vh;
     margin-bottom: 0.5vh;
     cursor: pointer;
@@ -30,5 +28,9 @@ export const IconButton = styled.button`
     :active:focus {
         box-shadow: none;
         outline: 0;
+    }
+
+    @media (max-width: 768px) {
+        font-size: 0.9rem;
     }
 `;

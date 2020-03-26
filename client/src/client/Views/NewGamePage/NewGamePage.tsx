@@ -348,6 +348,15 @@ const NewGamePage: React.FunctionComponent<RouteComponentProps<
 
                         <Buttons>
                             <Button
+                                type="submit"
+                                disabled={
+                                    isSubmitting ||
+                                    validationErrorExists(errors, touched)
+                                }
+                            >
+                                {id ? 'Edit Game' : 'Add Game'}
+                            </Button>
+                            <Button
                                 type="button"
                                 style={{
                                     backgroundColor: 'lightgrey',
@@ -356,15 +365,6 @@ const NewGamePage: React.FunctionComponent<RouteComponentProps<
                                 onClick={handleCancel}
                             >
                                 Cancel
-                            </Button>
-                            <Button
-                                type="submit"
-                                disabled={
-                                    isSubmitting ||
-                                    validationErrorExists(errors, touched)
-                                }
-                            >
-                                {id ? 'Edit Game' : 'Add Game'}
                             </Button>
                         </Buttons>
                     </FormContainer>
@@ -379,7 +379,8 @@ export default withRouter(NewGamePage);
 const MultiplayerIcon = styled(Icon)<{ checked: boolean }>`
     height: 10vh;
     border-radius: 50%;
-    border: 3px solid ${props => (props.checked ? 'green' : 'transparent')};
+    border: 3px solid ${props => (props.checked ? 'green' : 'red')};
+    background-color: ${props => (props.checked ? 'green' : 'red')};
 
     &:hover {
         cursor: pointer;

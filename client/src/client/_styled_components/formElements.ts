@@ -21,6 +21,12 @@ export const FormContainer = styled.form`
     width: 40vw;
     min-width: 480px;
     margin: 5vh;
+
+    @media (max-width: 768px) {
+        min-width: 0;
+        width: 100%;
+        margin: 0;
+    }
 `;
 
 export const Section = styled.div`
@@ -31,6 +37,13 @@ export const Section = styled.div`
     & > div {
         margin-top: 4vh;
     }
+
+    & > * {
+        @media (max-width: 768px) {
+            margin: 0 2vw;
+            border-radius: 0;
+        }
+    }
 `;
 
 export const Buttons = styled.div`
@@ -38,10 +51,24 @@ export const Buttons = styled.div`
     flex-direction: row;
     justify-content: space-around;
     margin-top: 5vh;
+    margin-bottom: 5vh;
     width: 100%;
 
     & > button {
         border-radius: 2px;
+    }
+
+    @media (max-width: 768px) {
+        margin-top: 0;
+        flex-direction: column;
+        align-content: center;
+        align-items: center;
+
+        & > button {
+            margin-top: 0.5vh;
+            width: 60%;
+            height: 8vh;
+        }
     }
 `;
 
@@ -49,13 +76,14 @@ export const StyledField = styled(Field)`
     padding: 12px;
     border-radius: 2px;
     font-family: ${props => props.theme.fonts.primary};
-    border: 1px solid rgba(88, 88, 88, 0.2);
+    border: 2px solid ${props => props.theme.colors.seperator};
     font-size: 1.1em;
     font-weight: bold;
-    color: #444;
+    color: ${props => props.theme.colors.text};
     opacity: 0.8;
-    min-width: 85%;
+    min-width: 80%;
     margin-top: 1vh;
+    background-color: ${props => props.theme.colors.background};
 
     &:focus,
     :active {
@@ -83,12 +111,16 @@ export const Label = styled.label`
 `;
 
 export const Error = styled.div`
-    color: ${props => props.theme.colors.text};
+    color: ${props => props.theme.colors.contrastText};
     opacity: 0.7;
     font-size: 0.8em;
     font-family: ${props => props.theme.fonts.error};
     background-color: ${props => props.theme.colors.error};
     padding-left: 12px;
+
+    @media (max-width: 768px) {
+        font-size: 1.4em;
+    }
 `;
 
 export const Select = styled.select`
@@ -101,8 +133,9 @@ export const Select = styled.select`
     text-transform: capitalize;
     margin-top: 1vh;
     font-family: ${props => props.theme.fonts.primary};
-    color: #444;
+    color: ${props => props.theme.colors.text};
     opacity: 0.8;
+    background-color: ${props => props.theme.colors.background};
 
     &:focus,
     :active {
@@ -112,7 +145,7 @@ export const Select = styled.select`
 
 export const SelectOption = styled.option`
     padding: 8px;
-    background-color: #fff;
+    background-color: ${props => props.theme.colors.background};
     text-transform: capitalize;
     font-size: 0.9em;
 `;
@@ -164,6 +197,12 @@ export const FormatFields = styled.div`
     align-items: center;
     border: 2px solid ${props => props.theme.colors.seperator};
     padding: 12px;
+
+    @media (max-width: 768px) {
+        max-width: 100%;
+        justify-content: space-around;
+        margin: 0 2vw;
+    }
 `;
 
 export const CollectionSection = styled.div`
@@ -177,5 +216,11 @@ export const CollectionSection = styled.div`
 
     & > img {
         max-height: 65vh;
+    }
+
+    @media (max-width: 768px) {
+        & > img {
+            display: none;
+        }
     }
 `;

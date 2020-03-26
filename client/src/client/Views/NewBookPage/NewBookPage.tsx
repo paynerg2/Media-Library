@@ -514,11 +514,11 @@ const NewBookPage: React.FunctionComponent<RouteComponentProps<
                                             checked={values.physical}
                                         />
                                     </div>
-                                    <Error>
-                                        <ErrorMessage name="digital" />
-                                        <ErrorMessage name="physical" />
-                                    </Error>
                                 </FormatFields>
+                                <Error>
+                                    <ErrorMessage name="digital" />
+                                    <ErrorMessage name="physical" />
+                                </Error>
                             </Section>
                             {values.image && (
                                 <img src={values.image} alt="Cover" />
@@ -526,6 +526,16 @@ const NewBookPage: React.FunctionComponent<RouteComponentProps<
                         </CollectionSection>
 
                         <Buttons>
+                            <Button
+                                type="submit"
+                                disabled={
+                                    isSubmitting ||
+                                    validationErrorExists(errors, touched)
+                                }
+                            >
+                                {id ? 'Edit Book' : 'Add Book'}
+                            </Button>
+
                             <Button
                                 type="button"
                                 style={{
@@ -535,16 +545,6 @@ const NewBookPage: React.FunctionComponent<RouteComponentProps<
                                 onClick={handleCancel}
                             >
                                 Cancel
-                            </Button>
-
-                            <Button
-                                type="submit"
-                                disabled={
-                                    isSubmitting ||
-                                    validationErrorExists(errors, touched)
-                                }
-                            >
-                                {id ? 'Edit Book' : 'Add Book'}
                             </Button>
                         </Buttons>
                     </FormContainer>

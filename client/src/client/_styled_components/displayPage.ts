@@ -19,6 +19,10 @@ export const Title = styled.div`
     letter-spacing: 2px;
     font-size: 1.5em;
     font-weight: bold;
+
+    @media (max-width: 768px) {
+        border-radius: 0;
+    }
 `;
 
 export const Image = styled.img`
@@ -31,6 +35,10 @@ export const CoverImage = styled(Image)`
     grid-area: cover;
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;
+
+    @media (max-width: 768px) {
+        border-radius: 0;
+    }
 `;
 
 export const Label = styled.div`
@@ -72,16 +80,24 @@ export const Entry = styled.div`
     &::after {
         content: ' ';
         display: block;
-        border: 0.2vh solid ${props => props.theme.colors.primary};
+        border: 0.3vh solid ${props => props.theme.colors.secondary};
         min-width: 70%;
         opacity: 0.5;
         border-radius: 4px;
-        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+        box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.05);
+
+        @media (max-width: 768px) {
+            min-width: 95%;
+        }
     }
 
     &:hover::after {
         transition: 0.5s ease-out;
         opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+        height: 10vh;
     }
 `;
 
@@ -120,5 +136,9 @@ export const Buttons = styled.div`
         width: 48%;
         border-radius: 0.5em;
         margin: 2px;
+    }
+
+    @media (max-width: 768px) {
+        height: 10vh;
     }
 `;

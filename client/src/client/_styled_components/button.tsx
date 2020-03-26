@@ -57,4 +57,8 @@ export const Button = styled('button')<{ color?: string }>`
         box-shadow: none;
         outline: 0;
     }
+
+    @media (max-width: 768px) {
+        border-radius: 3px;
+    }
 `;

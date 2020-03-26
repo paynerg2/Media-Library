@@ -58,6 +58,13 @@ const Menu = styled.div`
 
     width: 10vw;
     padding: 0 1vw;
+
+    z-index: 1;
+
+    @media (max-width: 768px) {
+        width: 100%;
+        height: auto;
+    }
 `;
 
 const Item = styled.div`
@@ -70,6 +77,10 @@ const Item = styled.div`
 
     color: white;
     margin: 2vh 0;
+
+    @media (max-width: 768px) {
+        margin: 2vh 4vw;
+    }
 `;
 
 const SelectableItem = styled(Item)`

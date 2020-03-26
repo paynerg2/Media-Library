@@ -19,4 +19,9 @@ export const DisplayHeader = styled.h1`
     background: ${props => props.theme.colors.primary};
     border-radius: 0.2em;
     opacity: 0.6;
+
+    @media (max-width: 768px) {
+        border-radius: 0;
+        margin: 0;
+    }
 `;
