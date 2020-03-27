@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { animated } from 'react-spring';
 
-const Scroller = (props: any) => {
+const ScrollerComponent = (props: any) => {
     return (
         <Container
             style={props.style}
@@ -15,7 +15,7 @@ const Scroller = (props: any) => {
     );
 };
 
-export default animated(Scroller);
+export const Scroller = animated(ScrollerComponent);
 
 /* Styles */
 
@@ -30,7 +30,6 @@ const Container = styled(animated.button)<{ right: boolean }>`
     border: none;
     outline: none;
     border: solid 1px darkgrey;
-    /* box-shadow: 1px 2px 2px 1px lightgrey; */
     margin-right: ${props => (props.right ? '0vh' : '1vh')};
     margin-left: ${props => (props.right ? '1vh' : '0vh')};
     cursor: pointer;
@@ -38,6 +37,11 @@ const Container = styled(animated.button)<{ right: boolean }>`
     &:hover > div {
         border-right: 10px solid black;
         transition: 0.2s ease-in;
+    }
+
+    @media (max-width: 768px) {
+        display: none;
+        width: 0;
     }
 `;
 

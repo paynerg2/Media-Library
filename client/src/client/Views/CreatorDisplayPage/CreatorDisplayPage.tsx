@@ -7,7 +7,7 @@ import ItemContainer from '../../_components/ItemContainer/ItemContainer';
 import { MongoId } from '../../_interfaces';
 import { SectionHeader } from '../../_styled_components/sectionHeader';
 import { DisplayHeader } from '../../_styled_components/displayHeader';
-import { ItemList } from '../../_components/ItemList';
+import { ScrollableList } from '../../_components/ScrollableList';
 
 const CreatorDisplayPage: React.FunctionComponent<CreatorDisplayProps> = props => {
     const { id } = props.match.params;
@@ -42,8 +42,8 @@ const CreatorDisplayPage: React.FunctionComponent<CreatorDisplayProps> = props =
             {books.length > 0 && (
                 <Fragment>
                     <SectionHeader>Books</SectionHeader>
-                    <ItemList
-                        items={books
+                    <ScrollableList>
+                        {books
                             .sort((a, b) =>
                                 a.title
                                     .toLowerCase()
@@ -57,15 +57,15 @@ const CreatorDisplayPage: React.FunctionComponent<CreatorDisplayProps> = props =
                                     route={'books'}
                                 />
                             ))}
-                        ref={null}
-                    />
+                    </ScrollableList>
+                    >
                 </Fragment>
             )}
             {discs.length > 0 && (
                 <Fragment>
                     <SectionHeader>Discs</SectionHeader>
-                    <ItemList
-                        items={discs
+                    <ScrollableList>
+                        {discs
                             .sort((a, b) =>
                                 a.title
                                     .toLowerCase()
@@ -79,8 +79,7 @@ const CreatorDisplayPage: React.FunctionComponent<CreatorDisplayProps> = props =
                                     route={'discs'}
                                 />
                             ))}
-                        ref={null}
-                    />
+                    </ScrollableList>
                 </Fragment>
             )}
         </Fragment>
