@@ -5,8 +5,8 @@ import { Series, Book, Disc, Game } from '../../../lib/interfaces';
 import { MongoId } from '../../_interfaces';
 import ItemContainer from '../../_components/ItemContainer/ItemContainer';
 import { SectionHeader } from '../../_styled_components/sectionHeader';
-import { ItemList } from '../../_components/ItemList';
 import { DisplayHeader } from '../../_styled_components/displayHeader';
+import { ScrollableList } from '../../_components/ScrollableList';
 
 const SeriesDisplayPage: React.FunctionComponent<SeriesDisplayPageProps> = props => {
     const { id } = props.match.params;
@@ -38,8 +38,8 @@ const SeriesDisplayPage: React.FunctionComponent<SeriesDisplayPageProps> = props
             {books.length > 0 && (
                 <Fragment>
                     <SectionHeader>Books</SectionHeader>
-                    <ItemList
-                        items={books
+                    <ScrollableList>
+                        {books
                             .sort((a, b) =>
                                 a.title
                                     .toLowerCase()
@@ -53,15 +53,14 @@ const SeriesDisplayPage: React.FunctionComponent<SeriesDisplayPageProps> = props
                                     route={'books'}
                                 />
                             ))}
-                        ref={null}
-                    />
+                    </ScrollableList>
                 </Fragment>
             )}
             {discs.length > 0 && (
                 <Fragment>
                     <SectionHeader>Discs</SectionHeader>
-                    <ItemList
-                        items={discs
+                    <ScrollableList>
+                        {discs
                             .sort((a, b) =>
                                 a.title
                                     .toLowerCase()
@@ -75,15 +74,15 @@ const SeriesDisplayPage: React.FunctionComponent<SeriesDisplayPageProps> = props
                                     route={'discs'}
                                 />
                             ))}
-                        ref={null}
-                    />
+                    </ScrollableList>
+                    >
                 </Fragment>
             )}
             {games.length > 0 && (
                 <Fragment>
                     <SectionHeader>Games</SectionHeader>
-                    <ItemList
-                        items={games
+                    <ScrollableList>
+                        {games
                             .sort((a, b) =>
                                 a.title
                                     .toLowerCase()
@@ -97,8 +96,7 @@ const SeriesDisplayPage: React.FunctionComponent<SeriesDisplayPageProps> = props
                                     route={'games'}
                                 />
                             ))}
-                        ref={null}
-                    />
+                    </ScrollableList>
                 </Fragment>
             )}
         </Fragment>

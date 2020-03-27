@@ -1,5 +1,7 @@
-import React, { Fragment, useState, useRef, useEffect } from 'react';
-import { ListScroller } from '../../_components/ListScroller';
+import React, { Fragment, useState } from 'react';
+import styled from 'styled-components';
+
+import { ScrollableList } from '../../_components/ScrollableList';
 import { useSelector, useWindowSize } from '../../_hooks';
 import { getFilteredList } from '../../_helpers/getFilteredList';
 import { SectionHeader } from '../../_styled_components/sectionHeader';
@@ -7,27 +9,13 @@ import { Button } from '../../_styled_components/button';
 import { IconButton } from '../../_styled_components/iconButton';
 import Link from '../../_styled_components/link';
 import { SearchResultCount } from '../../_styled_components/searchResultCount';
-import { useChain, useSpring, ReactSpringHook, config } from 'react-spring';
 import { WindowSizeObject } from '../../_interfaces';
-import styled from 'styled-components';
+
 import { Spinner } from '../../_components/Spinner';
 
 //! Redirect from login does not load data
 
 const HomePage: React.FC = () => {
-    const size: WindowSizeObject = useWindowSize();
-    const calculateLength = (): number => {
-        const ratio =
-            size.width && size.height ? size.height / size.width : undefined;
-        let length = 1;
-        while (!!ratio && 12 + (length + 1) * 21 * ratio < 100) {
-            length++;
-        }
-        return length;
-    };
-    const length: number = calculateLength();
-
-    //const [searchTerm, setSearchTerm] = useState('');
     const searchTerm = useSelector(state => state.search.term);
     const { books, discs, games } = useSelector(state => state);
 
@@ -48,42 +36,6 @@ const HomePage: React.FC = () => {
     const getButtonText = () => {
         return singleView ? 'Back' : 'View All';
     };
-
-    // todo: clean this section up, rename variables
-    // Note: Casting to avoid TypeCheck issue.
-    const transitionRef = useRef() as React.RefObject<ReactSpringHook>;
-    const transition = useSpring({
-        ref: transitionRef,
-        config: config.stiff,
-        from: { opacity: 0, width: '0vh' },
-        to: {
-            opacity: singleView ? 0 : 1,
-            width: singleView ? '0vh' : '4vh'
-        }
-    });
-
-    const transRef = useRef() as React.RefObject<ReactSpringHook>;
-
-    // This fixes an issue with tracking ref.current
-    useEffect(() => {}, [transitionRef, transRef]);
-
-    // This pattern, as opposed to simply useChain([trailRef, transitionRef], ...)
-    // forces the ref to update on each render, avoiding an issue which would
-    // start the animations simultaneously on the initial app render.
-    // https://github.com/react-spring/react-spring/issues/574
-    // ref.current clears on nav leading to a stalled animation state when navigating
-    // back to the homepage.
-    // This pattern avoids both issues - another method for maintaining ref.current
-    // may work as well if any bugs arise from this.
-    useChain(
-        [
-            transRef.current ? { current: transRef.current } : transRef,
-            transitionRef.current
-                ? { current: transitionRef.current }
-                : transitionRef
-        ],
-        [0, 0.8]
-    );
 
     //! Bug: Clicking View All while offset != 0 does not show entire list
 
@@ -109,7 +61,7 @@ const HomePage: React.FC = () => {
                                 )}
                             </div>
                             <div>
-                                <Button
+                                <SingleViewButton
                                     onClick={() =>
                                         handleVisibilityToggle([
                                             true,
@@ -119,24 +71,17 @@ const HomePage: React.FC = () => {
                                     }
                                 >
                                     {getButtonText()}
-                                </Button>
+                                </SingleViewButton>
                             </div>
                         </div>
                     </SectionHeader>
-                    <div>
-                        {books.loading ? (
-                            <Placeholder>
-                                <Spinner />
-                            </Placeholder>
-                        ) : (
-                            <ListScroller
-                                style={transition}
-                                list={bookList}
-                                listRef={transRef}
-                                length={singleView ? bookList.length : length}
-                            />
-                        )}
-                    </div>
+                    {books.loading ? (
+                        <Placeholder>
+                            <Spinner />
+                        </Placeholder>
+                    ) : (
+                        <ScrollableList>{bookList}</ScrollableList>
+                    )}
                 </Fragment>
             )}
 
@@ -160,7 +105,7 @@ const HomePage: React.FC = () => {
                                 )}
                             </div>
                             <div>
-                                <Button
+                                <SingleViewButton
                                     onClick={() =>
                                         handleVisibilityToggle([
                                             false,
@@ -170,24 +115,17 @@ const HomePage: React.FC = () => {
                                     }
                                 >
                                     {getButtonText()}
-                                </Button>
+                                </SingleViewButton>
                             </div>
                         </div>
                     </SectionHeader>
-                    <div>
-                        {discs.loading ? (
-                            <Placeholder>
-                                <Spinner />
-                            </Placeholder>
-                        ) : (
-                            <ListScroller
-                                style={transition}
-                                list={discList}
-                                listRef={transRef}
-                                length={singleView ? discList.length : length}
-                            />
-                        )}
-                    </div>
+                    {discs.loading ? (
+                        <Placeholder>
+                            <Spinner />
+                        </Placeholder>
+                    ) : (
+                        <ScrollableList>{discList}</ScrollableList>
+                    )}
                 </Fragment>
             )}
 
@@ -211,7 +149,7 @@ const HomePage: React.FC = () => {
                                 )}
                             </div>
                             <div>
-                                <Button
+                                <SingleViewButton
                                     onClick={() =>
                                         handleVisibilityToggle([
                                             false,
@@ -221,24 +159,17 @@ const HomePage: React.FC = () => {
                                     }
                                 >
                                     {getButtonText()}
-                                </Button>
+                                </SingleViewButton>
                             </div>
                         </div>
                     </SectionHeader>
-                    <div>
-                        {games.loading ? (
-                            <Placeholder>
-                                <Spinner />
-                            </Placeholder>
-                        ) : (
-                            <ListScroller
-                                style={transition}
-                                list={gameList}
-                                listRef={transRef}
-                                length={singleView ? gameList.length : length}
-                            />
-                        )}
-                    </div>
+                    {games.loading ? (
+                        <Placeholder>
+                            <Spinner />
+                        </Placeholder>
+                    ) : (
+                        <ScrollableList>{gameList}</ScrollableList>
+                    )}
                 </Fragment>
             )}
         </Fragment>
@@ -253,4 +184,14 @@ const Placeholder = styled.div`
     margin-left: 1vh;
     margin-right: 1vh;
     background-position: 0 0;
+`;
+
+const SingleViewButton = styled(Button)`
+    /* Don't show this button on mobile layout 
+        Scrolling on mobile is already a good experience, switching to a vertical scroll to view all
+        is currently deemed unnecessary  
+    */
+    @media (max-width: 768px) {
+        display: none;
+    }
 `;

@@ -6,11 +6,13 @@ import { Company, Book, Disc, Game } from '../../../lib/interfaces';
 import { MongoId } from '../../_interfaces';
 import { DisplayHeader } from '../../_styled_components/displayHeader';
 import { SectionHeader } from '../../_styled_components/sectionHeader';
-import { ItemList } from '../../_components/ItemList';
+import { ScrollableList } from '../../_components/ScrollableList';
 
 const CompanyDisplayPage: React.FunctionComponent<CompanyDisplayPageProps> = props => {
     const { id } = props.match.params;
-    const selectedCompany = useSelector(state => state.companies.byId[id]);
+    const selectedCompany: Company & MongoId = useSelector(
+        state => state.companies.byId[id]
+    );
     const [company, setCompany] = useState({} as Company);
     const books: (Book & MongoId)[] = useSelector(state =>
         state.books.allIds
@@ -49,8 +51,8 @@ const CompanyDisplayPage: React.FunctionComponent<CompanyDisplayPageProps> = pro
             {books.length > 0 && (
                 <Fragment>
                     <SectionHeader>Books</SectionHeader>
-                    <ItemList
-                        items={books
+                    <ScrollableList>
+                        {books
                             .sort((a, b) =>
                                 a.title
                                     .toLowerCase()
@@ -64,15 +66,14 @@ const CompanyDisplayPage: React.FunctionComponent<CompanyDisplayPageProps> = pro
                                     route={'books'}
                                 />
                             ))}
-                        ref={null}
-                    />
+                    </ScrollableList>
                 </Fragment>
             )}
             {discs.length > 0 && (
                 <Fragment>
                     <SectionHeader>Discs</SectionHeader>
-                    <ItemList
-                        items={discs
+                    <ScrollableList>
+                        {discs
                             .sort((a, b) =>
                                 a.title
                                     .toLowerCase()
@@ -86,15 +87,14 @@ const CompanyDisplayPage: React.FunctionComponent<CompanyDisplayPageProps> = pro
                                     route={'discs'}
                                 />
                             ))}
-                        ref={null}
-                    />
+                    </ScrollableList>
                 </Fragment>
             )}
             {games.length > 0 && (
                 <Fragment>
                     <SectionHeader>Games</SectionHeader>
-                    <ItemList
-                        items={games
+                    <ScrollableList>
+                        {games
                             .sort((a, b) =>
                                 a.title
                                     .toLowerCase()
@@ -108,8 +108,8 @@ const CompanyDisplayPage: React.FunctionComponent<CompanyDisplayPageProps> = pro
                                     route={'games'}
                                 />
                             ))}
-                        ref={null}
-                    />
+                    </ScrollableList>
+                    >
                 </Fragment>
             )}
         </Fragment>
