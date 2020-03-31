@@ -7,6 +7,7 @@ const {
     update,
     delete: _delete
 } = creatorRequestHandler;
+
 const router = express();
 
 // Mount routes

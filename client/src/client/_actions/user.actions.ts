@@ -1,9 +1,9 @@
+import { Dispatch } from 'react';
+import { AnyAction } from 'redux';
 import { userConstants } from '../_constants';
 import { userService } from '../_services/user.service';
 import { UserActionTypes } from './types/user.action.types';
 import { User } from '../_interfaces';
-import { Dispatch } from 'react';
-import { AnyAction } from 'redux';
 
 const create = (user: User) => async (dispatch: Dispatch<AnyAction>) => {
     try {

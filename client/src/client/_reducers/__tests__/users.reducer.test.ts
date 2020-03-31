@@ -1,7 +1,7 @@
+import { Action } from 'redux';
 import { users } from '../users.reducer';
 import { userConstants } from '../../_constants';
 import { UserState } from '../../_interfaces';
-import { Action } from 'redux';
 
 describe('Users Reducer', () => {
     const testMessage = 'test';

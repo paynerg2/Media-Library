@@ -1,6 +1,5 @@
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcryptjs';
-
 import User from '../users/user.model';
 import { IUser } from './user.interface';
 import {

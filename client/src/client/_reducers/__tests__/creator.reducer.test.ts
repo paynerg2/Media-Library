@@ -4,7 +4,6 @@ import { creatorConstants } from '../../_constants';
 import { CreatorState, IAction } from '../../_interfaces';
 import { MongoId } from '../../_interfaces';
 import { Creator } from '../../../lib/interfaces';
-import { getFullName } from '../../_helpers/getFullName';
 
 describe('Creators Reducer', () => {
     const testErrorMessage = 'test';

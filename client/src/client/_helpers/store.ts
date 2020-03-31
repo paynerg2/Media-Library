@@ -1,9 +1,8 @@
 import { createStore, applyMiddleware, Middleware, Store } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-
 import thunkMiddleware from 'redux-thunk';
 import { createLogger } from 'redux-logger';
+import storage from 'redux-persist/lib/storage';
 import rootReducer from '../_reducers';
 
 const loggerMiddleware: Middleware = createLogger();

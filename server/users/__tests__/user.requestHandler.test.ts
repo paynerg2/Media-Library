@@ -1,3 +1,4 @@
+import { NextFunction } from 'connect';
 import {
     _delete,
     register,
@@ -8,7 +9,6 @@ import {
 } from '../user.requestHandlers';
 import { userService } from '../user.service';
 import { userSchema } from '../../../client/src/lib/schemas/user.schema';
-import { NextFunction } from 'connect';
 import { IUser } from '../user.interface';
 
 describe('User Controller', () => {

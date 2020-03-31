@@ -1,9 +1,9 @@
+import { Dispatch } from 'react';
+import { AnyAction } from 'redux';
 import { authenticationConstants } from '../_constants';
 import { authenticationService } from '../_services/';
 import { AuthenticationActionTypes } from './types';
 import { AuthenticatedUser } from '../_interfaces';
-import { Dispatch } from 'react';
-import { AnyAction } from 'redux';
 
 const login = (username: String, password: String) => async (
     dispatch: Dispatch<AnyAction>

@@ -1,5 +1,5 @@
-import axios from '../_helpers/axios';
 import { AxiosRequestConfig } from 'axios';
+import axios from '../_helpers/axios';
 import { AuthenticatedUser } from '../_interfaces';
 
 const login = async (

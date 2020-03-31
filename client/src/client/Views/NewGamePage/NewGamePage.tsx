@@ -2,17 +2,16 @@ import React, { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { Formik, FieldArray, ErrorMessage } from 'formik';
+import styled from 'styled-components';
 import { validationErrorExists } from '../../_helpers/validationErrorExists';
 import { useSelector } from '../../_hooks';
 import {
     assureCompanyExists,
     assureSeriesExists
 } from '../../_helpers/formSubmissionHelpers';
-
 import { gameSchema } from '../../../lib/schemas';
 import { gameActions } from '../../_actions';
 import { Game, defaultGame } from '../../../lib/interfaces';
-
 import {
     FormContainer,
     Section,
@@ -31,7 +30,6 @@ import { DisplayHeader } from '../../_styled_components/displayHeader';
 import { SectionHeader } from '../../_styled_components/sectionHeader';
 import { GameSystemIcons } from '../../_assets/icons';
 import { Icon } from '../../_styled_components/displayPage';
-import styled from 'styled-components';
 
 interface MatchProps {
     id: string;

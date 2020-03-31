@@ -1,6 +1,8 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { RouteComponentProps, withRouter } from 'react-router';
 import { Formik, FieldArray, ErrorMessage } from 'formik';
+import styled from 'styled-components';
 import { validationErrorExists } from '../../_helpers/validationErrorExists';
 import { discSchema } from '../../../lib/schemas';
 import { discActions } from '../../_actions';
@@ -12,7 +14,6 @@ import {
     assureCreatorExists,
     assureSeriesExists
 } from '../../_helpers/formSubmissionHelpers';
-import { RouteComponentProps, withRouter } from 'react-router';
 import {
     FormContainer,
     Section,
@@ -30,7 +31,6 @@ import { DisplayHeader } from '../../_styled_components/displayHeader';
 import { SectionHeader } from '../../_styled_components/sectionHeader';
 import { Button } from '../../_styled_components/button';
 import { IconButton } from '../../_styled_components/iconButton';
-import styled from 'styled-components';
 import { removeDuplicates } from '../../_helpers/removeDuplicates';
 
 interface MatchProps {

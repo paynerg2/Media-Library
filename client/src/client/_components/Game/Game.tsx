@@ -1,4 +1,5 @@
 import React, { Fragment, useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { useGame } from '../../_hooks';
@@ -16,7 +17,6 @@ import {
     Icon,
     Buttons
 } from '../../_styled_components/displayPage';
-import { useDispatch } from 'react-redux';
 import { gameActions } from '../../_actions';
 import { GameSystemIcons } from '../../_assets/icons';
 

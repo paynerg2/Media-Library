@@ -1,6 +1,6 @@
+import { Document, Model } from 'mongoose';
 import { logger } from './logger';
 import { IService } from '../_interfaces/service.interface';
-import { Document, Model } from 'mongoose';
 
 const handleError = (error: Error, errorMessage?: string) => {
     if (errorMessage) {

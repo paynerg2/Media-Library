@@ -1,6 +1,7 @@
 import express from 'express';
 import { discRequestHandler } from './disc.requestHandler';
 const { create, getAll, getById, update, delete: _delete } = discRequestHandler;
+
 const router = express();
 
 // Mount Routes

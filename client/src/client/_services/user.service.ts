@@ -1,5 +1,5 @@
-import axios from '../_helpers/axios';
 import { AxiosRequestConfig } from 'axios';
+import axios from '../_helpers/axios';
 import { User } from '../_interfaces';
 
 const create = async (user: User) => {

@@ -1,7 +1,7 @@
+import { Action } from 'redux';
 import { authentication } from '../authentication.reducer';
 import { authenticationConstants } from '../../_constants';
 import { AuthenticationState, AuthenticatedUser } from '../../_interfaces';
-import { Action } from 'redux';
 
 describe('Authentication Reducer', () => {
     const testMessage = 'test';

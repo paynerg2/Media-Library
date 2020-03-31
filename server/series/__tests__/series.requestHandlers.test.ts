@@ -7,7 +7,6 @@
  */
 
 import { NextFunction } from 'connect';
-
 import { seriesRequestHandler } from '../series.requestHandler';
 import { seriesService } from '../series.service';
 import { seriesSchema } from '../../../client/src/lib/schemas';

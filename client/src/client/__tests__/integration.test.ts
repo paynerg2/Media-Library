@@ -10,8 +10,7 @@ import { initialState as bookDefaultState } from '../_reducers/book.reducer';
 import { initialState as gameDefaultState } from '../_reducers/game.reducer';
 import {
     initialState as searchDefaultState,
-    SearchActionType,
-    search
+    SearchActionType
 } from '../_reducers/search.reducer';
 import {
     userActions,

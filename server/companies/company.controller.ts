@@ -7,6 +7,7 @@ const {
     update,
     delete: _delete
 } = companyRequestHandler;
+
 const router = express();
 
 // Mount Routes

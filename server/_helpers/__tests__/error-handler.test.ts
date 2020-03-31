@@ -1,8 +1,8 @@
 import { NextFunction } from 'express';
 import { ValidationError } from 'yup';
-import { errorHandler } from '../error-handler';
-import { invalidToken } from '../../../lib/messages/error-handler.errorMessages';
 import { UnauthorizedError, ErrorCode } from 'express-jwt';
+import { errorHandler } from '../error-handler';
+import { invalidToken } from '../../../client/src/lib/messages/error-handler.errorMessages';
 
 describe('Error Handler (Helper)', () => {
     const req: any = {};

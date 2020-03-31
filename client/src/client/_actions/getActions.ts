@@ -1,6 +1,5 @@
 import { Dispatch } from 'react';
 import { AnyAction } from 'redux';
-
 import { IActionTypes } from '../_interfaces';
 import { getActionTypes } from './getActionTypes';
 import { MongoId } from '../_interfaces/mongoId.interface';

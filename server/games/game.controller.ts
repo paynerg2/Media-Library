@@ -1,6 +1,7 @@
 import express from 'express';
 import { gameRequestHandler } from './game.requestHandler';
 const { create, getAll, getById, update, delete: _delete } = gameRequestHandler;
+
 const router = express();
 
 // Mount Routes

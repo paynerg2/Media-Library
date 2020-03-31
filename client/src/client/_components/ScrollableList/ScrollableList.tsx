@@ -60,7 +60,7 @@ export const ScrollableList: React.FC = ({ children }) => {
                     <Scroller
                         disabled={offset === maxOffset}
                         onClick={handleIncrement}
-                        right
+                        right={true}
                     >
                         inc
                     </Scroller>

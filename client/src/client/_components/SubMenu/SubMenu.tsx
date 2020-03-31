@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { authenticationActions } from '../../_actions';
-import { useDispatch } from 'react-redux';
 import { history } from '../../_helpers/history';
 import { Slider } from '../../_styled_components/slider';
 

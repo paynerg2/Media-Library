@@ -1,4 +1,4 @@
-import mongoose, { connections } from 'mongoose';
+import mongoose from 'mongoose';
 import { env } from '../_helpers/env';
 import { logger } from '../_helpers/logger';
 import { connectOptions } from './connectOptions';

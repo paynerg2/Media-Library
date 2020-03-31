@@ -1,8 +1,8 @@
 import React, { useEffect, Fragment } from 'react';
+import { useDispatch } from 'react-redux';
 import { Router, Route, Switch } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import styled from 'styled-components';
-
 import { theme as lightTheme, darkTheme } from './theme';
 import { history } from '../_helpers/history';
 import { PrivateRoute } from '../_components/PrivateRoute';
@@ -10,8 +10,8 @@ import RegistrationPage from '../Views/RegistrationPage/RegistrationPage';
 import LoginPage from '../Views/LoginPage/LoginPage';
 import Header from '../_components/Header/Header';
 import HomePage from '../Views/HomePage/HomePage';
+import Footer from '../_components/Footer/Footer';
 import NewBookPage from '../Views/NewBookPage/NewBookPage';
-import { useDispatch } from 'react-redux';
 import {
     seriesActions,
     companyActions,
@@ -31,7 +31,6 @@ import CreatorDisplayPage from '../Views/CreatorDisplayPage/CreatorDisplayPage';
 import CompanyDisplayPage from '../Views/CompanyDisplayPage/CompanyDisplayPage';
 
 import './App.css';
-import Footer from '../_components/Footer/Footer';
 
 export const App: React.FC = () => {
     const { loggedIn } = useSelector(state => state.authentication);

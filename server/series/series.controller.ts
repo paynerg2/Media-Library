@@ -7,6 +7,7 @@ const {
     update,
     delete: _delete
 } = seriesRequestHandler;
+
 const router = express();
 
 // Mount Routes

@@ -7,7 +7,6 @@ import { userActions } from '../../_actions';
 import { validationErrorExists } from '../../_helpers/validationErrorExists';
 import { history } from '../../_helpers/history';
 import { Button } from '../../_styled_components/button';
-import { SectionHeader } from '../../_styled_components/sectionHeader';
 import {
     Error,
     FormHeader,

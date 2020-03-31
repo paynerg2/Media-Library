@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-
 import { icons } from '../../_assets/icons';
 import { Icon } from '../../_styled_components/displayPage';
 

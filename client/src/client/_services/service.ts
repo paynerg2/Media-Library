@@ -1,5 +1,5 @@
-import axios from '../_helpers/axios';
 import { AxiosRequestConfig } from 'axios';
+import axios from '../_helpers/axios';
 
 const create = <T extends any>(route: string) => async (
     item: T

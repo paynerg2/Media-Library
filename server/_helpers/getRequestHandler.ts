@@ -6,7 +6,6 @@ import { getService } from '../_helpers/getService';
 import { getSchema } from '../_helpers/getSchema';
 import { logger } from './logger';
 import { IService } from '../_interfaces/service.interface';
-import { Ref } from 'yup';
 
 const create = <T extends any, R extends any>(
     service: IService<T, R>,

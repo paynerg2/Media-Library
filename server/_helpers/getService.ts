@@ -4,6 +4,7 @@ import { creatorService } from '../creators/creator.service';
 import { bookService } from '../books/book.service';
 import { discService } from '../discs/disc.service';
 import { gameService } from '../games/game.service';
+
 export const invalidServiceType = 'Invalid service type';
 
 export const getService = (type: string) => {

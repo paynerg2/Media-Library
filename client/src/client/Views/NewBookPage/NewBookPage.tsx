@@ -14,7 +14,6 @@ import {
     assureSeriesExists
 } from '../../_helpers/formSubmissionHelpers';
 import { removeDuplicates } from '../../_helpers/removeDuplicates';
-
 import { Button } from '../../_styled_components/button';
 import { IconButton } from '../../_styled_components/iconButton';
 import {

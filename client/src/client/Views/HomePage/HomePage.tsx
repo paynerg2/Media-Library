@@ -1,15 +1,13 @@
 import React, { Fragment, useState } from 'react';
 import styled from 'styled-components';
-
 import { ScrollableList } from '../../_components/ScrollableList';
-import { useSelector, useWindowSize } from '../../_hooks';
+import { useSelector } from '../../_hooks';
 import { getFilteredList } from '../../_helpers/getFilteredList';
 import { SectionHeader } from '../../_styled_components/sectionHeader';
 import { Button } from '../../_styled_components/button';
 import { IconButton } from '../../_styled_components/iconButton';
 import Link from '../../_styled_components/link';
 import { SearchResultCount } from '../../_styled_components/searchResultCount';
-import { WindowSizeObject } from '../../_interfaces';
 
 import { Spinner } from '../../_components/Spinner';
 

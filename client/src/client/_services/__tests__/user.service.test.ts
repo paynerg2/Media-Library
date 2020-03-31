@@ -1,6 +1,6 @@
+import { AxiosResponse } from 'axios';
 import axios from '../../_helpers/axios';
 import { userService } from '../user.service';
-import { AxiosResponse } from 'axios';
 
 describe('User Service', () => {
     describe('Create', () => {

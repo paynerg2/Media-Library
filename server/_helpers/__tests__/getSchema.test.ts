@@ -1,4 +1,4 @@
-import { seriesSchema } from '../../../lib/schemas';
+import { seriesSchema } from '../../../client/src/lib/schemas';
 import { invalidSchemaType, getSchema } from '../getSchema';
 
 describe('getSchema Helper', () => {
