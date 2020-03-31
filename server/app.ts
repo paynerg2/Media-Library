@@ -30,13 +30,13 @@ app.use(express.static(path.join(__dirname, '../client/build')));
 app.use(jwt());
 
 // API Routes
-app.use('/users', require('./users/user.controller'));
-app.use('/series', require('./series/series.controller'));
-app.use('/companies', require('./companies/company.controller'));
-app.use('/creators', require('./creators/creator.controller'));
-app.use('/books', require('./books/book.controller'));
-app.use('/discs', require('./discs/disc.controller'));
-app.use('/games', require('./games/game.controller'));
+app.use('/api/users', require('./users/user.controller'));
+app.use('/api/series', require('./series/series.controller'));
+app.use('/api/companies', require('./companies/company.controller'));
+app.use('/api/creators', require('./creators/creator.controller'));
+app.use('/api/books', require('./books/book.controller'));
+app.use('/api/discs', require('./discs/disc.controller'));
+app.use('/api/games', require('./games/game.controller'));
 
 // Global Error Handler
 app.use(errorHandler);

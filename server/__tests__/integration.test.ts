@@ -109,7 +109,7 @@ describe('Integration Tests', () => {
         });
 
         describe('Public Routes', () => {
-            describe('(Register) /users | POST', () => {
+            describe('(Register) /api/users | POST', () => {
                 it('passes a super generic smoke test', () => {
                     const test = 'test';
                     expect(test).toEqual(test);
@@ -119,7 +119,7 @@ describe('Integration Tests', () => {
                     // Add a test user to the database
 
                     const postResponse = await request(app)
-                        .post('/users/register')
+                        .post('/api/users/register')
                         .send({ data: testUser });
                     expect(postResponse.status).toEqual(200);
                     expect(postResponse.body).toEqual({});
@@ -128,7 +128,7 @@ describe('Integration Tests', () => {
                 // Validation Errors:
                 it('Rejects with an error when username is already taken', async () => {
                     const postResponse = await request(app)
-                        .post('/users/register')
+                        .post('/api/users/register')
                         .send({
                             data: { ...testUser, email: 'test2@test.com' }
                         });
@@ -141,7 +141,7 @@ describe('Integration Tests', () => {
 
                 it('Rejects with an error when email is already taken', async () => {
                     const postResponse = await request(app)
-                        .post('/users/register')
+                        .post('/api/users/register')
                         .send({ data: { ...testUser, username: 'test2' } });
                     expect(postResponse.status).toEqual(500);
                     expect(postResponse.error).toBeDefined();
@@ -152,7 +152,7 @@ describe('Integration Tests', () => {
 
                 it('Rejects with an error when username is too short', async () => {
                     const postResponse = await request(app)
-                        .post('/users/register')
+                        .post('/api/users/register')
                         .send({
                             data: {
                                 ...testUser,
@@ -169,7 +169,7 @@ describe('Integration Tests', () => {
 
                 it('Rejects with an error when password is too short', async () => {
                     const postResponse = await request(app)
-                        .post('/users/register')
+                        .post('/api/users/register')
                         .send({
                             data: {
                                 username: 'test2',
@@ -186,7 +186,7 @@ describe('Integration Tests', () => {
 
                 it('Rejects with an error when email is not of a valid format', async () => {
                     const postResponse = await request(app)
-                        .post('/users/register')
+                        .post('/api/users/register')
                         .send({
                             data: {
                                 username: 'test2',
@@ -203,7 +203,7 @@ describe('Integration Tests', () => {
 
                 it('Rejects with an error when username is not provided', async () => {
                     const postResponse = await request(app)
-                        .post('/users/register')
+                        .post('/api/users/register')
                         .send({
                             data: { email: 'test2@test.com', password: 'test' }
                         });
@@ -216,7 +216,7 @@ describe('Integration Tests', () => {
 
                 it('Rejects with an error when password is not provided', async () => {
                     const postResponse = await request(app)
-                        .post('/users/register')
+                        .post('/api/users/register')
                         .send({
                             data: { email: 'test2@test.com', username: 'test2' }
                         });
@@ -229,7 +229,7 @@ describe('Integration Tests', () => {
 
                 it('Rejects with an error when email is not provided', async () => {
                     const postResponse = await request(app)
-                        .post('/users/register')
+                        .post('/api/users/register')
                         .send({
                             data: { username: 'test2', password: 'test' }
                         });
@@ -243,31 +243,31 @@ describe('Integration Tests', () => {
         });
 
         describe('Unauthorized Private Route Access', () => {
-            it('/users | GET : Rejects with 401 Unauthorized Error', async () => {
-                const response = await request(app).get('/users');
+            it('/api/users | GET : Rejects with 401 Unauthorized Error', async () => {
+                const response = await request(app).get('/api/users');
                 expect(response.status).toEqual(401);
                 expect(response.error).toBeDefined();
                 expect(response.body).toEqual({ message: invalidToken });
             });
 
-            it('/users/:id | GET : Rejects with 401 Unauthorized Error', async () => {
-                const response = await request(app).post('/users/2');
+            it('/api/users/:id | GET : Rejects with 401 Unauthorized Error', async () => {
+                const response = await request(app).post('/api/users/2');
                 expect(response.status).toEqual(401);
                 expect(response.error).toBeDefined();
                 expect(response.body).toEqual({ message: invalidToken });
             });
 
-            it('/users/:id | PUT : Rejects with 401 Unauthorized Error', async () => {
+            it('/api/users/:id | PUT : Rejects with 401 Unauthorized Error', async () => {
                 const response = await request(app)
-                    .put('/users/2')
+                    .put('/api/users/2')
                     .send({ data: testUser });
                 expect(response.status).toEqual(401);
                 expect(response.error).toBeDefined();
                 expect(response.body).toEqual({ message: invalidToken });
             });
 
-            it('/users/:id | DELETE : Rejects with 401 Unauthorized Error', async () => {
-                const response = await request(app).delete('/users/2');
+            it('/api/users/:id | DELETE : Rejects with 401 Unauthorized Error', async () => {
+                const response = await request(app).delete('/api/users/2');
                 expect(response.status).toEqual(401);
                 expect(response.error).toBeDefined();
                 expect(response.body).toEqual({ message: invalidToken });
@@ -277,10 +277,10 @@ describe('Integration Tests', () => {
         describe('Private Routes', () => {
             let token: string | null;
 
-            describe('(Login) /users/authenticate | POST', () => {
+            describe('(Login) /api/users/authenticate | POST', () => {
                 it('Rejects with 400 Validation Error if given invalid credentials', async () => {
                     const authenticationResponse = await request(app)
-                        .post('/users/authenticate')
+                        .post('/api/users/authenticate')
                         .send({ data: { username: 'fake', password: 'fake' } });
                     expect(authenticationResponse.status).toEqual(400);
                     expect(authenticationResponse.body.token).toBeUndefined();
@@ -292,7 +292,7 @@ describe('Integration Tests', () => {
 
                 it('Validates user and returns jwt token', async () => {
                     const authenticationResponse = await request(app)
-                        .post('/users/authenticate')
+                        .post('/api/users/authenticate')
                         .send({
                             data: {
                                 username: testUser.username,
@@ -305,10 +305,10 @@ describe('Integration Tests', () => {
                 });
             });
 
-            describe('(GetAll) /users | GET', () => {
+            describe('(GetAll) /api/users | GET', () => {
                 it('Returns a full list of users', async () => {
                     const getResponse = await request(app)
-                        .get('/users')
+                        .get('/api/users')
                         .set('Authorization', 'Bearer ' + token);
                     expect(getResponse.status).toEqual(200);
                     expect(getResponse.body[0].username).toEqual(
@@ -318,12 +318,12 @@ describe('Integration Tests', () => {
                 });
             });
 
-            describe('(Get By Id) /users/:id | GET', () => {
+            describe('(Get By Id) /api/users/:id | GET', () => {
                 it('Successfully retrieves a user by id', async () => {
                     // Currently assumes that this test is run after the POST test has left a user in the DB
                     // Get the id from the first user returned
                     const getResponse = await request(app)
-                        .get('/users')
+                        .get('/api/users')
                         .set('Authorization', 'Bearer ' + token);
                     expect(getResponse.status).toEqual(200);
                     expect(getResponse.body.length).toEqual(1);
@@ -333,7 +333,7 @@ describe('Integration Tests', () => {
 
                     // Check that the user returned when requesting by id is the same
                     const getByIdResponse = await request(app)
-                        .get(`/users/${id}`)
+                        .get(`/api/users/${id}`)
                         .set('Authorization', 'Bearer ' + token);
                     expect(getByIdResponse.status).toEqual(200);
                     expect(getByIdResponse.body).toEqual(expectedUser);
@@ -341,14 +341,14 @@ describe('Integration Tests', () => {
 
                 it('Returns an error if user not found', async () => {
                     const getResponse = await request(app)
-                        .get('/users/2')
+                        .get('/api/users/2')
                         .set('Authorization', 'Bearer ' + token);
                     expect(getResponse.status).toEqual(500);
                     expect(getResponse.error).toBeDefined();
                 });
             });
 
-            describe('(Update) /users/:id | PUT', () => {
+            describe('(Update) /api/users/:id | PUT', () => {
                 let id: String;
                 let expectedUser: any;
                 const secondUser = {
@@ -360,14 +360,14 @@ describe('Integration Tests', () => {
                     // Currently assumes that this test is run after the POST test has left a user in the DB
                     // Get the first user returned
                     const getResponse = await request(app)
-                        .get('/users')
+                        .get('/api/users')
                         .set('Authorization', 'Bearer ' + token);
                     expectedUser = getResponse.body[0];
                     id = getResponse.body[0]._id;
 
                     // Add a second user to the database
                     await request(app)
-                        .post('/users/register')
+                        .post('/api/users/register')
                         .send({ data: secondUser })
                         .set('Authorization', 'Bearer ' + token);
                 });
@@ -380,7 +380,7 @@ describe('Integration Tests', () => {
                         email: 'update@test.com'
                     };
                     const putResponse = await request(app)
-                        .put(`/users/${id}`)
+                        .put(`/api/users/${id}`)
                         .set('Authorization', 'Bearer ' + token)
                         .send({ data: expectedUpdate });
                     expect(putResponse.status).toEqual(200);
@@ -388,7 +388,7 @@ describe('Integration Tests', () => {
 
                     // Check that the user is correctly updated
                     const getResponse2 = await request(app)
-                        .get(`/users/${id}`)
+                        .get(`/api/users/${id}`)
                         .set('Authorization', 'Bearer ' + token);
                     const updatedUser = getResponse2.body;
                     expect(getResponse2.status).toEqual(200);
@@ -406,7 +406,7 @@ describe('Integration Tests', () => {
                     };
 
                     const putResponse = await request(app)
-                        .put(`/users/${id}`)
+                        .put(`/api/users/${id}`)
                         .set('Authorization', 'Bearer ' + token)
                         .send({ data: expectedUpdate });
                     expect(putResponse.status).toEqual(500);
@@ -424,7 +424,7 @@ describe('Integration Tests', () => {
                     };
 
                     const putResponse = await request(app)
-                        .put(`/users/${id}`)
+                        .put(`/api/users/${id}`)
                         .set('Authorization', 'Bearer ' + token)
                         .send({ data: expectedUpdate });
                     expect(putResponse.status).toEqual(500);
@@ -442,7 +442,7 @@ describe('Integration Tests', () => {
                     };
 
                     const putResponse = await request(app)
-                        .put(`/users/${id}`)
+                        .put(`/api/users/${id}`)
                         .set('Authorization', 'Bearer ' + token)
                         .send({ data: expectedUpdate });
                     expect(putResponse.status).toEqual(400);
@@ -460,7 +460,7 @@ describe('Integration Tests', () => {
                     };
 
                     const putResponse = await request(app)
-                        .put(`/users/${id}`)
+                        .put(`/api/users/${id}`)
                         .set('Authorization', 'Bearer ' + token)
                         .send({ data: expectedUpdate });
                     expect(putResponse.status).toEqual(400);
@@ -478,7 +478,7 @@ describe('Integration Tests', () => {
                     };
 
                     const putResponse = await request(app)
-                        .put(`/users/${id}`)
+                        .put(`/api/users/${id}`)
                         .set('Authorization', 'Bearer ' + token)
                         .send({ data: expectedUpdate });
                     expect(putResponse.status).toEqual(400);
@@ -495,7 +495,7 @@ describe('Integration Tests', () => {
                     };
 
                     const putResponse = await request(app)
-                        .put(`/users/${id}`)
+                        .put(`/api/users/${id}`)
                         .set('Authorization', 'Bearer ' + token)
                         .send({ data: expectedUpdate });
                     expect(putResponse.status).toEqual(400);
@@ -512,7 +512,7 @@ describe('Integration Tests', () => {
                     };
 
                     const putResponse = await request(app)
-                        .put(`/users/${id}`)
+                        .put(`/api/users/${id}`)
                         .set('Authorization', 'Bearer ' + token)
                         .send({ data: expectedUpdate });
                     expect(putResponse.status).toEqual(400);
@@ -529,7 +529,7 @@ describe('Integration Tests', () => {
                     };
 
                     const putResponse = await request(app)
-                        .put(`/users/${id}`)
+                        .put(`/api/users/${id}`)
                         .set('Authorization', 'Bearer ' + token)
                         .send({ data: expectedUpdate });
                     expect(putResponse.status).toEqual(400);
@@ -540,12 +540,12 @@ describe('Integration Tests', () => {
                 });
             });
 
-            describe('(Delete) /users/:id | DELETE', () => {
+            describe('(Delete) /api/users/:id | DELETE', () => {
                 it('Successfully deletes user with selected id', async () => {
                     // Currently assumes that this test is run after the POST test has left a user in the DB
                     // Get the first user returned
                     const getResponse = await request(app)
-                        .get('/users')
+                        .get('/api/users')
                         .set('Authorization', 'Bearer ' + token);
                     expect(getResponse.status).toEqual(200);
                     expect(getResponse.body.length).toEqual(2);
@@ -554,14 +554,14 @@ describe('Integration Tests', () => {
 
                     // Delete the user by id
                     const deleteResponse = await request(app)
-                        .delete(`/users/${id}`)
+                        .delete(`/api/users/${id}`)
                         .set('Authorization', 'Bearer ' + token);
                     expect(deleteResponse.status).toEqual(200);
                     expect(deleteResponse.body).toEqual({});
 
                     // Expect the user to no longer by found in DB
                     const getByIdResponse = await request(app)
-                        .get(`/users/${id}`)
+                        .get(`/api/users/${id}`)
                         .set('Authorization', 'Bearer ' + token);
                     expect(getByIdResponse.status).toEqual(401);
                     expect(getByIdResponse.error).toBeDefined();
@@ -569,7 +569,7 @@ describe('Integration Tests', () => {
 
                 it('Returns an error if the user does not exist', async () => {
                     const deleteResponse = await request(app)
-                        .delete('/users/2')
+                        .delete('/api/users/2')
                         .set('Authorization', 'Bearer ' + token);
                     expect(deleteResponse.status).toEqual(401);
                     expect(deleteResponse.error).toBeDefined();
@@ -762,10 +762,10 @@ describe('Integration Tests', () => {
             items: ['test', 'test']
         };
 
-        describe('(Create) /series | POST', () => {
+        describe('(Create) /api/series | POST', () => {
             it('Adds a series to the database', async () => {
                 const postResponse = await request(app)
-                    .post('/series')
+                    .post('/api/series')
                     .send({ data: testSeries })
                     .set('Authorization', 'Bearer ' + token);
                 const cleanedResponse = getCleanedResponse(postResponse.body);
@@ -775,7 +775,7 @@ describe('Integration Tests', () => {
 
             it('Rejects with an error when the series already exists', async () => {
                 const postResponse = await request(app)
-                    .post('/series')
+                    .post('/api/series')
                     .send({ data: testSeries })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(500);
@@ -785,7 +785,7 @@ describe('Integration Tests', () => {
             // Validation Errors
             it('Rejects with an error when title is not provided', async () => {
                 const postResponse = await request(app)
-                    .post('/series')
+                    .post('/api/series')
                     .send({
                         data: { items: ['test', 'test'] }
                     })
@@ -798,10 +798,10 @@ describe('Integration Tests', () => {
             });
         });
 
-        describe('(Get All) /series | GET', () => {
+        describe('(Get All) /api/series | GET', () => {
             it('Returns a full list of series', async () => {
                 const getResponse = await request(app)
-                    .get('/series')
+                    .get('/api/series')
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(200);
                 expect(getResponse.body[0].name).toEqual(testSeries.name);
@@ -809,11 +809,11 @@ describe('Integration Tests', () => {
             });
         });
 
-        describe('(Get By Id) /series/:id | GET', () => {
+        describe('(Get By Id) /api/series/:id | GET', () => {
             it('Successfully retrieves a series by id', async () => {
                 // Retrieve the first series returned from the database
                 const getResponse = await request(app)
-                    .get('/series')
+                    .get('/api/series')
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(200);
                 expect(getResponse.body.length).toEqual(1);
@@ -823,7 +823,7 @@ describe('Integration Tests', () => {
 
                 // Search for that user by id & compare
                 const getByIdResponse = await request(app)
-                    .get(`/series/${id}`)
+                    .get(`/api/series/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getByIdResponse.status).toEqual(200);
                 expect(getByIdResponse.body).toEqual(expectedSeries);
@@ -831,14 +831,14 @@ describe('Integration Tests', () => {
 
             it('Returns an error if series not found', async () => {
                 const getResponse = await request(app)
-                    .get('/series/2')
+                    .get('/api/series/2')
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(500);
                 expect(getResponse.error).toBeDefined();
             });
         });
 
-        describe('(Update) /series/:id | PUT', () => {
+        describe('(Update) /api/series/:id | PUT', () => {
             let id: string;
             let expectedSeries: any;
             const secondSeries = {
@@ -847,7 +847,7 @@ describe('Integration Tests', () => {
             };
             beforeAll(async () => {
                 const getResponse = await request(app)
-                    .get('/series')
+                    .get('/api/series')
                     .set('Authorization', 'Bearer ' + token);
                 expectedSeries = getResponse.body[0];
                 id = getResponse.body[0]._id;
@@ -860,7 +860,7 @@ describe('Integration Tests', () => {
                     items: ['updated', 'items']
                 };
                 const putReponse = await request(app)
-                    .put(`/series/${id}`)
+                    .put(`/api/series/${id}`)
                     .set('Authorization', 'Bearer ' + token)
                     .send({ data: expectedUpdate });
                 const cleanedResponse = getCleanedResponse(putReponse.body);
@@ -874,7 +874,7 @@ describe('Integration Tests', () => {
                 };
 
                 const putResponse = await request(app)
-                    .put(`/series/${id}`)
+                    .put(`/api/series/${id}`)
                     .set('Authorization', 'Bearer ' + token)
                     .send({ data: expectedUpdate });
 
@@ -886,10 +886,10 @@ describe('Integration Tests', () => {
             });
         });
 
-        describe('(Delete) /series/:id | DELETE', () => {
+        describe('(Delete) /api/series/:id | DELETE', () => {
             it('Successfully deletes the series with selected id', async () => {
                 const getResponse = await request(app)
-                    .get('/series')
+                    .get('/api/series')
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(200);
                 expect(getResponse.body.length).toEqual(1);
@@ -898,14 +898,14 @@ describe('Integration Tests', () => {
 
                 // Delete the series by id
                 const deleteResponse = await request(app)
-                    .delete(`/series/${id}`)
+                    .delete(`/api/series/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(deleteResponse.status).toEqual(200);
                 expect(deleteResponse.body).toEqual({});
 
                 // Expect the series to no longer by found in DB
                 const getByIdResponse = await request(app)
-                    .get(`/series/${id}`)
+                    .get(`/api/series/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getByIdResponse.status).toEqual(404);
                 expect(getByIdResponse.error).toBeDefined();
@@ -1065,10 +1065,10 @@ describe('Integration Tests', () => {
             titles: [item1, item2]
         };
 
-        describe('(Create) /companies | POST', () => {
+        describe('(Create) /api/companies | POST', () => {
             it('Adds a company to the database', async () => {
                 const postResponse = await request(app)
-                    .post('/companies')
+                    .post('/api/companies')
                     .send({ data: testCompany })
                     .set('Authorization', 'Bearer ' + token);
                 // Expect default values to be added by Mongo
@@ -1083,7 +1083,7 @@ describe('Integration Tests', () => {
 
             it('Rejects with an error when the company exists already', async () => {
                 const postResponse = await request(app)
-                    .post('/companies')
+                    .post('/api/companies')
                     .send({ data: testCompany })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(500);
@@ -1093,10 +1093,10 @@ describe('Integration Tests', () => {
             });
         });
 
-        describe('(Get All) /companies | GET', () => {
+        describe('(Get All) /api/companies | GET', () => {
             it('Returns a full list of companies', async () => {
                 const getResponse = await request(app)
-                    .get('/companies')
+                    .get('/api/companies')
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(200);
                 expect(getResponse.body[0].name).toEqual(testCompany.name);
@@ -1104,11 +1104,11 @@ describe('Integration Tests', () => {
             });
         });
 
-        describe('(Get By Id) /companies/:id | GET', () => {
+        describe('(Get By Id) /api/companies/:id | GET', () => {
             it('Successfully retrieves a company by id', async () => {
                 // Get id from first company returned
                 const getResponse = await request(app)
-                    .get('/companies')
+                    .get('/api/companies')
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(200);
                 expect(getResponse.body.length).toEqual(1);
@@ -1118,7 +1118,7 @@ describe('Integration Tests', () => {
 
                 // Search for that company by id
                 const getByIdResponse = await request(app)
-                    .get(`/companies/${id}`)
+                    .get(`/api/companies/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getByIdResponse.status).toEqual(200);
                 expect(getByIdResponse.body).toEqual(expectedCompany);
@@ -1127,20 +1127,20 @@ describe('Integration Tests', () => {
             it('Returns an error if series not found', async () => {
                 const randomId: string = mongoose.Types.ObjectId().toHexString();
                 const getResponse = await request(app)
-                    .get(`/companies/${randomId}`)
+                    .get(`/api/companies/${randomId}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(404);
                 expect(getResponse.error).toBeDefined();
             });
         });
 
-        describe('(Update) /series/:id | PUT', () => {
+        describe('(Update) /api/series/:id | PUT', () => {
             let id: string;
             let expectedCompany: any;
 
             beforeAll(async () => {
                 const getResponse = await request(app)
-                    .get('/companies')
+                    .get('/api/companies')
                     .set('Authorization', 'Bearer ' + token);
                 expectedCompany = getResponse.body[0];
                 id = getResponse.body[0]._id;
@@ -1154,7 +1154,7 @@ describe('Integration Tests', () => {
                     titles: [...expectedCompany.titles, newItem]
                 };
                 const putResponse = await request(app)
-                    .put(`/companies/${id}`)
+                    .put(`/api/companies/${id}`)
                     .set('Authorization', 'Bearer ' + token)
                     .send({ data: expectedUpdate });
                 const cleanedResponse = getCleanedResponse(putResponse.body);
@@ -1168,7 +1168,7 @@ describe('Integration Tests', () => {
                     titles: [...testCompany.titles, newItem]
                 };
                 const putResponse = await request(app)
-                    .put(`/companies/${id}`)
+                    .put(`/api/companies/${id}`)
                     .set('Authorization', 'Bearer ' + token)
                     .send({ data: expectedUpdate });
 
@@ -1180,11 +1180,11 @@ describe('Integration Tests', () => {
             });
         });
 
-        describe('(Delete) /companies/:id | DELETE', () => {
+        describe('(Delete) /api/companies/:id | DELETE', () => {
             it('Successfully deletes the series with selected id', async () => {
                 // Get the id of the first company returned
                 const getResponse = await request(app)
-                    .get('/companies')
+                    .get('/api/companies')
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(200);
                 expect(getResponse.body.length).toEqual(1);
@@ -1193,14 +1193,14 @@ describe('Integration Tests', () => {
 
                 // Use that id to delete the series
                 const deleteResponse = await request(app)
-                    .delete(`/companies/${id}`)
+                    .delete(`/api/companies/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(deleteResponse.status).toEqual(200);
                 expect(deleteResponse.body).toEqual({});
 
                 // Expect the company to no longer by found in DB
                 const getByIdResponse = await request(app)
-                    .get(`/companies/${id}`)
+                    .get(`/api/companies/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getByIdResponse.status).toEqual(404);
                 expect(getByIdResponse.error).toBeDefined();
@@ -1366,10 +1366,10 @@ describe('Integration Tests', () => {
             works: [item1, item2]
         };
 
-        describe('(Create) /creators | POST', () => {
+        describe('(Create) /api/creators | POST', () => {
             it('Adds a creator to the database', async () => {
                 const postResponse = await request(app)
-                    .post('/creators')
+                    .post('/api/creators')
                     .send({ data: testCreator })
                     .set('Authorization', 'Bearer ' + token);
                 const cleanedResponse = getCleanedResponse(postResponse.body);
@@ -1378,10 +1378,10 @@ describe('Integration Tests', () => {
             });
         });
 
-        describe('(Get All) /creators | GET', () => {
+        describe('(Get All) /api/creators | GET', () => {
             it('Returns a full list of creators', async () => {
                 const getResponse = await request(app)
-                    .get('/creators')
+                    .get('/api/creators')
                     .set('Authorization', 'Bearer ' + token);
                 const cleanedResponse = getCleanedResponse(getResponse.body);
                 const expectedResponse = [testCreator];
@@ -1393,7 +1393,7 @@ describe('Integration Tests', () => {
             it('Successfully retrieves a creator by id', async () => {
                 // Get the id from the first creator returned
                 const getResponse = await request(app)
-                    .get('/creators')
+                    .get('/api/creators')
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(200);
                 expect(getResponse.body.length).toEqual(1);
@@ -1403,7 +1403,7 @@ describe('Integration Tests', () => {
 
                 // Search for that creator by id
                 const getByIdResponse = await request(app)
-                    .get(`/creators/${id}`)
+                    .get(`/api/creators/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getByIdResponse.status).toEqual(200);
                 expect(getByIdResponse.body).toEqual(expectedCreator);
@@ -1412,20 +1412,20 @@ describe('Integration Tests', () => {
             it('Returns an error if creator not found', async () => {
                 const randomId: string = mongoose.Types.ObjectId().toHexString();
                 const getResponse = await request(app)
-                    .get(`/creators/${randomId}`)
+                    .get(`/api/creators/${randomId}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(404);
                 expect(getResponse.error).toBeDefined();
             });
         });
 
-        describe('(Update) /creators/:id | PUT', () => {
+        describe('(Update) /api/creators/:id | PUT', () => {
             let id: string;
             let expectedCreator: any;
 
             beforeAll(async () => {
                 const getResponse = await request(app)
-                    .get('/creators')
+                    .get('/api/creators')
                     .set('Authorization', 'Bearer ' + token);
                 expectedCreator = getCleanedResponse(getResponse.body[0]);
                 id = getResponse.body[0]._id;
@@ -1439,7 +1439,7 @@ describe('Integration Tests', () => {
                 };
 
                 const putResponse = await request(app)
-                    .put(`/creators/${id}`)
+                    .put(`/api/creators/${id}`)
                     .set('Authorization', 'Bearer ' + token)
                     .send({ data: expectedUpdate });
                 expect(putResponse.status).toEqual(200);
@@ -1450,7 +1450,7 @@ describe('Integration Tests', () => {
             it('Rejects when firstName is not included', async () => {
                 const { firstName, ...expectedUpdate } = testCreator;
                 const putResponse = await request(app)
-                    .put(`/creators/${id}`)
+                    .put(`/api/creators/${id}`)
                     .set('Authorization', 'Bearer ' + token)
                     .send({ data: expectedUpdate });
                 expect(putResponse.status).toEqual(400);
@@ -1461,11 +1461,11 @@ describe('Integration Tests', () => {
             });
         });
 
-        describe('(Delete) /creators/:id | DELETE', () => {
+        describe('(Delete) /api/creators/:id | DELETE', () => {
             it('Successfully deletes the creator with selected id', async () => {
                 // Get the id from the first creator returned
                 const getResponse = await request(app)
-                    .get('/creators')
+                    .get('/api/creators')
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(200);
                 expect(getResponse.body.length).toEqual(1);
@@ -1474,14 +1474,14 @@ describe('Integration Tests', () => {
 
                 // Use that id to delete the creator
                 const deleteResponse = await request(app)
-                    .delete(`/creators/${id}`)
+                    .delete(`/api/creators/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(deleteResponse.status).toEqual(200);
                 expect(deleteResponse.body).toEqual({});
 
                 // Expect the creator to no longer be in DB
                 const getByIdResponse = await request(app)
-                    .get(`/creators/${id}`)
+                    .get(`/api/creators/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getByIdResponse.status).toEqual(404);
                 expect(getByIdResponse.error).toBeDefined();
@@ -1772,10 +1772,10 @@ describe('Integration Tests', () => {
             isbn: 'test'
         };
 
-        describe('(Create) /books | POST', () => {
+        describe('(Create) /api/books | POST', () => {
             it('Adds a book to the database', async () => {
                 const postResponse = await request(app)
-                    .post('/books')
+                    .post('/api/books')
                     .send({ data: testBook })
                     .set('Authorization', 'Bearer ' + token);
                 const cleanedResponse = getCleanedResponse(postResponse.body);
@@ -1790,7 +1790,7 @@ describe('Integration Tests', () => {
             it('Rejects when title not included', async () => {
                 const { title, ...bookWithoutTitle } = testBook;
                 const postResponse = await request(app)
-                    .post('/books')
+                    .post('/api/books')
                     .send({ data: bookWithoutTitle })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -1802,7 +1802,7 @@ describe('Integration Tests', () => {
             it('Rejects when physical not included', async () => {
                 const { physical, ...bookWithoutPhysical } = testBook;
                 const postResponse = await request(app)
-                    .post('/books')
+                    .post('/api/books')
                     .send({ data: bookWithoutPhysical })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -1814,7 +1814,7 @@ describe('Integration Tests', () => {
             it('Rejects when digital not included', async () => {
                 const { digital, ...bookWithoutDigital } = testBook;
                 const postResponse = await request(app)
-                    .post('/books')
+                    .post('/api/books')
                     .send({ data: bookWithoutDigital })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -1826,7 +1826,7 @@ describe('Integration Tests', () => {
             it('Rejects when publisher not included', async () => {
                 const { publisher, ...bookWithoutPublisher } = testBook;
                 const postResponse = await request(app)
-                    .post('/books')
+                    .post('/api/books')
                     .send({ data: bookWithoutPublisher })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -1838,7 +1838,7 @@ describe('Integration Tests', () => {
             it('Rejects when authors not included', async () => {
                 const { authors, ...bookWithoutAuthors } = testBook;
                 const postResponse = await request(app)
-                    .post('/books')
+                    .post('/api/books')
                     .send({ data: bookWithoutAuthors })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -1850,7 +1850,7 @@ describe('Integration Tests', () => {
             it('Rejects when language not included', async () => {
                 const { language, ...bookWithoutLanguage } = testBook;
                 const postResponse = await request(app)
-                    .post('/books')
+                    .post('/api/books')
                     .send({ data: bookWithoutLanguage })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -1862,7 +1862,7 @@ describe('Integration Tests', () => {
             it('Rejects when type not included', async () => {
                 const { type, ...bookWithoutType } = testBook;
                 const postResponse = await request(app)
-                    .post('/books')
+                    .post('/api/books')
                     .send({ data: bookWithoutType })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -1878,7 +1878,7 @@ describe('Integration Tests', () => {
                     type: 'test'
                 };
                 const postResponse = await request(app)
-                    .post('/books')
+                    .post('/api/books')
                     .send({ data: bookWithInvalidType })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -1889,10 +1889,10 @@ describe('Integration Tests', () => {
             });
         });
 
-        describe('(Get All) /books | GET', () => {
+        describe('(Get All) /api/books | GET', () => {
             it('Returns a full list of books', async () => {
                 const getResponse = await request(app)
-                    .get('/books')
+                    .get('/api/books')
                     .set('Authorization', 'Bearer ' + token);
                 const cleanedResponse = getCleanedResponse(getResponse.body);
                 const expectedResponse = [testBook];
@@ -1900,10 +1900,10 @@ describe('Integration Tests', () => {
             });
         });
 
-        describe('(Get By Id) /books/:id | GET', () => {
+        describe('(Get By Id) /api/books/:id | GET', () => {
             it('Successfully retrieves a book by id', async () => {
                 const getResponse = await request(app)
-                    .get('/books')
+                    .get('/api/books')
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(200);
                 expect(getResponse.body.length).toEqual(1);
@@ -1912,7 +1912,7 @@ describe('Integration Tests', () => {
                 const expectedBook = getResponse.body[0];
 
                 const getByIdResponse = await request(app)
-                    .get(`/books/${id}`)
+                    .get(`/api/books/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getByIdResponse.status).toEqual(200);
                 expect(getByIdResponse.body).toEqual(expectedBook);
@@ -1921,20 +1921,20 @@ describe('Integration Tests', () => {
             it('Returns an error if book not found', async () => {
                 const randomId: string = mongoose.Types.ObjectId().toHexString();
                 const getResponse = await request(app)
-                    .get(`/books/${randomId}`)
+                    .get(`/api/books/${randomId}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(404);
                 expect(getResponse.error).toBeDefined();
             });
         });
 
-        describe('(Update) /books/:id | PUT', () => {
+        describe('(Update) /api/books/:id | PUT', () => {
             let id: string;
             let expectedBook: any;
 
             beforeAll(async () => {
                 const getResponse = await request(app)
-                    .get('/books')
+                    .get('/api/books')
                     .set('Authorization', 'Bearer ' + token);
                 expectedBook = getCleanedResponse(getResponse.body[0]);
                 id = getResponse.body[0]._id;
@@ -1947,7 +1947,7 @@ describe('Integration Tests', () => {
                 };
 
                 const putResponse = await request(app)
-                    .put(`/books/${id}`)
+                    .put(`/api/books/${id}`)
                     .set('Authorization', 'Bearer ' + token)
                     .send({ data: expectedUpdate });
                 expect(putResponse.status).toEqual(200);
@@ -1956,11 +1956,11 @@ describe('Integration Tests', () => {
             });
         });
 
-        describe('(Delete) /books/:id | DELETE', () => {
+        describe('(Delete) /api/books/:id | DELETE', () => {
             it('Successfully deletes the book with selected id', async () => {
                 // Get id from first book returned
                 const getResponse = await request(app)
-                    .get('/books')
+                    .get('/api/books')
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(200);
                 expect(getResponse.body.length).toEqual(1);
@@ -1969,14 +1969,14 @@ describe('Integration Tests', () => {
 
                 // Use id to delete book
                 const deleteResponse = await request(app)
-                    .delete(`/books/${id}`)
+                    .delete(`/api/books/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(deleteResponse.status).toEqual(200);
                 expect(deleteResponse.body).toEqual({});
 
                 // Expect book to no longer be in DB
                 const getByIdResponse = await request(app)
-                    .get(`/books/${id}`)
+                    .get(`/api/books/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getByIdResponse.status).toEqual(404);
                 expect(getByIdResponse.error).toBeDefined();
@@ -2141,10 +2141,10 @@ describe('Integration Tests', () => {
             isCollection: false
         };
 
-        describe('(Create) /discs | POST', () => {
+        describe('(Create) /api/discs | POST', () => {
             it('Adds a disc to the database', async () => {
                 const postResponse = await request(app)
-                    .post('/discs')
+                    .post('/api/discs')
                     .send({ data: testDisc })
                     .set('Authorization', 'Bearer ' + token);
                 const cleanedResponse = getCleanedResponse(postResponse.body);
@@ -2155,7 +2155,7 @@ describe('Integration Tests', () => {
             it('Rejects when title not included', async () => {
                 const { title, ...discWithoutTitle } = testDisc;
                 const postResponse = await request(app)
-                    .post('/discs')
+                    .post('/api/discs')
                     .send({ data: discWithoutTitle })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -2167,7 +2167,7 @@ describe('Integration Tests', () => {
             it('Rejects when physical not included', async () => {
                 const { physical, ...discWithoutPhysical } = testDisc;
                 const postResponse = await request(app)
-                    .post('/discs')
+                    .post('/api/discs')
                     .send({ data: discWithoutPhysical })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -2179,7 +2179,7 @@ describe('Integration Tests', () => {
             it('Rejects when digital not included', async () => {
                 const { digital, ...discWithoutDigital } = testDisc;
                 const postResponse = await request(app)
-                    .post('/discs')
+                    .post('/api/discs')
                     .send({ data: discWithoutDigital })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -2191,7 +2191,7 @@ describe('Integration Tests', () => {
             it('Rejects when publisher not included', async () => {
                 const { publisher, ...discWithoutPublisher } = testDisc;
                 const postResponse = await request(app)
-                    .post('/discs')
+                    .post('/api/discs')
                     .send({ data: discWithoutPublisher })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -2203,7 +2203,7 @@ describe('Integration Tests', () => {
             it('Rejects when format not included', async () => {
                 const { format, ...discWithoutFormat } = testDisc;
                 const postResponse = await request(app)
-                    .post('/discs')
+                    .post('/api/discs')
                     .send({ data: discWithoutFormat })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -2218,7 +2218,7 @@ describe('Integration Tests', () => {
                     format: ['test']
                 };
                 const postResponse = await request(app)
-                    .post('/discs')
+                    .post('/api/discs')
                     .send({ data: discWithInvalidFormat })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -2230,7 +2230,7 @@ describe('Integration Tests', () => {
             it('Rejects when languages not included', async () => {
                 const { languages, ...discWithoutLanguages } = testDisc;
                 const postResponse = await request(app)
-                    .post('/discs')
+                    .post('/api/discs')
                     .send({ data: discWithoutLanguages })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -2245,7 +2245,7 @@ describe('Integration Tests', () => {
                     volume: -1
                 };
                 const postResponse = await request(app)
-                    .post('/discs')
+                    .post('/api/discs')
                     .send({ data: discWithInvalidVolume })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -2256,10 +2256,10 @@ describe('Integration Tests', () => {
             });
         });
 
-        describe('(Get All) /discs | GET', () => {
+        describe('(Get All) /api/discs | GET', () => {
             it('Returns a full list of discs', async () => {
                 const getResponse = await request(app)
-                    .get('/discs')
+                    .get('/api/discs')
                     .set('Authorization', 'Bearer ' + token);
                 const cleanedResponse = getCleanedResponse(getResponse.body);
                 const expectedResponse = [testDisc];
@@ -2267,10 +2267,10 @@ describe('Integration Tests', () => {
             });
         });
 
-        describe('(Get By Id) /discs/:id | GET', () => {
+        describe('(Get By Id) /api/discs/:id | GET', () => {
             it('Successfully retrieves a disc by id', async () => {
                 const getResponse = await request(app)
-                    .get('/discs')
+                    .get('/api/discs')
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(200);
                 expect(getResponse.body.length).toEqual(1);
@@ -2279,7 +2279,7 @@ describe('Integration Tests', () => {
                 const expectedDisc = getResponse.body[0];
 
                 const getByIdResponse = await request(app)
-                    .get(`/discs/${id}`)
+                    .get(`/api/discs/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getByIdResponse.status).toEqual(200);
                 expect(getByIdResponse.body).toEqual(expectedDisc);
@@ -2288,20 +2288,20 @@ describe('Integration Tests', () => {
             it('Returns an error if disc not found', async () => {
                 const randomId: string = mongoose.Types.ObjectId().toHexString();
                 const getResponse = await request(app)
-                    .get(`/discs/${randomId}`)
+                    .get(`/api/discs/${randomId}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(404);
                 expect(getResponse.error).toBeDefined();
             });
         });
 
-        describe('(Update) /discs/:id | PUT', () => {
+        describe('(Update) /api/discs/:id | PUT', () => {
             let id: string;
             let expectedDisc: any;
 
             beforeAll(async () => {
                 const getResponse = await request(app)
-                    .get('/discs')
+                    .get('/api/discs')
                     .set('Authorization', 'Bearer ' + token);
                 expectedDisc = getCleanedResponse(getResponse.body[0]);
                 id = getResponse.body[0]._id;
@@ -2314,7 +2314,7 @@ describe('Integration Tests', () => {
                 };
 
                 const putResponse = await request(app)
-                    .put(`/discs/${id}`)
+                    .put(`/api/discs/${id}`)
                     .set('Authorization', 'Bearer ' + token)
                     .send({ data: expectedUpdate });
                 expect(putResponse.status).toEqual(200);
@@ -2323,11 +2323,11 @@ describe('Integration Tests', () => {
             });
         });
 
-        describe('(Delete) /discs/:id | DELETE', () => {
+        describe('(Delete) /api/discs/:id | DELETE', () => {
             it('Successfully deletes the disc with selected id', async () => {
                 // Get id from first disc returned
                 const getResponse = await request(app)
-                    .get('/discs')
+                    .get('/api/discs')
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(200);
                 expect(getResponse.body.length).toEqual(1);
@@ -2336,14 +2336,14 @@ describe('Integration Tests', () => {
 
                 // Use id to delete disc
                 const deleteResponse = await request(app)
-                    .delete(`/discs/${id}`)
+                    .delete(`/api/discs/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(deleteResponse.status).toEqual(200);
                 expect(deleteResponse.body).toEqual({});
 
                 // Expect disc to no longer by in DB
                 const getByIdResponse = await request(app)
-                    .get(`/discs/${id}`)
+                    .get(`/api/discs/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getByIdResponse.status).toEqual(404);
                 expect(getByIdResponse.error).toBeDefined();
@@ -2503,10 +2503,10 @@ describe('Integration Tests', () => {
             genre: 'test'
         };
 
-        describe('(Create) /games | POST', () => {
+        describe('(Create) /api/games | POST', () => {
             it('Adds a game to the database', async () => {
                 const postResponse = await request(app)
-                    .post('/games')
+                    .post('/api/games')
                     .send({ data: testGame })
                     .set('Authorization', 'Bearer ' + token);
                 const cleanedResponse = getCleanedResponse(postResponse.body);
@@ -2517,7 +2517,7 @@ describe('Integration Tests', () => {
             it('Rejects when title is not included', async () => {
                 const { title, ...gameWithoutTitle } = testGame;
                 const postResponse = await request(app)
-                    .post('/games')
+                    .post('/api/games')
                     .send({ data: gameWithoutTitle })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -2529,7 +2529,7 @@ describe('Integration Tests', () => {
             it('Rejects when physical is not included', async () => {
                 const { physical, ...gameWithoutPhysical } = testGame;
                 const postResponse = await request(app)
-                    .post('/games')
+                    .post('/api/games')
                     .send({ data: gameWithoutPhysical })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -2541,7 +2541,7 @@ describe('Integration Tests', () => {
             it('Rejects when digital is not included', async () => {
                 const { digital, ...gameWithoutDigital } = testGame;
                 const postResponse = await request(app)
-                    .post('/games')
+                    .post('/api/games')
                     .send({ data: gameWithoutDigital })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -2553,7 +2553,7 @@ describe('Integration Tests', () => {
             it('Rejects when publisher is not included', async () => {
                 const { publisher, ...gameWithoutPublisher } = testGame;
                 const postResponse = await request(app)
-                    .post('/games')
+                    .post('/api/games')
                     .send({ data: gameWithoutPublisher })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -2565,7 +2565,7 @@ describe('Integration Tests', () => {
             it('Rejects when platforms is not included', async () => {
                 const { platforms, ...gameWithoutPlatforms } = testGame;
                 const postResponse = await request(app)
-                    .post('/games')
+                    .post('/api/games')
                     .send({ data: gameWithoutPlatforms })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -2578,7 +2578,7 @@ describe('Integration Tests', () => {
             it('Rejects when multiplayer is not included', async () => {
                 const { multiplayer, ...gameWithoutMultiplayer } = testGame;
                 const postResponse = await request(app)
-                    .post('/games')
+                    .post('/api/games')
                     .send({ data: gameWithoutMultiplayer })
                     .set('Authorization', 'Bearer ' + token);
                 expect(postResponse.status).toEqual(400);
@@ -2589,10 +2589,10 @@ describe('Integration Tests', () => {
             });
         });
 
-        describe('(Get All) /games | GET', () => {
+        describe('(Get All) /api/games | GET', () => {
             it('Returns a full list of games', async () => {
                 const getResponse = await request(app)
-                    .get('/games')
+                    .get('/api/games')
                     .set('Authorization', 'Bearer ' + token);
                 const cleanedResponse = getCleanedResponse(getResponse.body);
                 const expectedResponse = [testGame];
@@ -2600,10 +2600,10 @@ describe('Integration Tests', () => {
             });
         });
 
-        describe('(Get By Id) /games/:id | GET', () => {
+        describe('(Get By Id) /api/games/:id | GET', () => {
             it('Successfully retrieves a game by id', async () => {
                 const getResponse = await request(app)
-                    .get('/games')
+                    .get('/api/games')
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(200);
                 expect(getResponse.body.length).toEqual(1);
@@ -2612,7 +2612,7 @@ describe('Integration Tests', () => {
                 const expectedDisc = getResponse.body[0];
 
                 const getByIdResponse = await request(app)
-                    .get(`/games/${id}`)
+                    .get(`/api/games/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getByIdResponse.status).toEqual(200);
                 expect(getByIdResponse.body).toEqual(expectedDisc);
@@ -2621,20 +2621,20 @@ describe('Integration Tests', () => {
             it('Returns an error if game not found', async () => {
                 const randomId: string = mongoose.Types.ObjectId().toHexString();
                 const getResponse = await request(app)
-                    .get(`/games/${randomId}`)
+                    .get(`/api/games/${randomId}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(404);
                 expect(getResponse.error).toBeDefined();
             });
         });
 
-        describe('(Update) /games/:id | PUT', () => {
+        describe('(Update) /api/games/:id | PUT', () => {
             let id: string;
             let expectedGame: any;
 
             beforeAll(async () => {
                 const getResponse = await request(app)
-                    .get('/games')
+                    .get('/api/games')
                     .set('Authorization', 'Bearer ' + token);
                 expectedGame = getCleanedResponse(getResponse.body[0]);
                 id = getResponse.body[0]._id;
@@ -2647,7 +2647,7 @@ describe('Integration Tests', () => {
                 };
 
                 const putResponse = await request(app)
-                    .put(`/games/${id}`)
+                    .put(`/api/games/${id}`)
                     .set('Authorization', 'Bearer ' + token)
                     .send({ data: expectedUpdate });
                 expect(putResponse.status).toEqual(200);
@@ -2656,11 +2656,11 @@ describe('Integration Tests', () => {
             });
         });
 
-        describe('(Delete) /games/:id | DELETE', () => {
+        describe('(Delete) /api/games/:id | DELETE', () => {
             it('Successfully deletes the game with selected id', async () => {
                 // Get id from first game returned
                 const getResponse = await request(app)
-                    .get('/games')
+                    .get('/api/games')
                     .set('Authorization', 'Bearer ' + token);
                 expect(getResponse.status).toEqual(200);
                 expect(getResponse.body.length).toEqual(1);
@@ -2669,14 +2669,14 @@ describe('Integration Tests', () => {
 
                 // Use id to delete game
                 const deleteResponse = await request(app)
-                    .delete(`/games/${id}`)
+                    .delete(`/api/games/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(deleteResponse.status).toEqual(200);
                 expect(deleteResponse.body).toEqual({});
 
                 // Expect game to no longer by in DB
                 const getByIdResponse = await request(app)
-                    .get(`/games/${id}`)
+                    .get(`/api/games/${id}`)
                     .set('Authorization', 'Bearer ' + token);
                 expect(getByIdResponse.status).toEqual(404);
                 expect(getByIdResponse.error).toBeDefined();
@@ -2695,11 +2695,11 @@ const login = async () => {
 
     let token: string | null;
     await request(app)
-        .post('/users/register')
+        .post('/api/users/register')
         .send({ data: { ...loginCredentials } });
 
     const authenticationResponse = await request(app)
-        .post('/users/authenticate')
+        .post('/api/users/authenticate')
         .send({
             data: {
                 username: loginCredentials.username,
