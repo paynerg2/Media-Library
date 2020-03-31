@@ -12,8 +12,8 @@ export const jwt = () => {
     return expressJwt({ secret, isRevoked }).unless({
         path: [
             // public routes don't require auth
-            '/users/authenticate',
-            '/users/register'
+            'api/users/authenticate',
+            'api/users/register'
         ]
     });
 };
