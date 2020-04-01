@@ -40,7 +40,7 @@ const login = (username: String, password: String) => async (
     }
 };
 
-const logout = () => {
+const logout = (): AuthenticationActionTypes => {
     authenticationService.logout();
     const logoutAction: AuthenticationActionTypes = {
         type: authenticationConstants.LOGOUT

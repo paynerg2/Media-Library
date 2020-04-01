@@ -54,8 +54,6 @@ const Book: React.FunctionComponent<BookProps> = props => {
         }
     };
 
-    console.log(artists);
-    console.log(authors);
     return (
         <Container>
             <Title>

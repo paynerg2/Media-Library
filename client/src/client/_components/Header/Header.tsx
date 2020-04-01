@@ -19,8 +19,9 @@ const Header: React.FunctionComponent<HeaderProps> = ({ toggleTheme }) => {
     const location = useLocation();
 
     const size: WindowSizeObject = useWindowSize();
-    const minDesktopScreenSize = 768;
-    const isMobileSize = size.width && size.width < minDesktopScreenSize;
+    const minDesktopScreenSizeInPx: number = 768;
+    const isMobileSize: boolean =
+        !!size.width && size.width < minDesktopScreenSizeInPx;
 
     useEffect(() => {
         let isEntityPage =

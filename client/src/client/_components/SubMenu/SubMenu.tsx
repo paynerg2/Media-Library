@@ -14,12 +14,12 @@ export const SubMenu: React.FunctionComponent<SubMenuProps> = ({
 }) => {
     const dispatch = useDispatch();
     const [user, setUser] = useState('');
-    const isDarkMode = window.localStorage.getItem('theme') === 'dark';
+    const isDarkMode: boolean = window.localStorage.getItem('theme') === 'dark';
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const currentUser = window.localStorage.getItem('user');
-            let username = '';
+            let username: string = '';
             if (currentUser) {
                 username = JSON.parse(currentUser).username;
             }

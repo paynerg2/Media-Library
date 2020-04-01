@@ -1,12 +1,12 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, Dispatch } from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { useSelector } from '../../_hooks/useSelector';
 import { searchActions } from '../../_actions';
 
 export const SearchBar: React.FC = () => {
-    const dispatch = useDispatch();
-    const initialTerm = useSelector(state => state.search.term);
+    const dispatch: Dispatch<any> = useDispatch();
+    const initialTerm: string = useSelector(state => state.search.term);
     const [searchTerm, setSearchTerm] = useState(initialTerm);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -8,6 +8,7 @@ import { Scroller } from '../Scroller/';
 export const ScrollableList: React.FC = ({ children }) => {
     const listRef = useRef(null);
     const size: WindowSizeObject = useWindowSize();
+
     const calculateLength = (): number => {
         const ratio =
             size.width && size.height ? size.height / size.width : undefined;
@@ -17,6 +18,7 @@ export const ScrollableList: React.FC = ({ children }) => {
         }
         return length;
     };
+
     const minOffset = 0;
     const visibleListLength: number = calculateLength();
     const listLength: number =

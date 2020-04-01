@@ -15,14 +15,17 @@ interface MCEProps {
 export const MultipleCreatorEntry: React.FunctionComponent<MCEProps> = ({
     creators
 }) => {
+    const size: WindowSizeObject = useWindowSize();
+    const minDesktopWidth: number = 768;
+    const isMobileLayout: boolean =
+        !!size.width && size.width < minDesktopWidth;
+
+    // Options for React.Hover
     const options = {
         followCursor: false,
         shiftX: 20,
         shiftY: 0
     };
-    const size: WindowSizeObject = useWindowSize();
-    const minDesktopWidth = 768;
-    const isMobileLayout = size.width && size.width < minDesktopWidth;
 
     return creators && creators.length > 0 ? (
         creators && creators.length < 2 ? (
