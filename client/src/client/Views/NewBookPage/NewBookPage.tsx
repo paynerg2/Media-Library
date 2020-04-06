@@ -5,7 +5,13 @@ import { Formik, FieldArray, ErrorMessage } from 'formik';
 import { validationErrorExists } from '../../_helpers/validationErrorExists';
 import { bookSchema } from '../../../lib/schemas';
 import { bookActions } from '../../_actions';
-import { Book, defaultBook } from '../../../lib/interfaces';
+import {
+    Book,
+    defaultBook,
+    Creator,
+    Series,
+    Company
+} from '../../../lib/interfaces';
 import { bookTypes } from '../../../lib/formats';
 import { useSelector } from '../../_hooks';
 import {
@@ -33,6 +39,8 @@ import {
 } from '../../_styled_components/formElements';
 import { DisplayHeader } from '../../_styled_components/displayHeader';
 import { SectionHeader } from '../../_styled_components/sectionHeader';
+import { StringTMap } from '../../_interfaces/stringTMap.interface';
+import { MongoId } from '../../_interfaces';
 
 interface MatchProps {
     id: string;
@@ -42,9 +50,15 @@ const NewBookPage: React.FunctionComponent<RouteComponentProps<
     MatchProps
 >> = props => {
     const dispatch = useDispatch();
-    const creatorsById = useSelector(state => state.creators.byId);
-    const seriesById = useSelector(state => state.series.byId);
-    const companiesById = useSelector(state => state.companies.byId);
+    const creatorsById: StringTMap<Creator & MongoId> = useSelector(
+        state => state.creators.byId
+    );
+    const seriesById: StringTMap<Series & MongoId> = useSelector(
+        state => state.series.byId
+    );
+    const companiesById: StringTMap<Company & MongoId> = useSelector(
+        state => state.companies.byId
+    );
     const { id } = props.match.params;
     const { history } = props;
     const selectedBook = useSelector(state => state.books.byId[id]);

@@ -7,7 +7,7 @@ import { Spinner } from '../../_components/Spinner';
 const GameDisplayPage: React.FunctionComponent<GameDisplayPageProps> = props => {
     const { id } = props.match.params;
     const [loading, setLoading] = useState(true);
-    const loadingStatus = useSelector(state => state.games.loading);
+    const loadingStatus: boolean = useSelector(state => state.games.loading);
 
     useEffect(() => {
         setLoading(loadingStatus);

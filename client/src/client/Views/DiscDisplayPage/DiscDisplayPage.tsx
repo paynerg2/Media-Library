@@ -7,7 +7,7 @@ import { Spinner } from '../../_components/Spinner';
 const DiscDisplayPage: React.FunctionComponent<DiscDisplayPageProps> = props => {
     const { id } = props.match.params;
     const [loading, setLoading] = useState(true);
-    const loadingStatus = useSelector(state => state.discs.loading);
+    const loadingStatus: boolean = useSelector(state => state.discs.loading);
 
     useEffect(() => {
         setLoading(loadingStatus);

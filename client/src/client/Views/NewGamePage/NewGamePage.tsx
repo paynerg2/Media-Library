@@ -11,7 +11,7 @@ import {
 } from '../../_helpers/formSubmissionHelpers';
 import { gameSchema } from '../../../lib/schemas';
 import { gameActions } from '../../_actions';
-import { Game, defaultGame } from '../../../lib/interfaces';
+import { Game, defaultGame, Series, Company } from '../../../lib/interfaces';
 import {
     FormContainer,
     Section,
@@ -30,6 +30,8 @@ import { DisplayHeader } from '../../_styled_components/displayHeader';
 import { SectionHeader } from '../../_styled_components/sectionHeader';
 import { GameSystemIcons } from '../../_assets/icons';
 import { Icon } from '../../_styled_components/displayPage';
+import { StringTMap } from '../../_interfaces/stringTMap.interface';
+import { MongoId } from '../../_interfaces';
 
 interface MatchProps {
     id: string;
@@ -41,8 +43,12 @@ const NewGamePage: React.FunctionComponent<RouteComponentProps<
     const { id } = props.match.params;
     const { history } = props;
     const dispatch = useDispatch();
-    const seriesById = useSelector(state => state.series.byId);
-    const companiesById = useSelector(state => state.companies.byId);
+    const seriesById: StringTMap<Series & MongoId> = useSelector(
+        state => state.series.byId
+    );
+    const companiesById: StringTMap<Company & MongoId> = useSelector(
+        state => state.companies.byId
+    );
 
     const selectedGame = useSelector(state => state.games.byId[id]);
     const initialValues: Game = selectedGame ? selectedGame : defaultGame;

@@ -7,7 +7,7 @@ import { Spinner } from '../../_components/Spinner';
 const BookDisplayPage: React.FunctionComponent<BookDisplayPageProps> = props => {
     const { id } = props.match.params;
     const [loading, setLoading] = useState(true);
-    const loadingStatus = useSelector(state => state.books.loading);
+    const loadingStatus: boolean = useSelector(state => state.books.loading);
 
     useEffect(() => {
         setLoading(loadingStatus);

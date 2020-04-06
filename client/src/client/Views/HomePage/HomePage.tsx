@@ -14,7 +14,7 @@ import { Spinner } from '../../_components/Spinner';
 //! Redirect from login does not load data
 
 const HomePage: React.FC = () => {
-    const searchTerm = useSelector(state => state.search.term);
+    const searchTerm: string = useSelector(state => state.search.term);
     const { books, discs, games } = useSelector(state => state);
 
     const bookList: JSX.Element[] = getFilteredList(books, searchTerm, 'books');

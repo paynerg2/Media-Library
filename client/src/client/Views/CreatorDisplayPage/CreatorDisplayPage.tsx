@@ -12,7 +12,9 @@ import { ScrollableList } from '../../_components/ScrollableList';
 const CreatorDisplayPage: React.FunctionComponent<CreatorDisplayProps> = props => {
     const { id } = props.match.params;
     const selectedCreator = useSelector(state => state.creators.byId[id]);
-    const fullName = selectedCreator ? getFullName(selectedCreator) : '';
+    const fullName: string = selectedCreator
+        ? getFullName(selectedCreator)
+        : '';
     const [creator, setCreator] = useState({} as Creator);
     const books: (Book & MongoId)[] = useSelector(state =>
         state.books.allIds

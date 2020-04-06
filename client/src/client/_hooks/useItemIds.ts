@@ -12,9 +12,9 @@ export const useItemIds = (id: string, entityType: string) => {
     } else if (entityType === 'creator') {
         items = creators.byId[id].works;
     }
-    const bookIds = books.allIds.filter(b => items.includes(b));
-    const discIds = discs.allIds.filter(d => items.includes(d));
-    const gameIds = games.allIds.filter(g => items.includes(g));
+    const bookIds: Array<string> = books.allIds.filter(b => items.includes(b));
+    const discIds: Array<string> = discs.allIds.filter(d => items.includes(d));
+    const gameIds: Array<string> = games.allIds.filter(g => items.includes(g));
 
     return [bookIds, discIds, gameIds];
 };

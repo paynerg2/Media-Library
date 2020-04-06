@@ -2,7 +2,7 @@ import { Creator } from '../../lib/interfaces';
 import { MongoId } from '../_interfaces';
 
 export const getFullName = (creator: Creator | (Creator & MongoId)) => {
-    let fullName = creator.firstName;
+    let fullName: string = creator.firstName;
     if (creator.middleInitials) {
         fullName = `${fullName} ${creator.middleInitials}`;
     }

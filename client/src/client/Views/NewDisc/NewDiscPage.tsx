@@ -6,7 +6,13 @@ import styled from 'styled-components';
 import { validationErrorExists } from '../../_helpers/validationErrorExists';
 import { discSchema } from '../../../lib/schemas';
 import { discActions } from '../../_actions';
-import { Disc, defaultDisc } from '../../../lib/interfaces';
+import {
+    Disc,
+    defaultDisc,
+    Creator,
+    Series,
+    Company
+} from '../../../lib/interfaces';
 import { discFormats } from '../../../lib/formats';
 import { useSelector } from '../../_hooks';
 import {
@@ -32,6 +38,8 @@ import { SectionHeader } from '../../_styled_components/sectionHeader';
 import { Button } from '../../_styled_components/button';
 import { IconButton } from '../../_styled_components/iconButton';
 import { removeDuplicates } from '../../_helpers/removeDuplicates';
+import { StringTMap } from '../../_interfaces/stringTMap.interface';
+import { MongoId } from '../../_interfaces';
 
 interface MatchProps {
     id: string;
@@ -45,10 +53,16 @@ const NewDiscPage: React.FunctionComponent<RouteComponentProps<
     const dispatch = useDispatch();
 
     // Get necessary information to display form values for editing.
-    const loading = useSelector(state => state.books.loading);
-    const creatorsById = useSelector(state => state.creators.byId);
-    const seriesById = useSelector(state => state.series.byId);
-    const companiesById = useSelector(state => state.companies.byId);
+    const loading: boolean = useSelector(state => state.books.loading);
+    const creatorsById: StringTMap<Creator & MongoId> = useSelector(
+        state => state.creators.byId
+    );
+    const seriesById: StringTMap<Series & MongoId> = useSelector(
+        state => state.series.byId
+    );
+    const companiesById: StringTMap<Company & MongoId> = useSelector(
+        state => state.companies.byId
+    );
     const selectedDisc = useSelector(state => state.discs.byId[id]);
 
     // Update with selected disc once/if values are available.
