@@ -18,7 +18,7 @@ app.use(cors());
 // Set up logging
 app.use(
     logger('common', {
-        stream: fs.createWriteStream('./__logs__/access.log', { flags: 'a' })
+        stream: fs.createWriteStream('./__logs__/access.log', { flags: 'a' }),
     })
 );
 app.use(logger('dev'));
@@ -42,6 +42,6 @@ app.use('/api/games', require('./games/game.controller'));
 app.use(errorHandler);
 
 // Fix known deploy routing issue.
-app.get('/*', function(req, res) {
+app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
