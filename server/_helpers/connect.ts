@@ -23,15 +23,12 @@ export const connect = async (options?: Array<string>) => {
         .connect(connectionString, {
             useCreateIndex: true,
             useNewUrlParser: true,
-            useFindAndModify: false
+            useFindAndModify: false,
+            useUnifiedTopology: true,
         })
         .then(async () => {
-            const collections = await mongoose.connection.db
-                .listCollections()
-                .toArray();
-            const collectionNames = collections.map(
-                collection => collection.name
-            );
+            const collections = await mongoose.connection.db.listCollections().toArray();
+            const collectionNames = collections.map((collection) => collection.name);
             if (process.env.NODE_ENV !== 'test') {
                 logger.info('Successfully connected to database');
             }
@@ -99,11 +96,9 @@ export const connect = async (options?: Array<string>) => {
                 logger.info('Dropping collection: games');
             }
         })
-        .catch(err => {
+        .catch((err) => {
             logger.error(`Error connecting to database: ${err}`);
-            console.log(
-                `Failure to connect using connection string: ${connectionString}`
-            );
+            console.log(`Failure to connect using connection string: ${connectionString}`);
             console.log(`connection options: ${connectOptions}`);
             console.log(`error message: ${err.message}`);
             return process.exit(1);
