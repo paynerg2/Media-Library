@@ -5,16 +5,16 @@ import { IUser } from './user.interface';
 import {
     duplicateEmail,
     duplicateUsername,
-    userNotFound
+    userNotFound,
 } from '../../client/src/lib/messages/user.errorMessages';
 import { logger } from '../_helpers/logger';
 
 const authenticate = async ({ username, password }: UserParams) => {
     let user = await User.findOne({ username });
+    logger.info(`user: ${user}`);
     if (user && bcrypt.compareSync(password, user.hash)) {
         const { hash, ...userWithoutHash } = user.toObject();
-        const secret: jwt.Secret =
-            process.env.PROD_SECRET || (process.env.SECRET as jwt.Secret);
+        const secret: jwt.Secret = process.env.PROD_SECRET || (process.env.SECRET as jwt.Secret);
         const token = jwt.sign({ sub: user.id }, secret);
         return { ...userWithoutHash, token };
     }
@@ -54,7 +54,7 @@ const create = async (userParam: UserParams) => {
     const userParamWithoutPassword = {
         username: userParam.username,
         email: userParam.email,
-        createdDate: userParam.createdDate
+        createdDate: userParam.createdDate,
     };
 
     let user: IUser = new User(userParamWithoutPassword);
@@ -89,7 +89,7 @@ const update = async (id: string, userParam: UserParams) => {
     let userNameAlreadyExists = null;
     if (updatingUsername) {
         userNameAlreadyExists = await User.findOne({
-            username: userParam.username
+            username: userParam.username,
         });
     }
     if (updatingUsername && userNameAlreadyExists) {
@@ -152,5 +152,5 @@ export const userService: IUserService = {
     getById,
     create,
     update,
-    delete: _delete
+    delete: _delete,
 };

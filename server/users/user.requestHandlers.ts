@@ -5,17 +5,11 @@ import { userSchema } from '../../client/src/lib/schemas';
 import { invalidUsernameOrPassword } from '../../client/src/lib/messages/user.errorMessages';
 import { logger } from '../_helpers/logger';
 
-export const authenticate = (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const authenticate = (req: Request, res: Response, next: NextFunction) => {
     userService
         .authenticate(req.body.data)
         .then((user: IUser) =>
-            user
-                ? res.json(user)
-                : res.status(400).json({ message: invalidUsernameOrPassword })
+            user ? res.json(user) : res.status(400).json({ message: invalidUsernameOrPassword })
         )
         .catch((err: Error) => {
             logger.error(err);
@@ -23,11 +17,7 @@ export const authenticate = (
         });
 };
 
-export const register = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const register = async (req: Request, res: Response, next: NextFunction) => {
     let error;
     try {
         await userSchema.validate(req.body.data);
@@ -48,11 +38,7 @@ export const register = async (
     }
 };
 
-export const getAll = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const getAll = async (req: Request, res: Response, next: NextFunction) => {
     userService
         .getAll()
         .then((users: IUser[]) => res.json(users))
@@ -62,25 +48,17 @@ export const getAll = async (
         });
 };
 
-export const getById = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const getById = async (req: Request, res: Response, next: NextFunction) => {
     userService
         .getById(req.params.id)
-        .then(user => (user ? res.json(user) : res.sendStatus(404)))
+        .then((user) => (user ? res.json(user) : res.sendStatus(404)))
         .catch((err: Error) => {
             logger.error(err);
             next(err);
         });
 };
 
-export const update = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const update = async (req: Request, res: Response, next: NextFunction) => {
     let error;
     try {
         await userSchema.validate(req.body.data);
@@ -101,11 +79,7 @@ export const update = async (
     }
 };
 
-export const _delete = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const _delete = async (req: Request, res: Response, next: NextFunction) => {
     try {
         await userService.delete(req.params.id);
         res.json({});

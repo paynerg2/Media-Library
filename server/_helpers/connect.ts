@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { connections } from 'mongoose';
 import { env } from '../_helpers/env';
 import { logger } from '../_helpers/logger';
 import { connectOptions } from './connectOptions';
@@ -19,6 +19,7 @@ if (process.env.NODE_ENV === 'test') {
 mongoose.Promise = global.Promise;
 
 export const connect = async (options?: Array<string>) => {
+    logger.info('Connecting to database...');
     await mongoose
         .connect(connectionString, {
             useCreateIndex: true,

@@ -9,9 +9,11 @@ export const jwt = () => {
     return expressJwt({ secret, isRevoked }).unless({
         path: [
             // public routes don't require auth
-            'api/users/authenticate',
-            'api/users/register'
-        ]
+            {
+                url: /^\/api\/users\/([^\/]*)$/,
+                methods: ['POST'],
+            },
+        ],
     });
 };
 
